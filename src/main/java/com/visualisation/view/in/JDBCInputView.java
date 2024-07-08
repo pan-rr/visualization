@@ -33,10 +33,21 @@ public class JDBCInputView extends JDBCBaseView implements InputView {
 
 
     private void createTable(SqlRowSetMetaData metaData) throws JSQLParserException, SQLException {
-        String createTableSQL = SQLHandler.getCreateTableSQLByMetaData(metaData, getRealTableName(),getDialectId());
+        String createTableSQL = SQLHandler.getCreateTableSQLByMetaData(metaData, getRealTableName(), getDialectId());
         jdbcTemplate.execute(createTableSQL);
+        index();
     }
 
+    private void index() {
+        if (properties.containsKey("indexOn")){
+            String indexOn = String.valueOf(properties.get("indexOn"));
+            StringBuilder sb = new StringBuilder("create index idx_")
+                    .append(getRealTableName())
+                    .append(" on ").append(getRealTableName())
+                    .append('(').append(indexOn).append(')');
+            jdbcTemplate.execute(sb.toString());
+        }
+    }
 
     public void loadData() {
         NamedParameterJdbcTemplate template = getTargetJDBCTemplate();

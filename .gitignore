@@ -38,6 +38,7 @@ build/
 .DS_Store
 
 .idea/!/target/
-!/.idea/
-!/target/
+/.idea/
+/target/
 /target/classes/csv/hobby.csv
+/target/
