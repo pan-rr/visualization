@@ -2,9 +2,12 @@ package com.visualisation.handler;
 
 import com.mysql.cj.MysqlType;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.parser.*;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.util.validation.Validation;
 import net.sf.jsqlparser.util.validation.ValidationError;
 import net.sf.jsqlparser.util.validation.feature.FeaturesAllowed;
@@ -18,7 +21,9 @@ import org.springframework.util.CollectionUtils;
 import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class SQLHandler {
@@ -71,13 +76,13 @@ public class SQLHandler {
         if (!CollectionUtils.isEmpty(errors)) throw new SQLException("SQL语法有误");
     }
 
-    public static String getSelectSQL(String rawSQL, Map<String, Object> map) throws SQLException {
-        validateSQL(rawSQL, Collections.singletonList(FeaturesAllowed.SELECT));
-        Set<Map.Entry<String, Object>> set = map.entrySet();
-        for (Map.Entry<String, Object> e : set) {
-            rawSQL = rawSQL.replace(e.getKey(), (CharSequence) e.getValue());
-        }
-        return rawSQL;
+    public static String getSelectSQL(String rawSQL, Map<String, Object> map) throws SQLException, JSQLParserException, ParseException {
+        Select select = (Select) CCJSqlParserUtil.parse(rawSQL);
+        PlainSelect selectBody = (PlainSelect) select.getSelectBody();
+        SimpleNode node = selectBody.getASTNode();
+        node.jjtAccept(new TableNameHandler(map), null);
+        return selectBody.toString();
+
     }
 
     public static String getInsertSQL(String tableName, String[] columnNames) {
@@ -99,5 +104,35 @@ public class SQLHandler {
     public static void createTable(SqlRowSetMetaData metaData, String tableName, String dialectId, JdbcTemplate template) throws JSQLParserException, SQLException {
         String createTableSQL = SQLHandler.getCreateTableSQLByMetaData(metaData, tableName, dialectId);
         template.execute(createTableSQL);
+    }
+
+
+    private static class TableNameHandler extends CCJSqlParserDefaultVisitor {
+        private Map<String, Object> names;
+
+        TableNameHandler(Map<String, Object> names) {
+            this.names = names;
+        }
+
+        @Override
+        public Object visit(SimpleNode node, Object data) {
+            Object value = node.jjtGetValue();
+            /** 根据节点类型找出表名和字段名节点，对名字加上双引号 */
+            if (node.getId() == CCJSqlParserTreeConstants.JJTCOLUMN) {
+                Column column = (Column) value;
+                Table table = column.getTable();
+                if (table != null && names.containsKey(table.getName())) {
+                    table.setName(String.valueOf(names.get(table.getName())));
+                }
+            } else if (node.getId() == CCJSqlParserTreeConstants.JJTTABLENAME) {
+                Table table = (Table) value;
+                if (table != null && names.containsKey(table.getName())) {
+                    table.setName(String.valueOf(names.get(table.getName())));
+                }
+            }
+            value = node.jjtGetValue();
+//            if(value != null)sb.append(value);
+            return super.visit(node, data);
+        }
     }
 }

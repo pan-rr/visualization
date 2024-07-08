@@ -4,6 +4,7 @@ import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.ViewManager;
 import com.visualisation.view.JDBCBaseView;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.ParseException;
 import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -50,7 +51,7 @@ public class JDBCOutPutView extends JDBCBaseView implements OutputView {
         String sql;
         try {
             sql = SQLHandler.getSelectSQL(getScript(), tableNames);
-        } catch (SQLException e) {
+        } catch (SQLException | JSQLParserException | ParseException e) {
             throw new RuntimeException(e);
         }
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
