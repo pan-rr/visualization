@@ -67,7 +67,7 @@ public class JDBCOutPutView extends JDBCBaseView implements OutputView {
         int[] types = new int[columnNames.length];
         Arrays.fill(types, Types.VARCHAR);
         String insertSQL = SQLHandler.getInsertSQL(getRawTableName(), columnNames);
-        BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate(targetDataSource, insertSQL, types, sqlRowSet.getRow());
+        BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate(targetDataSource, insertSQL, types, sqlRowSet.getRow() / 2);
         Object[] row;
         while (sqlRowSet.next()) {
             row = new Object[columnNames.length];

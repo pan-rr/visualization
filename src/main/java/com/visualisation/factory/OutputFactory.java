@@ -2,6 +2,7 @@ package com.visualisation.factory;
 
 import com.visualisation.manager.ViewManager;
 import com.visualisation.view.ViewConf;
+import com.visualisation.view.out.CSVOutPutView;
 import com.visualisation.view.out.ConsoleOutPutView;
 import com.visualisation.view.out.JDBCOutPutView;
 import com.visualisation.view.out.OutputView;
@@ -18,6 +19,7 @@ public class OutputFactory {
     static {
         OutputFactory.registerFactory("console", ConsoleOutPutView::produce);
         OutputFactory.registerFactory("jdbc", JDBCOutPutView::produce);
+        OutputFactory.registerFactory("csv", CSVOutPutView::produce);
     }
 
     public static void registerFactory(String id, Function<Pair<Map<String, Object>, ViewManager>, ? extends OutputView> fun) {

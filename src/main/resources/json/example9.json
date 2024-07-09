@@ -1,0 +1,24 @@
+{
+  "input": [
+    {
+      "viewType": "csv",
+      "filePath": "csv/student.csv",
+      "tableName": "student"
+    },
+    {
+      "viewType": "csv",
+      "filePath": "csv/hobby.csv",
+      "tableName": "hobby"
+    }
+  ],
+  "output": {
+    "viewType": "csv",
+    "filePath": "csv/hobby_studet.csv",
+    "param": {
+      "charset": "utf-8",
+      "fieldDelimiter": "",
+      "writeColumnHeader": "true"
+    },
+    "script": "select a.*,b.type prov from student a inner join hobby b on a.no = b.no"
+  }
+}

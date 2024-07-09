@@ -108,7 +108,7 @@ public class SQLHandler {
 
 
     private static class TableNameHandler extends CCJSqlParserDefaultVisitor {
-        private Map<String, Object> names;
+        private final Map<String, Object> names;
 
         TableNameHandler(Map<String, Object> names) {
             this.names = names;
@@ -117,7 +117,6 @@ public class SQLHandler {
         @Override
         public Object visit(SimpleNode node, Object data) {
             Object value = node.jjtGetValue();
-            /** 根据节点类型找出表名和字段名节点，对名字加上双引号 */
             if (node.getId() == CCJSqlParserTreeConstants.JJTCOLUMN) {
                 Column column = (Column) value;
                 Table table = column.getTable();
@@ -130,8 +129,6 @@ public class SQLHandler {
                     table.setName(String.valueOf(names.get(table.getName())));
                 }
             }
-            value = node.jjtGetValue();
-//            if(value != null)sb.append(value);
             return super.visit(node, data);
         }
     }

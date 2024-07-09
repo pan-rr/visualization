@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class CSVInputView extends BaseView implements InputView {
 
-    private static final String createSQL = "create table tableName as select * from csvread ({0} {1})";
+    private static final String CREATE_SQL = "create table tableName as select * from csvread ({0} {1})";
 
     private File csv;
 
@@ -87,7 +87,7 @@ public class CSVInputView extends BaseView implements InputView {
         }
         StringBuilder path = new StringBuilder();
         path.append('\'').append(properties.get("filePath")).append('\'');
-        String sql = MessageFormat.format(createSQL, path, sb.toString());
+        String sql = MessageFormat.format(CREATE_SQL, path, sb.toString());
         return SQLHandler.changeCreateTableSQL(sql, getRealTableName());
     }
 

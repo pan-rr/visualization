@@ -24,13 +24,14 @@
     }
   ],
   "output": {
-    "viewType": "jdbc",
-    "tableName": "test_person_prov",
-    "script": "select a.*,b.ancetral_place from person a inner join prov b on a.no = b.no",
+    "viewType": "csv",
+    "filePath": "csv/test_jdbc_csv.csv",
     "param": {
-      "url": "jdbc:mysql://localhost:3306/visualization?useUnicode=true&characterEncoding=utf8",
-      "username": "test",
-      "password": "test"
-    }
+      "charset": "utf-8",
+      "fieldDelimiter": "",
+      "fieldSeparator": "|",
+      "writeColumnHeader": "true"
+    },
+    "script": "select a.*,b.ancetral_place from person a inner join prov b on a.no = b.no"
   }
 }

@@ -21,7 +21,7 @@ public class H2Test {
     @Test
     public void test() throws IOException {
         long l = System.currentTimeMillis();
-        commander.commandWithLocalFile("json/example8.json");
+        commander.commandWithLocalFile("json/example10.json");
         System.err.println("jvm参数：-XX=+UseG1GC;-Xms=1g;-Xmx=8g");
         System.err.println("耗时：" + String.valueOf(System.currentTimeMillis() - l) + "ms");
     }

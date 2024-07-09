@@ -41,6 +41,44 @@ json配置分为多个扇入视图和一个扇出视图；扇入负责提取数�
 > script: 取数SQL
  
 > param: jdbc视图时存放jdbc连接参数
+ 
++ 样例
+
+```json
+{
+  "input": [
+    {
+      "viewType": "jdbc",
+      "tableName": "student",
+      "script" : "select no , name ,sex from student",
+      "param": {
+        "url": "jdbc:mysql://localhost:3306/visualization?useUnicode=true&characterEncoding=utf8",
+        "username": "test",
+        "password": "test"
+      }
+    },
+    {
+      "viewType": "csv",
+      "filePath": "csv/hobby.csv",
+      "tableName": "hobby",
+      "param": {
+        "charset": "utf-8",
+        "writeColumnHeader": "true"
+      }
+    }
+  ],
+  "output": {
+    "viewType": "jdbc",
+    "tableName": "test_jdbc",
+    "script": "select a.*,b.type from student a inner join hobby b on a.no = b.no",
+    "param": {
+      "url": "jdbc:mysql://localhost:3306/visualization?useUnicode=true&characterEncoding=utf8",
+      "username": "test",
+      "password": "test"
+    }
+  }
+}
+```
 
 ##### 数据流程
 
