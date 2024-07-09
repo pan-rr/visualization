@@ -104,9 +104,11 @@ json配置分为多个扇入视图和一个扇出视图；扇入负责提取数�
 
 >测试结果
   
-单位均为ms
+图片无法加载的话，请去pic文件夹下看，单位均为ms
 
-**两张数据量均为3w的表inner join后，结果插入MySQL**
+**两张数据量均为10w的表inner join后，结果写CSV耗时1.3s**
+
+**两张数据量均为3w的表inner join后，结果插入MySQL，耗时4.5s**
 
 ![1](https://github.com/pan-rr/visualization/master/pic/3w*3w.png)
 
