@@ -55,7 +55,7 @@ public class SQLHandler {
 
     public static String getCreateTableSQLByMetaData(SqlRowSetMetaData metaData, String tableName, String dialectId) throws JSQLParserException, SQLException {
         String[] columnNames = metaData.getColumnNames();
-        StringBuilder sb = new StringBuilder("create table ");
+        StringBuilder sb = new StringBuilder("create table if not exists ");
         sb.append(tableName).append(" (");
         int end = columnNames.length - 1;
         int len;

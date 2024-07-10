@@ -62,7 +62,7 @@ public class JDBCInputView extends JDBCBaseView implements InputView {
         int[] types = new int[columnNames.length];
         Arrays.fill(types, Types.VARCHAR);
         String insertSQL = SQLHandler.getInsertSQL(getRealTableName(), columnNames);
-        BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate(federationDataSource, insertSQL, types, sqlRowSet.getRow());
+        BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate(federationDataSource, insertSQL, types, 10000);
         Object[] row;
         while (sqlRowSet.next()) {
             row = new Object[columnNames.length];
