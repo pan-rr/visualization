@@ -111,12 +111,14 @@ json配置分为多个扇入视图和一个扇出视图；扇入负责提取数�
 
 **两张数据量均为3w的表inner join后，结果插入MySQL，耗时4.5s**
 
+如果目标数据库支持文件导入方式的话，建议导出csv后再把csv导入数据库，这样可以节省时间
+
 ![1](https://github.com/pan-rr/visualization/master/pic/3w*3w.png)
 
 **person.csv导入MySQL**
-
+person.csv 有百万行数据
 ![1](https://github.com/pan-rr/visualization/master/pic/csv导入100wpeople.png)
 
 **prov.csv导入MySQL**
-
+prov.csv 有百万行数据
 ![1](https://github.com/pan-rr/visualization/master/pic/csv导入100w.png)
