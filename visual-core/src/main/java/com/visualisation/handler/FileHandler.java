@@ -25,7 +25,6 @@ public class FileHandler {
                 file = new ClassPathResource(path).getFile();
             }
         }
-
         return file;
     }
 

@@ -95,8 +95,19 @@ public class CSVInputView extends BaseView implements InputView {
         try {
             String sql = prepareSQL();
             jdbcTemplate.execute(sql);
+            index();
         } catch (IOException | SQLException | JSQLParserException e) {
             throw new RuntimeException(e);
+        }
+    }
+    private void index() {
+        if (properties.containsKey("indexOn")){
+            String indexOn = String.valueOf(properties.get("indexOn"));
+            StringBuilder sb = new StringBuilder("create index idx_")
+                    .append(getRealTableName())
+                    .append(" on ").append(getRealTableName())
+                    .append('(').append(indexOn).append(')');
+            jdbcTemplate.execute(sb.toString());
         }
     }
 

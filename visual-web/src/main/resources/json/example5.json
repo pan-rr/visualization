@@ -1,0 +1,19 @@
+{
+  "input": [
+    {
+      "viewType": "csv",
+      "filePath": "csv/prov.csv",
+      "tableName": "prov"
+    }
+  ],
+  "output": {
+    "viewType": "jdbc",
+    "tableName": "prov",
+    "script": "select * from prov",
+    "param": {
+      "url": "jdbc:mysql://localhost:3306/visualization?useUnicode=true&characterEncoding=utf8",
+      "username": "test",
+      "password": "test"
+    }
+  }
+}

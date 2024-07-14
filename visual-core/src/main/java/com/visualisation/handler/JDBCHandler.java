@@ -5,6 +5,9 @@ import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,10 +22,26 @@ public class JDBCHandler {
     private String dialectId;
 
     public JDBCHandler(Map<String, String> properties) {
+        String appDataSourceName = properties.get("appDataSourceName");
         this.dataSourceProperties = new DataSourceProperties();
-        dataSourceProperties.url = properties.get("url");
-        dataSourceProperties.username = properties.get("username");
-        dataSourceProperties.password = properties.get("password");
+        if (appDataSourceName != null) {
+            DataSource ds = SpringApplicationHandler.getCtx().getBean(appDataSourceName, DataSource.class);
+            this.dataSource = ds;
+            try {
+                Connection connection = ds.getConnection();
+                DatabaseMetaData metaData = connection.getMetaData();
+                dataSourceProperties.url = metaData.getURL();
+                dataSourceProperties.username = metaData.getUserName();
+                connection.close();
+                jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            dataSourceProperties.url = properties.get("url");
+            dataSourceProperties.username = properties.get("username");
+            dataSourceProperties.password = properties.get("password");
+        }
         DatabaseDriver databaseDriver = DatabaseDriver.fromJdbcUrl(dataSourceProperties.getUrl());
         this.dialectId = databaseDriver.getId();
     }
@@ -32,9 +51,9 @@ public class JDBCHandler {
     }
 
     public NamedParameterJdbcTemplate getJdbcTemplate() {
-        if (Objects.isNull(jdbcTemplate)) {
+        if (Objects.isNull(dataSource)) {
             synchronized (this) {
-                if (Objects.isNull(jdbcTemplate)) {
+                if (Objects.isNull(dataSource)) {
                     dataSource = DataSourceBuilder.create()
                             .url(dataSourceProperties.getUrl())
                             .username(dataSourceProperties.getUsername())

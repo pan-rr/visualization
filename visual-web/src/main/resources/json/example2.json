@@ -1,0 +1,25 @@
+{
+  "input": [
+    {
+      "viewType": "csv",
+      "filePath": "csv/student2.csv",
+      "tableName": "student",
+      "param": {
+        "headers": "no|name|sex",
+        "fieldSeparator": "|",
+        "caseSensitiveColumnNames": "true",
+        "charset": "utf-8",
+        "writeColumnHeader": "false"
+      }
+    },
+    {
+      "viewType": "csv",
+      "filePath": "csv/hobby.csv",
+      "tableName": "hobby"
+    }
+  ],
+  "output": {
+    "viewType": "console",
+    "script": "select a.no,a.name,b.type from student a inner join hobby b on a.no = b.no"
+  }
+}

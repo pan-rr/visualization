@@ -14,7 +14,7 @@ import java.io.*;
 @Component
 public class Commander {
 
-    @Resource
+    @Resource(name = "db")
     private DataSource dataSource;
 
     public void commandWithJsonString(String json) {
