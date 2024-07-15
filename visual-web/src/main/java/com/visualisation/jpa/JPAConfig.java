@@ -1,4 +1,4 @@
-package com.visualisation.config;
+package com.visualisation.jpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
