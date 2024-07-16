@@ -11,7 +11,7 @@
 
     <artifactId>visual-core</artifactId>
     <version>${visual.version}</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
