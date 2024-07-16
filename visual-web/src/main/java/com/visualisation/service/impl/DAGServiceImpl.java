@@ -7,6 +7,7 @@ import com.visualisation.model.dag.*;
 import com.visualisation.repository.dag.EdgeRepository;
 import com.visualisation.repository.dag.DAGPointerRepository;
 import com.visualisation.repository.dag.DAGTemplateRepository;
+import com.visualisation.repository.dag.TaskLatchRepository;
 import com.visualisation.service.DAGService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DAGServiceImpl implements DAGService {
@@ -29,12 +32,15 @@ public class DAGServiceImpl implements DAGService {
     @Resource
     private DAGPointerRepository dagPointerRepository;
 
+    @Resource
+    private TaskLatchRepository taskLatchRepository;
+
 
     @Override
     public void saveTemplate(DAGTemplate dagTemplate) {
         dagTemplate.setStatus(StatusConstant.NORMAL);
         List<Node> list = dagTemplate.getList();
-        dagTemplate.fillNodeId(list);
+        dagTemplate.fillNodeId(list, 0);
         Gson gson = new Gson();
         String json = gson.toJson(list);
         dagTemplate.setGraph(json);
@@ -53,21 +59,30 @@ public class DAGServiceImpl implements DAGService {
         List<DAGPointer> pointers = pair.getSecond();
         edgeRepository.saveAll(edges);
         dagPointerRepository.saveAll(pointers);
+        List<TaskLatch> latches = TaskLatch.getLatch(edges);
+        taskLatchRepository.saveAll(latches);
     }
 
     @Override
-    public List<Edge> findNextEdges(TaskId taskId) {
-        return edgeRepository.findByInstanceIdAndFromTaskId(taskId.getInstanceId(), taskId.getTaskId());
+    public List<Edge> findNextEdges(TaskKey taskKey) {
+        return edgeRepository.findByInstanceIdAndFromTaskId(taskKey.getInstanceId(), taskKey.getTaskId());
     }
 
     @Override
-    public void deletePointer(TaskId taskId) {
-        dagPointerRepository.deleteByInstanceIdAndTaskId(taskId.getInstanceId(), taskId.getTaskId());
+    public void deletePointer(TaskKey taskKey) {
+        dagPointerRepository.deleteByInstanceIdAndTaskId(taskKey.getInstanceId(), taskKey.getTaskId());
     }
 
     @Override
-    public void savePointers(List<DAGPointer> pointers) {
-        dagPointerRepository.saveAll(pointers);
+    public void saveReadyPointers(List<DAGPointer> pointers) {
+        List<Long> list = pointers.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
+        taskLatchRepository.decreaseCount(list);
+        Set<Long> unreadyTask = taskLatchRepository.getUnreadyTask(list);
+        List<DAGPointer> readyTask = pointers.stream().filter(p -> !unreadyTask.contains(p.getTaskId()))
+                .collect(Collectors.toList());
+        List<Long> readyIds = readyTask.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
+        dagPointerRepository.saveAll(readyTask);
+        taskLatchRepository.deleteAllById(readyIds);
     }
 
 

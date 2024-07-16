@@ -15,11 +15,7 @@ import java.io.Serializable;
 @Builder
 @Entity
 @Table(name = "t_task")
-@IdClass(value = TaskId.class)
 public class Task implements Serializable {
-
-    @Id
-    private Long instanceId;
 
     @Id
     private Long taskId;

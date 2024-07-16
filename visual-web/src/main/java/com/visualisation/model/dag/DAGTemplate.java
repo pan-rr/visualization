@@ -25,20 +25,21 @@ public class DAGTemplate implements Serializable {
     @Id
     @GeneratedValue(generator = "snowId")
     @GenericGenerator(name = "snowId", strategy = "com.visualisation.jpa.SnowIdGenerator")
-    private Long id;
+    private Long templateId;
     private String name;
+    @Column(columnDefinition = "text")
     private String graph;
     private Integer status;
     @Transient
     private List<Node> list;
 
-    public void fillNodeId(List<Node> list) {
+    public void fillNodeId(List<Node> list, int deepth) {
         if (!CollectionUtils.isEmpty(list)) {
-            SnowIdWorker snowIdWorker = new SnowIdWorker(0, 0);
-            list.forEach(node -> {
+            SnowIdWorker snowIdWorker = new SnowIdWorker(0, deepth++);
+            for (Node node : list) {
                 node.setId(snowIdWorker.nextId());
-                fillNodeId(node.getNextList());
-            });
+                fillNodeId(node.getNextList(), deepth);
+            }
         }
     }
 
@@ -51,8 +52,19 @@ public class DAGTemplate implements Serializable {
         List<DAGPointer> pointers = new ArrayList<>(nodes.length);
         List<Edge> edges = new LinkedList<>();
         LinkedList<Node> q = new LinkedList<>();
+        int cnt;
+        List<Node> arr;
         for (Node node : nodes) {
-            q.offer(node);
+            arr = node.getNextList();
+            if (CollectionUtils.isEmpty(arr)) {
+                edges.add(Edge.builder()
+                        .instanceId(instanceId)
+                        .fromTaskId(node.getId())
+                        .toTaskId(node.getId())
+                        .build());
+            } else {
+                q.offer(node);
+            }
             pointers.add(DAGPointer.builder()
                     .instanceId(instanceId)
                     .count(0)
@@ -60,8 +72,6 @@ public class DAGTemplate implements Serializable {
                     .taskId(node.getId())
                     .build());
         }
-        int cnt;
-        List<Node> arr;
         Node node;
         while ((cnt = q.size()) > 0) {
             while (cnt-- > 0) {

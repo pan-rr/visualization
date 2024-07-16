@@ -1,10 +1,8 @@
 package com.visualisation;
 
+import com.visualisation.jpa.SnowIdWorker;
 import com.visualisation.manager.DAGManager;
-import com.visualisation.model.dag.DAGTemplate;
-import com.visualisation.model.dag.Node;
-import com.visualisation.model.dag.Task;
-import com.visualisation.model.dag.TaskId;
+import com.visualisation.model.dag.*;
 import com.visualisation.service.DAGService;
 import com.visualisation.service.TaskService;
 import org.junit.jupiter.api.Test;
@@ -50,7 +48,7 @@ public class ServiceTest {
 
     @Test
     void testDag() {
-        dagService.createInstanceByTemplateId(1262523763166019584L);
+        dagService.createInstanceByTemplateId(1262743053198688256L);
     }
 
     @Test
@@ -68,7 +66,6 @@ public class ServiceTest {
             i++;
             Task task = Task.builder()
                     .taskId(node.getId())
-                    .instanceId(build.getId())
                     .name("test-->" + i)
                     .json("{\n" +
                             "  \"input\": [\n" +
@@ -102,11 +99,59 @@ public class ServiceTest {
     }
 
     @Test
-    void testExecuteTask(){
-        TaskId taskId = TaskId.builder()
-                .instanceId(1262560291904815104L)
-                .taskId(1262560291841900544L)
+    void testCreateInstance() {
+        dagService.createInstanceByTemplateId(1262745914414465024L);
+    }
+
+    @Test
+    void saveTask2() {
+        List<Long> taskIds = Arrays.asList(1262745914351550464L, 1262745914351681536L, 1262745914351550465L);
+        long instanceId = new SnowIdWorker(0, 0).nextId();
+        int i = 0;
+        for (Long id : taskIds) {
+            i++;
+            Task task = Task.builder()
+                    .taskId(id)
+                    .name("test-->" + i)
+                    .json("{\n" +
+                            "  \"input\": [\n" +
+                            "    {\n" +
+                            "      \"viewType\": \"csv\",\n" +
+                            "      \"filePath\": \"csv/student2.csv\",\n" +
+                            "      \"tableName\": \"student\",\n" +
+                            "      \"param\": {\n" +
+                            "        \"headers\": \"no|name|sex\",\n" +
+                            "        \"fieldSeparator\": \"|\",\n" +
+                            "        \"caseSensitiveColumnNames\": \"true\",\n" +
+                            "        \"charset\": \"utf-8\",\n" +
+                            "        \"writeColumnHeader\": \"false\"\n" +
+                            "      }\n" +
+                            "    },\n" +
+                            "    {\n" +
+                            "      \"viewType\": \"csv\",\n" +
+                            "      \"filePath\": \"csv/hobby.csv\",\n" +
+                            "      \"tableName\": \"hobby\"\n" +
+                            "    }\n" +
+                            "  ],\n" +
+                            "  \"output\": {\n" +
+                            "    \"viewType\": \"console\",\n" +
+                            "    \"script\": \"select a.no,a.name,b.type from student a inner join hobby b on a.no = b.no\"\n" +
+                            "  }\n" +
+                            "}").build();
+            taskService.saveTask(task);
+
+        }
+
+    }
+
+    @Test
+    void testExecuteTask() {
+        DAGPointer p = DAGPointer
+                .builder()
+                .instanceId(1262746701970538496L)
+                .taskId(1262745914351550464L)
                 .build();
-        manager.executeTask(taskId);
+
+        manager.executeTask(p);
     }
 }

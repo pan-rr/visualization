@@ -26,4 +26,11 @@ public class DAGPointer implements Serializable {
     private Integer status;
     private Integer retryMaxCount;
     private Integer count;
+
+    public TaskKey getTaskKey(){
+        return TaskKey.builder()
+                .instanceId(instanceId)
+                .taskId(taskId)
+                .build();
+    }
 }

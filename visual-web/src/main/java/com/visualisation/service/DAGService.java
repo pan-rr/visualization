@@ -3,7 +3,7 @@ package com.visualisation.service;
 import com.visualisation.model.dag.DAGPointer;
 import com.visualisation.model.dag.DAGTemplate;
 import com.visualisation.model.dag.Edge;
-import com.visualisation.model.dag.TaskId;
+import com.visualisation.model.dag.TaskKey;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ public interface DAGService {
 
     void createInstanceByTemplateId(Long templateId);
 
-    List<Edge> findNextEdges(TaskId taskId);
+    List<Edge> findNextEdges(TaskKey taskKey);
 
-    void deletePointer(TaskId taskId);
+    void deletePointer(TaskKey taskKey);
 
-    void savePointers(List<DAGPointer> pointers);
+    void saveReadyPointers(List<DAGPointer> pointers);
 
 }

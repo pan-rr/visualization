@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskId implements Serializable {
+public class TaskKey implements Serializable {
     private Long instanceId;
 
     private Long taskId;

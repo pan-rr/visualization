@@ -2,11 +2,10 @@ package com.visualisation.manager;
 
 import com.visualisation.Commander;
 import com.visualisation.DAGException;
-import com.visualisation.constant.StatusConstant;
 import com.visualisation.model.dag.DAGPointer;
 import com.visualisation.model.dag.Edge;
 import com.visualisation.model.dag.Task;
-import com.visualisation.model.dag.TaskId;
+import com.visualisation.model.dag.TaskKey;
 import com.visualisation.service.DAGService;
 import com.visualisation.service.TaskService;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,23 +35,26 @@ public class DAGManager {
 
 
     @Transactional(transactionManager = "transactionManagerDAG")
-    public void executeTask(TaskId taskId) {
-        Task task = taskService.getTaskById(taskId);
+    public void executeTask(DAGPointer pointer) {
+        TaskKey taskKey = pointer.getTaskKey();
+        Task task = taskService.getTaskById(taskKey.getTaskId());
         if (Objects.isNull(task)) {
-            throw new DAGException("任务为空，id:" + taskId);
+            throw new DAGException("任务为空，id:" + taskKey);
         }
         commander.commandWithJsonString(task.getJson());
-        taskService.updateTaskStatus(taskId.getInstanceId(), task.getTaskId(), StatusConstant.FINISHED);
-        dagService.deletePointer(taskId);
-        List<Edge> nextEdges = dagService.findNextEdges(taskId);
+        dagService.deletePointer(taskKey);
+        List<Edge> nextEdges = dagService.findNextEdges(taskKey);
         if (!CollectionUtils.isEmpty(nextEdges)) {
-            List<DAGPointer> pointers = nextEdges.stream().map(edge -> DAGPointer.builder()
-                    .instanceId(edge.getInstanceId())
-                    .taskId(edge.getToTaskId())
-                    .count(0)
-                    .retryMaxCount(retryMaxCount)
-                    .build()).collect(Collectors.toList());
-            dagService.savePointers(pointers);
+            List<DAGPointer> pointers = nextEdges
+                    .stream()
+                    .filter(edge -> Objects.nonNull(edge.getToTaskId()))
+                    .map(edge -> DAGPointer.builder()
+                            .instanceId(edge.getInstanceId())
+                            .taskId(edge.getToTaskId())
+                            .count(0)
+                            .retryMaxCount(retryMaxCount)
+                            .build()).collect(Collectors.toList());
+            dagService.saveReadyPointers(pointers);
         }
     }
 }
