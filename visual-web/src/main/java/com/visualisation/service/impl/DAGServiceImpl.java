@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.visualisation.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.model.dag.*;
-import com.visualisation.repository.dag.EdgeRepository;
-import com.visualisation.repository.dag.DAGPointerRepository;
-import com.visualisation.repository.dag.DAGTemplateRepository;
-import com.visualisation.repository.dag.TaskLatchRepository;
+import com.visualisation.repository.dag.*;
 import com.visualisation.service.DAGService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
@@ -35,6 +32,9 @@ public class DAGServiceImpl implements DAGService {
     @Resource
     private TaskLatchRepository taskLatchRepository;
 
+    @Resource
+    private DAGInstanceRepository dagInstanceRepository;
+
 
     @Override
     public void saveTemplate(DAGTemplate dagTemplate) {
@@ -61,6 +61,14 @@ public class DAGServiceImpl implements DAGService {
         dagPointerRepository.saveAll(pointers);
         List<TaskLatch> latches = TaskLatch.getLatch(edges);
         taskLatchRepository.saveAll(latches);
+        Long instanceId = pointers.get(0).getInstanceId();
+        DAGInstance instance = DAGInstance.builder()
+                .instanceId(instanceId)
+                .templateId(templateId)
+                .version(template.getVersion())
+                .status(StatusConstant.NORMAL)
+                .build();
+        dagInstanceRepository.save(instance);
     }
 
     @Override
@@ -82,8 +90,15 @@ public class DAGServiceImpl implements DAGService {
                 .collect(Collectors.toList());
         List<Long> readyIds = readyTask.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
         dagPointerRepository.saveAll(readyTask);
-        taskLatchRepository.deleteAllById(readyIds);
+        taskLatchRepository.deleteLatchByIds(readyIds);
     }
 
 
+    @Override
+    public void tryFinishInstance(Long instanceId) {
+        Integer instancePointCount = dagPointerRepository.getInstancePointCount(instanceId);
+        if (instancePointCount < 1) {
+            dagInstanceRepository.updateStatus(instanceId, StatusConstant.FINISHED);
+        }
+    }
 }

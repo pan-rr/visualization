@@ -8,11 +8,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.util.Pair;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
@@ -21,6 +24,7 @@ import java.util.*;
 @Builder
 @Entity
 @Table(name = "t_dag_template")
+@EntityListeners(value = AuditingEntityListener.class)
 public class DAGTemplate implements Serializable {
     @Id
     @GeneratedValue(generator = "snowId")
@@ -32,6 +36,9 @@ public class DAGTemplate implements Serializable {
     private Integer status;
     @Transient
     private List<Node> list;
+
+    @LastModifiedDate
+    private LocalDateTime version;
 
     public void fillNodeId(List<Node> list, int deepth) {
         if (!CollectionUtils.isEmpty(list)) {

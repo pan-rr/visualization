@@ -19,4 +19,6 @@ public interface DAGService {
 
     void saveReadyPointers(List<DAGPointer> pointers);
 
+    void tryFinishInstance(Long instanceId);
+
 }

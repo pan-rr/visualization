@@ -18,4 +18,8 @@ public interface TaskLatchRepository extends JpaRepository<TaskLatch, Long> {
     @Query(value = "select task_id from t_task_latch where task_id in :ids and count > 0", nativeQuery = true)
     Set<Long> getUnreadyTask(@Param("ids") List<Long> ids);
 
+    @Modifying
+    @Query(value = "delete from t_task_latch where task_id in :ids and count < 1", nativeQuery = true)
+    void deleteLatchByIds(@Param("ids") List<Long> ids);
+
 }

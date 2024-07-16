@@ -26,30 +26,6 @@ public class ServiceTest {
     @Resource
     DAGManager manager;
 
-    @Test
-    public void testSave() {
-        DAGTemplate build = DAGTemplate.builder()
-                .build();
-        List<Node> list = new LinkedList<>();
-        Node root1 = Node.builder()
-                .name("root1")
-                .build();
-        Node root2 = Node.builder()
-                .name("root2")
-                .build();
-        list.add(root1);
-        list.add(root2);
-        root1.setNextList(Arrays.asList(Node.builder()
-                .name("t1")
-                .build()));
-        build.setList(list);
-        dagService.saveTemplate(build);
-    }
-
-    @Test
-    void testDag() {
-        dagService.createInstanceByTemplateId(1262743053198688256L);
-    }
 
     @Test
     void saveTask() {
@@ -99,13 +75,30 @@ public class ServiceTest {
     }
 
     @Test
-    void testCreateInstance() {
-        dagService.createInstanceByTemplateId(1262745914414465024L);
+    public void testSave() {
+        DAGTemplate build = DAGTemplate.builder()
+                .name("mul")
+                .build();
+        List<Node> list = new LinkedList<>();
+        Node root1 = Node.builder()
+                .name("root1")
+                .build();
+        Node root2 = Node.builder()
+                .name("root2")
+                .build();
+        list.add(root1);
+        list.add(root2);
+        root1.setNextList(Arrays.asList(Node.builder()
+                .name("t1")
+                .build()));
+        build.setList(list);
+        dagService.saveTemplate(build);
     }
+
 
     @Test
     void saveTask2() {
-        List<Long> taskIds = Arrays.asList(1262745914351550464L, 1262745914351681536L, 1262745914351550465L);
+        List<Long> taskIds = Arrays.asList(1262762644620705792L, 1262762644620836864L, 1262762644620705793L);
         long instanceId = new SnowIdWorker(0, 0).nextId();
         int i = 0;
         for (Long id : taskIds) {
@@ -145,11 +138,18 @@ public class ServiceTest {
     }
 
     @Test
+    void testCreateInstance() {
+        manager.createInstanceByTemplateId(1262762644750729216L);
+    }
+
+
+
+    @Test
     void testExecuteTask() {
         DAGPointer p = DAGPointer
                 .builder()
-                .instanceId(1262746701970538496L)
-                .taskId(1262745914351550464L)
+                .instanceId(1262763940790665216L)
+                .taskId(1262762644620836864L)
                 .build();
 
         manager.executeTask(p);

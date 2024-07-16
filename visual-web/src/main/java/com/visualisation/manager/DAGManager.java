@@ -47,7 +47,7 @@ public class DAGManager {
         if (!CollectionUtils.isEmpty(nextEdges)) {
             List<DAGPointer> pointers = nextEdges
                     .stream()
-                    .filter(edge -> Objects.nonNull(edge.getToTaskId()))
+                    .filter(edge -> !Objects.equals(edge.getToTaskId(), edge.getFromTaskId()))
                     .map(edge -> DAGPointer.builder()
                             .instanceId(edge.getInstanceId())
                             .taskId(edge.getToTaskId())
@@ -55,6 +55,13 @@ public class DAGManager {
                             .retryMaxCount(retryMaxCount)
                             .build()).collect(Collectors.toList());
             dagService.saveReadyPointers(pointers);
+        }else {
+            dagService.tryFinishInstance(taskKey.getInstanceId());
         }
+    }
+
+    @Transactional(transactionManager = "transactionManagerDAG")
+    public void createInstanceByTemplateId(Long templateId) {
+        dagService.createInstanceByTemplateId(templateId);
     }
 }
