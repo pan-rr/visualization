@@ -2,6 +2,7 @@ package com.visualisation.manager;
 
 import com.visualisation.model.dag.DAGPointer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class WorkerManager {
@@ -26,6 +28,9 @@ public class WorkerManager {
 
     @Resource
     private DAGManager dagManager;
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     private int watermark;
 
@@ -52,9 +57,15 @@ public class WorkerManager {
                 while (true) {
                     try {
                         DAGPointer pointer = q.take();
+                        // redisson版本有点问题，先用这个
+                        String key = "visual_pointer_" + pointer.getTaskId();
+                        boolean flag = redisTemplate.opsForValue().setIfAbsent(key, key, 1, TimeUnit.HOURS);
+                        // 拿不到锁就放弃任务
+                        if (!flag) return;
                         map.put(Thread.currentThread(), pointer);
                         dagManager.executeTask(pointer);
                         map.remove(Thread.currentThread());
+                        redisTemplate.delete(key);
                     } catch (Exception e) {
                         e.printStackTrace();
                         DAGPointer pointer = map.get(Thread.currentThread());
