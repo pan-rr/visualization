@@ -1,21 +1,24 @@
 package com.visualisation.manager;
 
 import com.visualisation.model.dag.DAGPointer;
+import com.visualisation.service.PointerDispatchService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class WorkerManager {
     @Value("${visual.dag.worker.count}")
     private Integer workerCount = 8;
@@ -30,25 +33,32 @@ public class WorkerManager {
     private DAGManager dagManager;
 
     @Resource
+    private PointerQueueManager pointerQueueManager;
+
+    @Resource
+    private PointerDispatchService pointerDispatchService;
+
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     private int watermark;
 
-    private LinkedBlockingQueue<DAGPointer> q = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<DAGPointer> pointerQ;
 
-    private LinkedBlockingQueue<Object> signal = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<Object> signalQ = new LinkedBlockingQueue<>();
 
-    private LinkedBlockingQueue<DAGPointer> increaseFailCountQ = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<DAGPointer> failTaskQ = new LinkedBlockingQueue<>();
     private List<Worker> workers;
 
     private Worker keeper;
 
-    private Worker increaseWorker;
+    private Worker failTaskWorker;
 
     private ConcurrentHashMap<Thread, DAGPointer> map = new ConcurrentHashMap<>();
 
     @PostConstruct
     void init() {
+        pointerQ = pointerQueueManager.getQueue();
         workers = new ArrayList<>(workerCount);
         watermark = Math.max(workerCount / 2, 5);
         Worker t;
@@ -56,20 +66,19 @@ public class WorkerManager {
             t = new Worker(() -> {
                 while (true) {
                     try {
-                        DAGPointer pointer = q.take();
-                        // redisson版本有点问题，先用这个
+                        DAGPointer pointer = pointerQ.take();
                         String key = "visual_pointer_" + pointer.getTaskId();
-                        boolean flag = redisTemplate.opsForValue().setIfAbsent(key, key, 1, TimeUnit.HOURS);
+                        Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, key, 1, TimeUnit.HOURS);
                         // 拿不到锁就放弃任务
-                        if (!flag) return;
+                        if (Boolean.FALSE.equals(flag)) continue;
                         map.put(Thread.currentThread(), pointer);
                         dagManager.executeTask(pointer);
                         map.remove(Thread.currentThread());
                         redisTemplate.delete(key);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         DAGPointer pointer = map.get(Thread.currentThread());
-                        increaseFailCountQ.offer(pointer);
+                        failTaskQ.offer(pointer);
+                        log.error("处理失败，原因：{} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     }
                 }
             });
@@ -82,19 +91,18 @@ public class WorkerManager {
         keeper = new Worker(() -> {
             while (true) {
                 try {
-                    signal.take();
-                    if (q.size() <= watermark) {
-                        List<DAGPointer> pointers = dagManager.getPointers(scanLimit);
-                        System.err.println(pointers);
-                        if (!CollectionUtils.isEmpty(pointers)) {
-                            q.addAll(pointers);
-                        }
+                    signalQ.take();
+                    if (pointerQ.size() <= watermark) {
+//                        List<DAGPointer> pointers = dagManager.getPointers(scanLimit);
+//                        if (!CollectionUtils.isEmpty(pointers)) {
+//                            pointerQ.addAll(pointers);
+//                        }
+                        pointerDispatchService.dispatchPointer(scanLimit);
                         // 只提取一次
-                        signal.clear();
-
+                        signalQ.clear();
                     }
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                } catch (Exception e) {
+                    log.error("keeper error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 }
             }
         });
@@ -102,25 +110,25 @@ public class WorkerManager {
         keeper.setName("dag-keeper");
         keeper.start();
 
-        increaseWorker = new Worker(() -> {
+        failTaskWorker = new Worker(() -> {
             while (true) {
                 try {
-                    DAGPointer pointer = increaseFailCountQ.take();
-                    dagManager.updateCount(pointer);
+                    DAGPointer pointer = failTaskQ.take();
+                    dagManager.updateTaskInfo(pointer);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    log.error("failTaskWorker error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 }
             }
         });
-        increaseWorker.setDaemon(true);
-        increaseWorker.setName("dag-increaseWorker");
-        increaseWorker.start();
+        failTaskWorker.setDaemon(true);
+        failTaskWorker.setName("dag-failTaskWorker");
+        failTaskWorker.start();
 
     }
 
-    @Scheduled(fixedDelay = 10000L)
+    @Scheduled(fixedDelay = 30000L)
     public void offerSignal() {
-        signal.offer(1);
+        signalQ.offer(1);
     }
 
     private static class Worker extends Thread {

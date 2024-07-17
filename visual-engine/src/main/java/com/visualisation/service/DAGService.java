@@ -18,8 +18,10 @@ public interface DAGService {
 
     void tryFinishInstance(Long instanceId);
 
-    void updateCount(DAGPointer pointer);
+    void updateInstanceStatus(Long instanceId, Integer status);
 
-     List<DAGPointer> getPointers(int limit);
+    void updatePointer(DAGPointer pointer);
+
+    List<DAGPointer> getPointers(int limit);
 
 }

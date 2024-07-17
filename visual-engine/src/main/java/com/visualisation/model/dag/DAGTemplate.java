@@ -1,7 +1,7 @@
 package com.visualisation.model.dag;
 
 import com.google.gson.Gson;
-import com.visualisation.DAGException;
+import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.jpa.SnowIdWorker;
 import lombok.AllArgsConstructor;

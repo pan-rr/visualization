@@ -1,7 +1,7 @@
 package com.visualisation.service.impl;
 
 import com.google.gson.Gson;
-import com.visualisation.DAGException;
+import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.model.dag.*;
 import com.visualisation.repository.dag.*;
@@ -99,12 +99,17 @@ public class DAGServiceImpl implements DAGService {
     public void tryFinishInstance(Long instanceId) {
         Integer instancePointCount = dagPointerRepository.getInstancePointCount(instanceId);
         if (instancePointCount < 1) {
-            dagInstanceRepository.updateStatus(instanceId, StatusConstant.FINISHED);
+            dagInstanceRepository.updateInstanceStatus(instanceId, StatusConstant.FINISHED);
         }
     }
 
     @Override
-    public void updateCount(DAGPointer pointer) {
+    public void updateInstanceStatus(Long instanceId, Integer status) {
+        dagInstanceRepository.updateInstanceStatus(instanceId, status);
+    }
+
+    @Override
+    public void updatePointer(DAGPointer pointer) {
         dagPointerRepository.updateCount(pointer.getInstanceId(), pointer.getTaskId());
     }
 

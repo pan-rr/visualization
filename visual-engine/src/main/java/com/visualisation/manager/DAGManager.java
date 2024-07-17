@@ -1,7 +1,7 @@
 package com.visualisation.manager;
 
 import com.visualisation.Commander;
-import com.visualisation.DAGException;
+import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.model.dag.*;
 import com.visualisation.service.DAGService;
@@ -72,8 +72,12 @@ public class DAGManager {
         taskService.saveTask(task);
     }
 
-    public void updateCount(DAGPointer pointer) {
-        dagService.updateCount(pointer);
+    @Transactional(transactionManager = "transactionManagerDAG")
+    public void updateTaskInfo(DAGPointer pointer) {
+        dagService.updatePointer(pointer);
+        if (pointer.getRetryMaxCount() - pointer.getCount() < 1) {
+            dagService.updateInstanceStatus(pointer.getInstanceId(), StatusConstant.BLOCK);
+        }
     }
 
     public List<DAGPointer> getPointers(int limit) {

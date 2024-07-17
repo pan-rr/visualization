@@ -161,6 +161,6 @@ public class ServiceTest {
                 .instanceId(1262920022301343744L)
                 .taskId(1262917775920201729L)
                 .build();
-        manager.updateCount(build);
+        manager.updateTaskInfo(build);
     }
 }
