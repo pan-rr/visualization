@@ -1,0 +1,144 @@
+{
+  "nodes": [
+    {
+      "id": "dacda6b6-48d3-4dff-911d-287704eb23d8",
+      "type": "rect",
+      "x": -180,
+      "y": 140,
+      "properties": {
+        "text": "任务1",
+        "name": "",
+        "region": "",
+        "type": "",
+        "json": ""
+      },
+      "text": {
+        "x": -180,
+        "y": 140,
+        "value": "任务1"
+      }
+    },
+    {
+      "id": "6af29ec7-4b55-4a87-bd4d-b5b3ac04ecc1",
+      "type": "rect",
+      "x": -180,
+      "y": 310,
+      "properties": {
+        "text": "任务2",
+        "name": "",
+        "region": "",
+        "type": "",
+        "json": ""
+      },
+      "text": {
+        "x": -180,
+        "y": 310,
+        "value": "任务2"
+      }
+    },
+    {
+      "id": "0d1bc79f-d889-4bdc-b892-134715f70eeb",
+      "type": "rect",
+      "x": 190,
+      "y": 140,
+      "properties": {
+        "text": "任务32",
+        "name": "",
+        "region": "",
+        "type": "",
+        "json": ""
+      },
+      "text": {
+        "x": 190,
+        "y": 140,
+        "value": "任务3"
+      }
+    },
+    {
+      "id": "e8ecf1dc-f226-4e85-858e-940a1a0d1957",
+      "type": "rect",
+      "x": 190,
+      "y": 310,
+      "properties": {
+        "text": "任务4",
+        "name": "",
+        "region": "",
+        "type": "",
+        "json": ""
+      },
+      "text": {
+        "x": 190,
+        "y": 310,
+        "value": "任务4"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "ae9ada3c-41e6-4072-9d0c-b6a132824db0",
+      "type": "bezier",
+      "sourceNodeId": "dacda6b6-48d3-4dff-911d-287704eb23d8",
+      "targetNodeId": "0d1bc79f-d889-4bdc-b892-134715f70eeb",
+      "startPoint": {
+        "x": -130,
+        "y": 140
+      },
+      "endPoint": {
+        "x": 140,
+        "y": 140
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": -130,
+          "y": 140
+        },
+        {
+          "x": -30,
+          "y": 140
+        },
+        {
+          "x": 40,
+          "y": 140
+        },
+        {
+          "x": 140,
+          "y": 140
+        }
+      ]
+    },
+    {
+      "id": "b026a0bc-a886-4107-98ba-6404886204c0",
+      "type": "bezier",
+      "sourceNodeId": "dacda6b6-48d3-4dff-911d-287704eb23d8",
+      "targetNodeId": "e8ecf1dc-f226-4e85-858e-940a1a0d1957",
+      "startPoint": {
+        "x": -130,
+        "y": 140
+      },
+      "endPoint": {
+        "x": 140,
+        "y": 310
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": -130,
+          "y": 140
+        },
+        {
+          "x": -30,
+          "y": 140
+        },
+        {
+          "x": 40,
+          "y": 310
+        },
+        {
+          "x": 140,
+          "y": 310
+        }
+      ]
+    }
+  ]
+}
