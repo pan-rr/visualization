@@ -38,17 +38,15 @@ JDK1.8+、MySQL5.7+、Redis6+、Vue3
 1. 启动MySQL、Redis
 2. 启动visual-discover
 3. 启动visual-engine
+4. 启动visual-portal
 
 #### 样例流程
 
-1. 新建流程模版，调用com.visualisation.controller.DagController.createProcessTemplate(
-   com.visualisation.model.dag.DAGTemplate)
-2. 新建任务节点的任务详情，调用com.visualisation.controller.DagController.createProcessTemplate(
-   com.visualisation.model.dag.Task)；
-3. 新建流程实例com.visualisation.controller.DagController.createProcessTemplate(java.lang.Long)
-4. 等待任务执行完成
+1. 在流程管理-流程定义新建流程模版。拖拽左侧“任务节点”到画布，点击节点进行配置。配置完成后点击发布流程
+2. 在已定义流程列表点击运行实例
+3. 等待任务完成
 
-#### Task json 属性介绍
+#### 节点任务 json 属性介绍
 
 + intput属性
 
