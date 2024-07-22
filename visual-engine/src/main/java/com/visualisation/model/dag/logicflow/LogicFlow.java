@@ -4,15 +4,18 @@ import com.visualisation.constant.StatusConstant;
 import com.visualisation.exception.DAGException;
 import com.visualisation.jpa.SnowIdWorker;
 import com.visualisation.model.dag.DAGPointer;
+import com.visualisation.model.dag.DAGValidator;
 import com.visualisation.model.dag.Edge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.util.Pair;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -34,24 +37,14 @@ public class LogicFlow {
 
     public void validateDAG() {
         Set<String> roots = nodes.stream().map(LogicFlowNode::getId).collect(Collectors.toSet());
-        edges.forEach(e -> roots.remove(e.getTargetNodeId()));
-        Map<String, List<LogicFlowEdge>> map = edges.stream().collect(Collectors.groupingBy(LogicFlowEdge::getSourceNodeId));
-        Set<String> exist = new HashSet<>();
-        LinkedList<String> q = new LinkedList<>(roots);
-        int cnt;
-        String cur;
-        List<LogicFlowEdge> arr;
-        while ((cnt = q.size()) > 0) {
-            while (cnt-- > 0) {
-                cur = q.poll();
-                if (!exist.add(cur)) {
-                    throw new DAGException("流程出现环，节点id：" + cur);
-                }
-                arr = map.get(cur);
-                if (!CollectionUtils.isEmpty(arr)) {
-                    arr.forEach(e -> q.add(e.getTargetNodeId()));
-                }
-            }
+        List<String[]> data = new ArrayList<>();
+        edges.forEach(e -> {
+            data.add(new String[]{e.getSourceNodeId(), e.getTargetNodeId()});
+            roots.remove(e.getTargetNodeId());
+        });
+        DAGValidator<String> validator = new DAGValidator<>(data);
+        if (!validator.validate()) {
+            throw new DAGException("检测到流程有环！请检查并去掉造成环的边！");
         }
     }
 
@@ -60,24 +53,14 @@ public class LogicFlow {
         SnowIdWorker snowIdWorker = new SnowIdWorker(0, 0);
         long instanceId = snowIdWorker.nextId();
         Set<String> roots = nodes.stream().map(LogicFlowNode::getId).collect(Collectors.toSet());
-        edges.forEach(e -> roots.remove(e.getTargetNodeId()));
-        Map<String, List<LogicFlowEdge>> map = edges.stream().collect(Collectors.groupingBy(LogicFlowEdge::getSourceNodeId));
-        Set<String> exist = new HashSet<>();
-        LinkedList<String> q = new LinkedList<>(roots);
-        int cnt;
-        String cur;
-        List<LogicFlowEdge> arr;
-        while ((cnt = q.size()) > 0) {
-            while (cnt-- > 0) {
-                cur = q.poll();
-                if (!exist.add(cur)) {
-                    throw new DAGException("流程出现环，节点id：" + cur);
-                }
-                arr = map.get(cur);
-                if (!CollectionUtils.isEmpty(arr)) {
-                    arr.forEach(e -> q.add(e.getTargetNodeId()));
-                }
-            }
+        List<String[]> data = new ArrayList<>();
+        edges.forEach(e -> {
+            data.add(new String[]{e.getSourceNodeId(), e.getTargetNodeId()});
+            roots.remove(e.getTargetNodeId());
+        });
+        DAGValidator<String> validator = new DAGValidator<>(data);
+        if (!validator.validate()) {
+            throw new DAGException("流程出现环！请检查！");
         }
         List<DAGPointer> dagPointers = roots.stream().map(nodeId -> DAGPointer.builder()
                 .instanceId(instanceId)

@@ -60,19 +60,19 @@ public class DAGManager {
         }
     }
 
-    @Transactional(transactionManager = "transactionManagerDAG")
-    public DAGInstance createInstanceByTemplateId(Long templateId) {
-        return dagService.createInstanceByTemplateId(templateId);
-    }
+//    @Transactional(transactionManager = "transactionManagerDAG")
+//    public DAGInstance createInstanceByTemplateId(Long templateId) {
+//        return dagService.createInstanceByTemplateId(templateId);
+//    }
 
     @Transactional(transactionManager = "transactionManagerDAG")
     public DAGInstance createLogicFlowInstanceByTemplateId(Long templateId) {
         return dagService.createLogicFlowInstanceByTemplateId(templateId);
     }
 
-    public void saveTemplate(DAGTemplate dagTemplate) {
-        dagService.saveTemplate(dagTemplate);
-    }
+//    public void saveTemplate(DAGTemplate dagTemplate) {
+//        dagService.saveTemplate(dagTemplate);
+//    }
 
     public void saveTask(Task task) {
         taskService.saveTask(task);
@@ -95,5 +95,9 @@ public class DAGManager {
         dagService.saveTemplateByPack(pack);
         taskService.saveTask(pack.getTasks());
         taskService.deleteDraftTaskByIDList(pack.getDraftTaskIds());
+    }
+
+    public void disableTemplateById(Long templateId){
+        dagService.updateTemplateStatus(templateId,StatusConstant.FORBIDDEN);
     }
 }

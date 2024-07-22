@@ -7,6 +7,7 @@ import com.visualisation.model.PageResponse;
 import com.visualisation.model.Response;
 import com.visualisation.model.dag.DAGInstance;
 import com.visualisation.model.dag.DAGTemplate;
+import com.visualisation.model.dag.PortalDAGInstance;
 import com.visualisation.model.dag.logicflow.DraftTask;
 import com.visualisation.model.dag.logicflow.LogicGraph;
 import com.visualisation.model.portal.PortalDAGTemplate;
@@ -47,6 +48,15 @@ public class PortalController {
 
     }
 
+    @PostMapping("/getInstanceList")
+    public PageResponse getInstanceList(@RequestBody PageParameter parameter) {
+        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
+        Page<DAGInstance> templateList = dagService.getInstanceList(request);
+        List<PortalDAGInstance> collect = templateList.getContent().stream().map(DAGInstance::convert).collect(Collectors.toList());
+        return PageResponse.success(collect, templateList.getNumberOfElements());
+
+    }
+
     @PostMapping("/saveTask")
     public Response<Object> saveDraftTask(@RequestBody DraftTask task) {
         logicFlowManager.saveDraftTask(task);
@@ -57,7 +67,16 @@ public class PortalController {
     @GetMapping("/createInstance")
     public Response<Object> createInstance(@RequestParam("templateId") String templateId) {
         Long id = Long.valueOf(templateId);
-        DAGInstance instance = dagManager.createLogicFlowInstanceByTemplateId(id);
-        return Response.builder().result("新建实例成功").build();
+        dagManager.createLogicFlowInstanceByTemplateId(id);
+        return Response.success("新建实例成功");
     }
+
+    @GetMapping("/disableTemplateById")
+    public Response<Object> disableTemplateById(@RequestParam("templateId") String templateId) {
+        Long id = Long.valueOf(templateId);
+        dagManager.disableTemplateById(id);
+        return Response.success("禁用模版成功");
+    }
+
+
 }

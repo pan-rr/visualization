@@ -76,9 +76,9 @@ public class WorkerManager {
                         map.remove(Thread.currentThread());
                         redisTemplate.delete(key);
                     } catch (Exception e) {
+                        log.error("处理失败，原因：{} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                         DAGPointer pointer = map.get(Thread.currentThread());
                         failTaskQ.offer(pointer);
-                        log.error("处理失败，原因：{} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     }
                 }
             });

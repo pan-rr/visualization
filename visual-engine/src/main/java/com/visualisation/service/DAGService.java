@@ -9,13 +9,15 @@ import java.util.List;
 
 public interface DAGService {
 
-    void saveTemplate(DAGTemplate dagTemplate);
+//    void saveTemplate(DAGTemplate dagTemplate);
 
     Page<DAGTemplate> getTemplateList(Pageable pageable);
 
+    Page<DAGInstance> getInstanceList(Pageable pageable);
+
     void saveTemplateByPack(LogicFlowPack pack);
 
-    DAGInstance createInstanceByTemplateId(Long templateId);
+//    DAGInstance createInstanceByTemplateId(Long templateId);
 
     List<Edge> findNextEdges(TaskKey taskKey);
 
@@ -32,4 +34,6 @@ public interface DAGService {
     List<DAGPointer> getPointers(int limit);
 
     DAGInstance createLogicFlowInstanceByTemplateId(Long templateId);
+
+    void updateTemplateStatus(Long templateId, int status);
 }

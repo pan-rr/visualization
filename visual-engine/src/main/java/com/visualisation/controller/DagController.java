@@ -2,11 +2,12 @@ package com.visualisation.controller;
 
 import com.visualisation.manager.DAGManager;
 import com.visualisation.model.Response;
-import com.visualisation.model.dag.DAGInstance;
 import com.visualisation.model.dag.DAGPointer;
-import com.visualisation.model.dag.DAGTemplate;
 import com.visualisation.model.dag.Task;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
@@ -17,11 +18,11 @@ public class DagController {
     @Resource
     private DAGManager dagManager;
 
-    @PostMapping("/createProcessTemplate")
-    public Response<Object> createProcessTemplate(@RequestBody DAGTemplate dagTemplate) {
-        dagManager.saveTemplate(dagTemplate);
-        return Response.builder().result(Boolean.TRUE).build();
-    }
+//    @PostMapping("/createProcessTemplate")
+//    public Response<Object> createProcessTemplate(@RequestBody DAGTemplate dagTemplate) {
+//        dagManager.saveTemplate(dagTemplate);
+//        return Response.builder().result(Boolean.TRUE).build();
+//    }
 
     @PostMapping("/saveTask")
     public Response<Object> createProcessTemplate(@RequestBody Task task) {
@@ -29,11 +30,11 @@ public class DagController {
         return Response.builder().result(Boolean.TRUE).build();
     }
 
-    @GetMapping("/createInstance")
-    public Response<Object> createInstance(@RequestParam("templateId") Long templateId) {
-        DAGInstance instance = dagManager.createInstanceByTemplateId(templateId);
-        return Response.builder().result(instance).build();
-    }
+//    @GetMapping("/createInstance")
+//    public Response<Object> createInstance(@RequestParam("templateId") Long templateId) {
+//        DAGInstance instance = dagManager.createInstanceByTemplateId(templateId);
+//        return Response.builder().result(instance).build();
+//    }
 
     /**
      * 此接口只为手动调用，正常流程应该由程序调用

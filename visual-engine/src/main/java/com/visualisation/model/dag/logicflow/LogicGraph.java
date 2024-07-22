@@ -28,7 +28,7 @@ public class LogicGraph {
     public void validateDAG() {
         logicFlow.validateDAG();
         if (StringUtils.isEmpty(name)) {
-            throw new DAGException("流程模版名称为空");
+            throw new DAGException("流程模版名称不能为空！");
         }
     }
 

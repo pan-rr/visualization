@@ -1,5 +1,6 @@
 package com.visualisation.model.dag;
 
+import com.visualisation.constant.StatusConstant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,17 @@ public class DAGInstance implements Serializable {
     @Id
     private Long instanceId;
     private Long templateId;
+    private String templateName;
     private LocalDateTime version;
     private Integer status;
+
+    public PortalDAGInstance convert() {
+        return PortalDAGInstance.builder()
+                .templateId(String.valueOf(templateId))
+                .instanceId(String.valueOf(instanceId))
+                .status(StatusConstant.getStatusName(status))
+                .build();
+
+    }
 
 }
