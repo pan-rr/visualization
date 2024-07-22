@@ -1,6 +1,10 @@
 server:
+  port: 8374
   servlet:
-    context-path: /
+    context-path: /engine
+spring:
+  application:
+    name: VISUAL-ENGINE
 eureka:
   client:
     register-with-eureka: true

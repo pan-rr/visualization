@@ -4,6 +4,7 @@ import com.visualisation.Commander;
 import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.model.dag.*;
+import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import com.visualisation.service.DAGService;
 import com.visualisation.service.TaskService;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +65,11 @@ public class DAGManager {
         return dagService.createInstanceByTemplateId(templateId);
     }
 
+    @Transactional(transactionManager = "transactionManagerDAG")
+    public DAGInstance createLogicFlowInstanceByTemplateId(Long templateId) {
+        return dagService.createLogicFlowInstanceByTemplateId(templateId);
+    }
+
     public void saveTemplate(DAGTemplate dagTemplate) {
         dagService.saveTemplate(dagTemplate);
     }
@@ -82,5 +88,12 @@ public class DAGManager {
 
     public List<DAGPointer> getPointers(int limit) {
         return dagService.getPointers(limit);
+    }
+
+    @Transactional(transactionManager = "transactionManagerDAG")
+    public void saveDAGPack(LogicFlowPack pack){
+        dagService.saveTemplateByPack(pack);
+        taskService.saveTask(pack.getTasks());
+        taskService.deleteDraftTaskByIDList(pack.getDraftTaskIds());
     }
 }

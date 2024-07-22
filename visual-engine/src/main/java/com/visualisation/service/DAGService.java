@@ -1,12 +1,19 @@
 package com.visualisation.service;
 
 import com.visualisation.model.dag.*;
+import com.visualisation.model.dag.logicflow.LogicFlowPack;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface DAGService {
 
     void saveTemplate(DAGTemplate dagTemplate);
+
+    Page<DAGTemplate> getTemplateList(Pageable pageable);
+
+    void saveTemplateByPack(LogicFlowPack pack);
 
     DAGInstance createInstanceByTemplateId(Long templateId);
 
@@ -24,4 +31,5 @@ public interface DAGService {
 
     List<DAGPointer> getPointers(int limit);
 
+    DAGInstance createLogicFlowInstanceByTemplateId(Long templateId);
 }

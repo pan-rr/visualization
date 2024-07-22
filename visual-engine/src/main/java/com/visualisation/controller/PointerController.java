@@ -22,9 +22,8 @@ public class PointerController {
     @PostMapping("/acceptPointers")
     public Response<Object> acceptPointers(@RequestBody List<DAGPointer> pointers) {
         if (!CollectionUtils.isEmpty(pointers)) {
-            pointerQueueManager.getQueue().addAll(pointers);
+            pointerQueueManager.addAll(pointers);
         }
-        System.err.println("----accept");
         return Response.builder().message("success").build();
     }
 }

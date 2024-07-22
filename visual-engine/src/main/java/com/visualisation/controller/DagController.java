@@ -30,7 +30,7 @@ public class DagController {
     }
 
     @GetMapping("/createInstance")
-    public Response<Object> createProcessTemplate(@RequestParam("templateId") Long templateId) {
+    public Response<Object> createInstance(@RequestParam("templateId") Long templateId) {
         DAGInstance instance = dagManager.createInstanceByTemplateId(templateId);
         return Response.builder().result(instance).build();
     }

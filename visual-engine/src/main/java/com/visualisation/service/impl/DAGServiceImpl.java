@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.model.dag.*;
+import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import com.visualisation.repository.dag.*;
 import com.visualisation.service.DAGService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -49,12 +52,47 @@ public class DAGServiceImpl implements DAGService {
     }
 
     @Override
+    public Page<DAGTemplate> getTemplateList(Pageable pageable) {
+        return dagTemplateRepository.findAll(pageable);
+    }
+
+    @Override
+    public void saveTemplateByPack(LogicFlowPack pack) {
+        dagTemplateRepository.save(pack.getTemplate());
+    }
+
+    @Override
     public DAGInstance createInstanceByTemplateId(Long templateId) {
         DAGTemplate template = dagTemplateRepository.getById(templateId);
         if (template.getStatus() != StatusConstant.NORMAL) {
             throw new DAGException("该流程状态不允许启动实例");
         }
         Pair<List<Edge>, List<DAGPointer>> pair = template.translateDAG(retryMaxCount);
+        List<Edge> edges = pair.getFirst();
+        List<DAGPointer> pointers = pair.getSecond();
+        edgeRepository.saveAll(edges);
+        dagPointerRepository.saveAll(pointers);
+        List<TaskLatch> latches = TaskLatch.getLatch(edges);
+        taskLatchRepository.saveAll(latches);
+        Long instanceId = pointers.get(0).getInstanceId();
+        DAGInstance instance = DAGInstance.builder()
+                .instanceId(instanceId)
+                .templateId(templateId)
+                .version(template.getVersion())
+                .status(StatusConstant.NORMAL)
+                .build();
+        dagInstanceRepository.save(instance);
+        return instance;
+    }
+
+
+    @Override
+    public DAGInstance createLogicFlowInstanceByTemplateId(Long templateId) {
+        DAGTemplate template = dagTemplateRepository.getById(templateId);
+        if (template.getStatus() != StatusConstant.NORMAL) {
+            throw new DAGException("该流程状态不允许启动实例");
+        }
+        Pair<List<Edge>, List<DAGPointer>> pair = template.translateLogicFlowDAG(retryMaxCount);
         List<Edge> edges = pair.getFirst();
         List<DAGPointer> pointers = pair.getSecond();
         edgeRepository.saveAll(edges);

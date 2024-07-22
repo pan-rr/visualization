@@ -1,9 +1,12 @@
 package com.visualisation.model.dag;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.gson.Gson;
 import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.jpa.SnowIdWorker;
+import com.visualisation.model.dag.logicflow.LogicFlow;
+import com.visualisation.model.portal.PortalDAGTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,6 +42,7 @@ public class DAGTemplate implements Serializable {
     private List<Node> list;
 
     @LastModifiedDate
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime version;
 
     public void fillNodeId(List<Node> list, int deepth) {
@@ -104,5 +108,19 @@ public class DAGTemplate implements Serializable {
         return Pair.of(edges, pointers);
     }
 
+    public Pair<List<Edge>, List<DAGPointer>> translateLogicFlowDAG(Integer retryMaxCount) {
+        Gson gson = new Gson();
+        LogicFlow logicFlow = gson.fromJson(graph, LogicFlow.class);
+        return logicFlow.translateDAG(retryMaxCount);
+    }
 
+    public PortalDAGTemplate convert() {
+        return PortalDAGTemplate.builder()
+                .templateId(String.valueOf(templateId))
+                .graph(graph)
+                .name(name)
+                .status(StatusConstant.getStatusName(status))
+                .version(version)
+                .build();
+    }
 }

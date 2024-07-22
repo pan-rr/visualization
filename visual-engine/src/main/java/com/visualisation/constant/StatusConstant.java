@@ -8,4 +8,18 @@ public class StatusConstant {
     public static final int BLOCK = -1;
 
     public static final int TERMINATE = -2;
+
+    public static String getStatusName(int status) {
+        switch (status) {
+            case BLOCK:
+                return "阻塞";
+            case FINISHED:
+                return "完成";
+            case TERMINATE:
+                return "终止";
+            case NORMAL:
+            default:
+                return "正常";
+        }
+    }
 }

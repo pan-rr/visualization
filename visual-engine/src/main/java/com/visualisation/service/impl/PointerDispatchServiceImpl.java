@@ -4,6 +4,7 @@ import com.visualisation.manager.DAGManager;
 import com.visualisation.manager.PointerQueueManager;
 import com.visualisation.model.dag.DAGPointer;
 import com.visualisation.service.PointerDispatchService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class PointerDispatchServiceImpl implements PointerDispatchService {
 
     @Value("${spring.application.name}")
@@ -64,6 +66,9 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
         List<DAGPointer> pointers = dagManager.getPointers(limit);
         if (!CollectionUtils.isEmpty(pointers)) {
             List<ServiceInstance> engines = discoveryClient.getInstances(applicationName);
+            if (CollectionUtils.isEmpty(engines)){
+                return;
+            }
             int engineSize = engines.size();
             Map<Integer, List<DAGPointer>> map = pointers
                     .stream()
