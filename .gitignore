@@ -44,3 +44,4 @@ build/
 /target/
 /visual-web/target/**
 /visual-web/target/classes/com/visualisation/Application.class
+/visual-engine/.idea/
