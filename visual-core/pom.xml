@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>visual-core</artifactId>
-    <version>${visual.version}</version>
+    <version>${visual.core.version}</version>
     <packaging>jar</packaging>
 
     <dependencies>

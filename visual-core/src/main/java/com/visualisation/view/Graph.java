@@ -1,5 +1,7 @@
 package com.visualisation.view;
 
+import com.visualisation.filter.ViewFilter;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,6 +33,13 @@ public class Graph {
 
     public Graph() {
 
+    }
+
+    public void filter(List<ViewFilter> filters){
+        for (ViewFilter filter : filters) {
+            filter.filter(output);
+            input.forEach(filter::filter);
+        }
     }
 
     public ViewConf getOutputView(){

@@ -1,6 +1,6 @@
 package com.visualisation.view.in;
 
-import com.visualisation.handler.FileHandler;
+import com.visualisation.manager.FileManager;
 import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.ViewManager;
 import com.visualisation.view.BaseView;
@@ -11,6 +11,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -126,9 +128,23 @@ public class CSVInputView extends BaseView implements InputView {
      */
     private void prepareCsv() throws IOException {
         String path = String.valueOf(properties.get("filePath"));
-        csv = FileHandler.getFileByPath(path);
+        Object o = properties.get("fileHandlerId");
+        String fileHandlerId = o == null ? "" : String.valueOf(o);
+        Map<?,?> param = (Map<?, ?>) properties.get("fileParam");
+        csv = FileManager.getFile(path,fileHandlerId,param);
         properties.put("filePath", csv.getAbsolutePath());
     }
 
-
+    @Override
+    public void destroy() {
+        super.destroy();
+        Object o = properties.get("destroyFileAfterFinish");
+        if (o != null && Boolean.TRUE.equals(Boolean.valueOf(o.toString()))){
+            try {
+                Files.deleteIfExists(Paths.get(csv.getPath()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

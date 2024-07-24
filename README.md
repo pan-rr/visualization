@@ -9,9 +9,9 @@
 
 #### 部分截图
 
-![1](https://github.com/pan-rr/visualization/master/pic/流程列表.png)
+![1](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
 
-![1](https://github.com/pan-rr/visualization/master/pic/流程配置.png)
+![2](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
 
 #### 使用场景
 
@@ -29,14 +29,14 @@ JDK1.8+、MySQL5.7+、Redis6+、Vue3
 
 #### 工程结构
 
-1. visual-discover：注册中心eureka
+1. visual-discovery：注册中心eureka
 2. visual-engine：计算节点。分布式集群请启动多实例。
 3. visual-core：配置化的基础实现
 
 #### 部署步骤
 
 1. 启动MySQL、Redis
-2. 启动visual-discover
+2. 启动visual-discovery
 3. 启动visual-engine
 4. 启动visual-portal
 

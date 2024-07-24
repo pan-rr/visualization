@@ -8,18 +8,21 @@
     <packaging>pom</packaging>
 
     <name>Visualisation</name>
-    <url>http://maven.apache.org</url>
+
     <modules>
         <module>visual-core</module>
         <module>visual-engine</module>
         <module>visual-discovery</module>
+        <module>visual-file</module>
+        <module>visual-common</module>
     </modules>
 
     <properties>
         <maven.complier.source>1.8</maven.complier.source>
         <maven.complier.target>1.8</maven.complier.target>
         <maven.complier.compilerVersion>1.8</maven.complier.compilerVersion>
-        <visual.version>1.0.4</visual.version>
+        <visual.core.version>1.0.5</visual.core.version>
+        <visual.common.version>1.0.0</visual.common.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springboot.version>2.6.11</springboot.version>
         <spring-cloud.version>3.1.4</spring-cloud.version>
