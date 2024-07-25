@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.visualisation.filter.ViewFilter;
 import com.visualisation.manager.FileManager;
-import com.visualisation.manager.ViewManager;
-import com.visualisation.view.Graph;
+import com.visualisation.view.VisualGraph;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -27,10 +26,8 @@ public class Commander {
 
     public void commandWithJsonString(String json) {
         Gson gson = new Gson();
-        Graph graph = gson.fromJson(json, Graph.class);
-        graph.filter(viewFilters);
-        ViewManager viewManager = new ViewManager(graph.getInputView(), graph.getOutputView(), dataSource);
-        viewManager.execute();
+        VisualGraph visualGraph = gson.fromJson(json, VisualGraph.class);
+        visualGraph.execute();
     }
 
     public void commandWithLocalFile(String path) throws IOException {
@@ -39,10 +36,8 @@ public class Commander {
         BufferedReader br = new BufferedReader(fileReader);
         JsonReader jsonReader = new JsonReader(br);
         Gson gson = new Gson();
-        Graph graph = gson.fromJson(jsonReader, Graph.class);
-        graph.filter(viewFilters);
-        ViewManager viewManager = new ViewManager(graph.getInputView(), graph.getOutputView(), dataSource);
-        viewManager.execute();
+        VisualGraph visualGraph = gson.fromJson(jsonReader, VisualGraph.class);
+        visualGraph.execute();
         br.close();
         jsonReader.close();
     }

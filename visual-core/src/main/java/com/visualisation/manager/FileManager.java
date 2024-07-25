@@ -32,6 +32,7 @@ public class FileManager {
         fileHandler.upload(file, targetPath, param);
     }
 
+    @Deprecated
     public static File getFileByPath(String path) throws IOException {
         File file;
         if (path.startsWith("/")) {

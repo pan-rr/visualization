@@ -18,23 +18,11 @@ public class DagController {
     @Resource
     private DAGManager dagManager;
 
-//    @PostMapping("/createProcessTemplate")
-//    public Response<Object> createProcessTemplate(@RequestBody DAGTemplate dagTemplate) {
-//        dagManager.saveTemplate(dagTemplate);
-//        return Response.builder().result(Boolean.TRUE).build();
-//    }
-
     @PostMapping("/saveTask")
     public Response<Object> createProcessTemplate(@RequestBody Task task) {
         dagManager.saveTask(task);
         return Response.builder().result(Boolean.TRUE).build();
     }
-
-//    @GetMapping("/createInstance")
-//    public Response<Object> createInstance(@RequestParam("templateId") Long templateId) {
-//        DAGInstance instance = dagManager.createInstanceByTemplateId(templateId);
-//        return Response.builder().result(instance).build();
-//    }
 
     /**
      * 此接口只为手动调用，正常流程应该由程序调用

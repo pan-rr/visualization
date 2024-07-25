@@ -1,0 +1,8 @@
+{
+  "sql": {
+    "script": "create table t_test( id varchar(10) )",
+    "url": "jdbc:mysql://localhost:3306/visualization?useUnicode=true&characterEncoding=utf8",
+    "username": "tmp",
+    "password": "tmp"
+  }
+}

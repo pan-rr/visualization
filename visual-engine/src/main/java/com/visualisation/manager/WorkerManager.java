@@ -73,7 +73,6 @@ public class WorkerManager {
                         if (Boolean.FALSE.equals(flag)) continue;
                         map.put(Thread.currentThread(), pointer);
                         dagManager.executeTask(pointer);
-                        map.remove(Thread.currentThread());
                         redisTemplate.delete(key);
                     } catch (Exception e) {
                         log.error("处理失败，原因：{} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
@@ -93,12 +92,7 @@ public class WorkerManager {
                 try {
                     signalQ.take();
                     if (pointerQ.size() <= watermark) {
-//                        List<DAGPointer> pointers = dagManager.getPointers(scanLimit);
-//                        if (!CollectionUtils.isEmpty(pointers)) {
-//                            pointerQ.addAll(pointers);
-//                        }
                         pointerDispatchService.dispatchPointer(scanLimit);
-                        // 只提取一次
                         signalQ.clear();
                     }
                 } catch (Exception e) {

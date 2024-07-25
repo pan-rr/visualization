@@ -21,10 +21,10 @@ public class LocalFileHandler implements FileHandler {
         try {
             if (sourcePath.startsWith("/")) {
                 file = new FileSystemResource(sourcePath).getFile();
-            } else if (sourcePath.startsWith("classpath:")) {
-                file = new ClassPathResource(sourcePath.replace("classpath:", "")).getFile();
-            } else {
+            } else if (sourcePath.startsWith("file://")) {
                 file = new FileUrlResource(sourcePath).getFile();
+            } else {
+                file = new ClassPathResource(sourcePath.replace("classpath:", "")).getFile();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
