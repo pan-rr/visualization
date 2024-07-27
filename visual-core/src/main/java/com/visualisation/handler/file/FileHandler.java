@@ -2,6 +2,7 @@ package com.visualisation.handler.file;
 
 import java.io.File;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 提供给用户自定义上传下载文件的方式
@@ -24,4 +25,28 @@ public interface FileHandler {
      * @param uploadParam 上传参数
      */
     void upload(File file, String targetPath, Map<?, ?> uploadParam);
+
+
+    default String generateRandomFilePathPrefix(){
+        return new StringBuilder(System.getProperty("user.home"))
+                .append( "/visual/temp/")
+                .append(UUID.randomUUID())
+                .append('/').toString();
+    }
+
+    default String generateRandomFilePath(String suffix){
+        return new StringBuilder(System.getProperty("user.home"))
+                .append( "/visual/temp/")
+                .append(UUID.randomUUID())
+                .append('/')
+                .append(suffix)
+                .toString();
+    }
+
+    default String generateFilePath(String suffix){
+        return new StringBuilder(System.getProperty("user.home"))
+                .append( "/visual/temp/")
+                .append(suffix)
+                .toString();
+    }
 }

@@ -1,0 +1,20 @@
+{
+  "input": [
+    {
+      "viewType": "csv",
+      "filePath": "classpath:csv/student.csv",
+      "tableName": "student"
+    },
+    {
+      "viewType": "csv",
+      "filePath": "classpath:csv/hobby.csv",
+      "tableName": "hobby"
+    }
+  ],
+  "output": {
+    "viewType": "csv",
+    "filePath": "csv/test.csv",
+    "fileHandlerId": "minioFileHandler",
+    "script": "select a.no,a.name,b.type from student a inner join hobby b on a.no = b.no"
+  }
+}
