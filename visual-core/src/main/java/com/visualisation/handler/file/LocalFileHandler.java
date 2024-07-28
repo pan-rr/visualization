@@ -16,6 +16,11 @@ import java.util.Map;
 public class LocalFileHandler implements FileHandler {
 
     @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public File download(String sourcePath, Map<?, ?> uploadParam) {
         File file;
         try {

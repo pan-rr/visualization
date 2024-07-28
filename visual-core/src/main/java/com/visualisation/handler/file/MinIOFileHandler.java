@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -25,6 +26,10 @@ public class MinIOFileHandler implements FileHandler {
 
     private static final String BUCKET_NAME = "visual";
 
+    @Override
+    public int getPriority() {
+        return 1;
+    }
 
     private String getObjectName(String path) {
         return VISUAL_PREFIX + path;
@@ -38,11 +43,13 @@ public class MinIOFileHandler implements FileHandler {
             GetObjectResponse is = minioClient.getObject(args);
             String filePath = generateFilePath(sourcePath);
             file = new File(filePath);
+            makeSureDirectoryExist(file);
             byte[] buffer = new byte[1024];
-            BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            BufferedOutputStream os = new BufferedOutputStream(Files.newOutputStream(file.toPath()));
             while (is.read(buffer) > -1) {
                 os.write(buffer);
             }
+            os.close();
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | XmlParserException | ServerException |
                  NoSuchAlgorithmException e) {

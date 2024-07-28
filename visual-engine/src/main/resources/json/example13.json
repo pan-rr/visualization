@@ -13,8 +13,8 @@
   ],
   "output": {
     "viewType": "csv",
-    "filePath": "csv/test.csv",
+    "filePath": "csv/student233.csv",
     "fileHandlerId": "minioFileHandler",
-    "script": "select a.no,a.name,b.type from student a inner join hobby b on a.no = b.no"
+    "script": "select * from student"
   }
 }

@@ -12,21 +12,30 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FileManager {
 
-    private static final String DEFAULT_FILE_HANDLER_ID = "localFileHandler";
+    private static final AtomicReference<String> DEFAULT_HANDLER_ID = new AtomicReference<>("localFileHandler");
 
+
+    public static String getFileHandlerId() {
+        return DEFAULT_HANDLER_ID.get();
+    }
+
+    public static void setFileHandlerId(String id) {
+         DEFAULT_HANDLER_ID.set(id);
+    }
 
     public static File getFile(String sourcePath, String fileHandlerId, Map<?, ?> param) {
-        String id = StringUtils.hasText(fileHandlerId) ? fileHandlerId : DEFAULT_FILE_HANDLER_ID;
+        String id = StringUtils.hasText(fileHandlerId) ? fileHandlerId : DEFAULT_HANDLER_ID.get();
         ApplicationContext ctx = SpringApplicationHandler.getCtx();
         FileHandler fileHandler = ctx.getBean(id, FileHandler.class);
         return fileHandler.download(sourcePath, param);
     }
 
     public static void outputFile(File file, String targetPath, String fileHandlerId, Map<?, ?> param) {
-        String id = StringUtils.hasText(fileHandlerId) ? fileHandlerId : DEFAULT_FILE_HANDLER_ID;
+        String id = StringUtils.hasText(fileHandlerId) ? fileHandlerId : DEFAULT_HANDLER_ID.get();
         ApplicationContext ctx = SpringApplicationHandler.getCtx();
         FileHandler fileHandler = ctx.getBean(id, FileHandler.class);
         fileHandler.upload(file, targetPath, param);
