@@ -88,6 +88,14 @@
 <!--            </exclusions>-->
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.elasticsearch.plugin/x-pack-sql-jdbc -->
+        <dependency>
+            <groupId>org.elasticsearch.plugin</groupId>
+            <artifactId>x-pack-sql-jdbc</artifactId>
+            <version>7.17.4</version>
+        </dependency>
+
+
 
     </dependencies>
 

@@ -38,9 +38,10 @@ public class CSVFilter implements ViewFilter {
     private static void handlerId(Map<String, Object> conf) {
         conf.compute("fileHandlerId", (k, v) -> {
             if (v != null) return v;
-            v = FileManager.getFileHandlerId();
+            v = FileManager.getDefaultFileHandlerId();
             String filePath = String.valueOf(conf.get("filePath"));
             try {
+                if (filePath.startsWith("classpath:"))return "localFileHandler";
                 String protocol = new URL(filePath).getProtocol();
                 if ("http".equals(protocol)) {
                     return "httpFileHandler";

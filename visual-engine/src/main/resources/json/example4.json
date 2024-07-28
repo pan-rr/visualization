@@ -12,7 +12,7 @@
     },
     {
       "viewType": "csv",
-      "filePath": "csv/hobby.csv",
+      "filePath": "classpath:csv/hobby.csv",
       "tableName": "hobby"
     }
   ],

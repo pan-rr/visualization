@@ -42,12 +42,18 @@ public class JDBCHandler {
             dataSourceProperties.username = properties.get("username");
             dataSourceProperties.password = properties.get("password");
         }
-        DatabaseDriver databaseDriver = DatabaseDriver.fromJdbcUrl(dataSourceProperties.getUrl());
-        this.dialectId = databaseDriver.getId();
+        this.setDialectIdByProperties();
+//        DatabaseDriver databaseDriver = DatabaseDriver.fromJdbcUrl(dataSourceProperties.getUrl());
+//        this.dialectId = databaseDriver.getId();
     }
 
     public String getDialectId() {
         return dialectId;
+    }
+
+    private void setDialectIdByProperties() {
+        DatabaseDriver databaseDriver = DatabaseDriver.fromJdbcUrl(dataSourceProperties.getUrl());
+        this.dialectId = databaseDriver.getId();
     }
 
     public NamedParameterJdbcTemplate getJdbcTemplate() {

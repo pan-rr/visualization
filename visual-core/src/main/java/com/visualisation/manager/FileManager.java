@@ -19,7 +19,7 @@ public class FileManager {
     private static final AtomicReference<String> DEFAULT_HANDLER_ID = new AtomicReference<>("localFileHandler");
 
 
-    public static String getFileHandlerId() {
+    public static String getDefaultFileHandlerId() {
         return DEFAULT_HANDLER_ID.get();
     }
 

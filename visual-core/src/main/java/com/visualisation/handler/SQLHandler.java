@@ -31,20 +31,30 @@ public class SQLHandler {
     private static final Map<String, Function<JDBCType, String>> JDBC_TYPE_CONVERTER = new HashMap<>();
 
     static {
+        // jdbc 转 h2 类型
         JDBC_TYPE_CONVERTER.put(DatabaseDriver.H2.getId(), (jdbcType -> {
             int i = DataType.convertSQLTypeToValueType(jdbcType);
             return Value.getTypeName(i);
         }));
+        // jdbc 转 MySQL 类型
         JDBC_TYPE_CONVERTER.put(DatabaseDriver.MYSQL.getId(), (jdbcType -> MysqlType.getByJdbcType(jdbcType.getVendorTypeNumber()).getName()));
     }
 
     private static StringBuilder changeType(String columnName, JDBCType columnType, int len, String dialect) {
         StringBuilder sb = new StringBuilder();
         sb.append(columnName).append(' ');
-        if (DatabaseDriver.MYSQL.getId().equals(dialect)) {
-            sb.append(JDBC_TYPE_CONVERTER.get(dialect).apply(columnType)).append('(').append(len).append(')');
-        }
+        Function<JDBCType, String> converter = getConverterByDialect(dialect);
+        sb.append(converter.apply(columnType)).append('(').append(len).append(')');
         return sb;
+    }
+
+    private static Function<JDBCType, String> getConverterByDialect(String dialect) {
+        Function<JDBCType, String> converter = JDBC_TYPE_CONVERTER.get(dialect);
+        if (converter == null) {
+            // 找不到数据类型转换器就尝试使用MySQL的类型
+            converter = JDBC_TYPE_CONVERTER.get(DatabaseDriver.MYSQL.getId());
+        }
+        return converter;
     }
 
     public static String changeCreateTableSQL(String sql, String tableName) throws JSQLParserException {
@@ -59,8 +69,6 @@ public class SQLHandler {
         sb.append(tableName).append(" (");
         int end = columnNames.length - 1;
         int len;
-
-
         for (int i = 0, j = 1; i <= end; i++, j++) {
             len = Math.min(500, metaData.getColumnDisplaySize(j));
             sb.append(changeType(columnNames[i], JDBCType.VARCHAR, len, dialectId));
