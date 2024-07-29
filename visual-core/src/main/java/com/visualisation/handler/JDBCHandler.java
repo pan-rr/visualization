@@ -22,7 +22,7 @@ public class JDBCHandler {
     private String dialectId;
 
     public JDBCHandler(Map<String, String> properties) {
-        String appDataSourceName = properties.get("appDataSourceName");
+        String appDataSourceName = properties.getOrDefault("appDataSourceName",null);
         this.dataSourceProperties = new DataSourceProperties();
         if (appDataSourceName != null) {
             DataSource ds = SpringApplicationHandler.getCtx().getBean(appDataSourceName, DataSource.class);

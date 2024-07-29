@@ -1,14 +1,15 @@
 package com.visualisation.handler.file;
 
+import com.visualisation.constant.LocalFileConstant;
+
 import java.io.File;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 提供给用户自定义上传下载文件的方式
  * 自定义handler直接在spring容器注册就行
  */
-public interface FileHandler  {
+public interface FileHandler {
 
     /**
      * @param sourcePath  文件源地址
@@ -32,30 +33,19 @@ public interface FileHandler  {
      * @return 优先级
      */
     default int getPriority() {
-        return -1;
+        return -2;
     }
 
     default String generateRandomFilePathPrefix() {
-        return new StringBuilder(System.getProperty("user.home"))
-                .append("/visual/temp/")
-                .append(UUID.randomUUID())
-                .append('/').toString();
+        return LocalFileConstant.getRandomTempFilePathPrefix();
     }
 
     default String generateRandomFilePath(String suffix) {
-        return new StringBuilder(System.getProperty("user.home"))
-                .append("/visual/temp/")
-                .append(UUID.randomUUID())
-                .append('/')
-                .append(suffix)
-                .toString();
+        return LocalFileConstant.getRandomTempFilePath(suffix);
     }
 
     default String generateFilePath(String suffix) {
-        return new StringBuilder(System.getProperty("user.home"))
-                .append("/visual/temp/")
-                .append(suffix)
-                .toString();
+        return LocalFileConstant.getTempFilePath(suffix);
     }
 
     default boolean makeSureDirectoryExist(File file) {

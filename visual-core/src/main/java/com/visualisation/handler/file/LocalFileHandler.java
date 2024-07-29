@@ -43,6 +43,7 @@ public class LocalFileHandler implements FileHandler {
         Path filePath = file.toPath();
         try {
             Files.move(filePath, target);
+            Files.deleteIfExists(filePath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

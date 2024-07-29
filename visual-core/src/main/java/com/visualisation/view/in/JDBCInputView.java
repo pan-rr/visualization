@@ -68,7 +68,6 @@ public class JDBCInputView extends JDBCBaseView implements InputView {
             row = new Object[columnNames.length];
             for (int i = 0; i < columnNames.length; i++) {
                 row[i] = sqlRowSet.getString(columnNames[i]);
-
             }
             batchSqlUpdate.update(row);
         }

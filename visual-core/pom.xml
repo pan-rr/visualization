@@ -95,6 +95,12 @@
             <version>7.17.4</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.alibaba/easyexcel -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.1.5</version>
+        </dependency>
 
 
     </dependencies>

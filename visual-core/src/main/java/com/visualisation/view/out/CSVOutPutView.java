@@ -1,7 +1,8 @@
 package com.visualisation.view.out;
 
-import com.visualisation.manager.FileManager;
+import com.visualisation.constant.LocalFileConstant;
 import com.visualisation.handler.SQLHandler;
+import com.visualisation.manager.FileManager;
 import com.visualisation.manager.ViewManager;
 import com.visualisation.view.BaseView;
 import net.sf.jsqlparser.JSQLParserException;
@@ -17,7 +18,6 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Map;
-import java.util.UUID;
 
 public class CSVOutPutView extends BaseView implements OutputView {
 
@@ -69,7 +69,7 @@ public class CSVOutPutView extends BaseView implements OutputView {
             String select = SQLHandler.getSelectSQL(getScript(), tableNames);
             String targetPath = String.valueOf(properties.get("filePath"));
             String[] split = targetPath.split("/");
-            String tempFilePath = System.getProperty("user.home") + "/visual/outputTempFile/" + UUID.randomUUID() + "/" + split[split.length - 1];
+            String tempFilePath = LocalFileConstant.getRandomTempFilePath(split[split.length - 1]);
             String outSQL = prepareSQL(select, tempFilePath);
             jdbcTemplate.execute(outSQL);
             csv = new File(tempFilePath);

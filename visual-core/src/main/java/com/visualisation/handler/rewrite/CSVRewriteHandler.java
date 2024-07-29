@@ -1,4 +1,4 @@
-package com.visualisation.filter;
+package com.visualisation.handler.rewrite;
 
 import com.visualisation.manager.FileManager;
 import org.springframework.stereotype.Component;
@@ -12,18 +12,18 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Component
-public class CSVFilter implements ViewFilter {
+public class CSVRewriteHandler implements ViewRewriteHandler {
 
     private final List<Consumer<Map<String, Object>>> chain = new LinkedList<>();
 
     @PostConstruct
     void init() {
-        chain.add(CSVFilter::handlerId);
-        chain.add(CSVFilter::destroyFileAfterFinish);
+        chain.add(CSVRewriteHandler::handlerId);
+        chain.add(CSVRewriteHandler::destroyFileAfterFinish);
     }
 
     @Override
-    public void filter(Map<String, Object> conf) {
+    public void handle(Map<String, Object> conf) {
         if (!"csv".equals(String.valueOf(conf.get("viewType")))) return;
         for (Consumer<Map<String, Object>> consumer : chain) {
             consumer.accept(conf);

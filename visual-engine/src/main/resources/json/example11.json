@@ -4,7 +4,7 @@
       "viewType": "jdbc",
       "tableName": "person",
       "indexOn": "no,sex",
-      "script": "select * from person limit 1000000",
+      "script": "select * from person limit 100",
       "param": {
         "appDataSourceName": "db2"
       }
@@ -13,20 +13,33 @@
       "viewType": "jdbc",
       "tableName": "prov",
       "indexOn": "no",
-      "script": "select * from prov limit 1000000",
+      "script": "select * from prov limit 100",
       "param": {
         "appDataSourceName": "db2"
       }
     }
   ],
   "output": {
-    "viewType": "csv",
-    "filePath": "csv/test_jdbc_csv.csv",
-    "param": {
-      "charset": "utf-8",
-      "fieldDelimiter": "",
-      "writeColumnHeader": "true"
-    },
+    "viewType": "excel",
+    "filePath": "csv/test_excel.xlsx",
+    "headers": [
+      [
+        "人员属性",
+        "ID"
+      ],
+      [
+        "人员属性",
+        "名称"
+      ],
+      [
+        "人员属性",
+        "性别"
+      ],
+      [
+        "籍贯信息",
+        "籍贯"
+      ]
+    ],
     "script": "select a.*,b.ancetral_place from person a inner join prov b on a.no = b.no"
   }
 }

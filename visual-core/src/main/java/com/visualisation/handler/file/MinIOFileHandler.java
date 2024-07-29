@@ -1,5 +1,6 @@
 package com.visualisation.handler.file;
 
+import com.visualisation.constant.MinIOConstant;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
@@ -22,9 +23,9 @@ public class MinIOFileHandler implements FileHandler {
     @Resource(name = "visualMinioClient")
     private MinioClient minioClient;
 
-    private static final String VISUAL_PREFIX = "/visual/storage/";
+    private static final String VISUAL_STORAGE_PREFIX = MinIOConstant.VISUAL_STORAGE_PREFIX;
 
-    private static final String BUCKET_NAME = "visual";
+    private static final String BUCKET_NAME = MinIOConstant.BUCKET_NAME;
 
     @Override
     public int getPriority() {
@@ -32,7 +33,7 @@ public class MinIOFileHandler implements FileHandler {
     }
 
     private String getObjectName(String path) {
-        return VISUAL_PREFIX + path;
+        return VISUAL_STORAGE_PREFIX + path;
     }
 
     @Override
@@ -68,6 +69,7 @@ public class MinIOFileHandler implements FileHandler {
                     .stream(is, is.available(), -1)
                     .build();
             minioClient.putObject(args);
+            Files.deleteIfExists(file.toPath());
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | XmlParserException | ServerException |
                  NoSuchAlgorithmException e) {

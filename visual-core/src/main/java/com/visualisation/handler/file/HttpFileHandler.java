@@ -1,5 +1,6 @@
 package com.visualisation.handler.file;
 
+import com.visualisation.constant.LocalFileConstant;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
@@ -7,17 +8,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.UUID;
 
 @Component(value = "httpFileHandler")
 public class HttpFileHandler implements FileHandler {
     @Override
     public File download(String sourcePath, Map<?, ?> uploadParam) {
         String fileName = Paths.get(sourcePath).getFileName().toString();
-        String randomDir = UUID.randomUUID().toString();
-        String filePath = System.getProperty("user.home") + "/visual/httpTempFile/" + randomDir + "/" + fileName;
+        String filePath = LocalFileConstant.getRandomHttpTempFilePath(fileName);
         File file;
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         // 这里可以根据client 处理 timeout等配置
@@ -27,8 +27,7 @@ public class HttpFileHandler implements FileHandler {
             InputStream inputStream = client.newCall(request).execute().body().byteStream();
             file = new File(filePath);
             File parentFile = file.getParentFile();
-            System.err.println("@@@@"+parentFile.getAbsoluteFile());
-            if (!parentFile.exists()){
+            if (!parentFile.exists()) {
                 parentFile.mkdirs();
             }
             file.createNewFile();
@@ -61,6 +60,7 @@ public class HttpFileHandler implements FileHandler {
                 .build();
         try {
             client.newCall(request).execute().body();
+            Files.deleteIfExists(file.toPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

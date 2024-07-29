@@ -1,6 +1,6 @@
 package com.visualisation.view;
 
-import com.visualisation.filter.ViewFilter;
+import com.visualisation.handler.rewrite.ViewRewriteHandler;
 import com.visualisation.handler.SpringApplicationHandler;
 import com.visualisation.manager.ViewManager;
 import com.visualisation.manager.orphan.SQLManager;
@@ -44,10 +44,10 @@ public class VisualGraph {
     public VisualGraph() {
     }
 
-    public void filter(Collection<ViewFilter> filters) {
-        for (ViewFilter filter : filters) {
-            filter.filter(output);
-            input.forEach(filter::filter);
+    public void filter(Collection<ViewRewriteHandler> filters) {
+        for (ViewRewriteHandler filter : filters) {
+            filter.handle(output);
+            input.forEach(filter::handle);
         }
     }
 
@@ -77,8 +77,8 @@ public class VisualGraph {
     private void executeNormal() {
         ApplicationContext ctx = SpringApplicationHandler.getCtx();
         DataSource db = ctx.getBean("db", DataSource.class);
-        Collection<ViewFilter> viewFilters = ctx.getBeansOfType(ViewFilter.class).values();
-        this.filter(viewFilters);
+        Collection<ViewRewriteHandler> viewRewriteHandlers = ctx.getBeansOfType(ViewRewriteHandler.class).values();
+        this.filter(viewRewriteHandlers);
         ViewManager viewManager = new ViewManager(this.getInputView(), this.getOutputView(), db);
         viewManager.execute();
     }

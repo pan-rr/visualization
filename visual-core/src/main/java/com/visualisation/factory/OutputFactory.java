@@ -2,10 +2,7 @@ package com.visualisation.factory;
 
 import com.visualisation.manager.ViewManager;
 import com.visualisation.view.ViewConf;
-import com.visualisation.view.out.CSVOutPutView;
-import com.visualisation.view.out.ConsoleOutPutView;
-import com.visualisation.view.out.JDBCOutPutView;
-import com.visualisation.view.out.OutputView;
+import com.visualisation.view.out.*;
 import org.springframework.data.util.Pair;
 
 import java.util.HashMap;
@@ -20,6 +17,7 @@ public class OutputFactory {
         OutputFactory.registerFactory("console", ConsoleOutPutView::produce);
         OutputFactory.registerFactory("jdbc", JDBCOutPutView::produce);
         OutputFactory.registerFactory("csv", CSVOutPutView::produce);
+        OutputFactory.registerFactory("excel", ExcelOutPutView::produce);
     }
 
     public static void registerFactory(String id, Function<Pair<Map<String, Object>, ViewManager>, ? extends OutputView> fun) {
