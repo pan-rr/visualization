@@ -1,15 +1,18 @@
 package com.visualisation.manager;
 
 import com.visualisation.Commander;
-import com.visualisation.exception.DAGException;
 import com.visualisation.constant.StatusConstant;
+import com.visualisation.exception.DAGException;
 import com.visualisation.model.dag.*;
 import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import com.visualisation.service.DAGService;
 import com.visualisation.service.TaskService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -32,32 +35,40 @@ public class DAGManager {
     @Resource
     private Commander commander;
 
+    @Resource(name = "dagTransactionTemplate")
+    private TransactionTemplate transactionTemplate;
 
-    @Transactional(transactionManager = "transactionManagerDAG")
+
+    //    @Transactional(transactionManager = "transactionManagerDAG")
     public void executeTask(DAGPointer pointer) {
         TaskKey taskKey = pointer.getTaskKey();
         Task task = taskService.getTaskById(taskKey.getTaskId());
         if (Objects.isNull(task)) {
             throw new DAGException("任务为空，id:" + taskKey);
         }
-        commander.commandWithJsonString(task.getJson());
-        dagService.deletePointer(taskKey);
         List<Edge> nextEdges = dagService.findNextEdges(taskKey);
-        if (!CollectionUtils.isEmpty(nextEdges)) {
-            List<DAGPointer> pointers = nextEdges
-                    .stream()
-                    .filter(edge -> !Objects.equals(edge.getToTaskId(), edge.getFromTaskId()))
-                    .map(edge -> DAGPointer.builder()
-                            .instanceId(edge.getInstanceId())
-                            .taskId(edge.getToTaskId())
-                            .count(0)
-                            .status(StatusConstant.NORMAL)
-                            .retryMaxCount(retryMaxCount)
-                            .build()).collect(Collectors.toList());
-            dagService.saveReadyPointers(pointers);
-        } else {
-            dagService.tryFinishInstance(taskKey.getInstanceId());
-        }
+        commander.commandWithJsonString(task.getJson());
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                dagService.deletePointer(taskKey);
+                if (!CollectionUtils.isEmpty(nextEdges)) {
+                    List<DAGPointer> pointers = nextEdges
+                            .stream()
+                            .filter(edge -> !Objects.equals(edge.getToTaskId(), edge.getFromTaskId()))
+                            .map(edge -> DAGPointer.builder()
+                                    .instanceId(edge.getInstanceId())
+                                    .taskId(edge.getToTaskId())
+                                    .count(0)
+                                    .status(StatusConstant.NORMAL)
+                                    .retryMaxCount(retryMaxCount)
+                                    .build()).collect(Collectors.toList());
+                    dagService.saveReadyPointers(pointers);
+                } else {
+                    dagService.tryFinishInstance(taskKey.getInstanceId());
+                }
+            }
+        });
     }
 
 //    @Transactional(transactionManager = "transactionManagerDAG")
@@ -91,13 +102,13 @@ public class DAGManager {
     }
 
     @Transactional(transactionManager = "transactionManagerDAG")
-    public void saveDAGPack(LogicFlowPack pack){
+    public void saveDAGPack(LogicFlowPack pack) {
         dagService.saveTemplateByPack(pack);
         taskService.saveTask(pack.getTasks());
         taskService.deleteDraftTaskByIDList(pack.getDraftTaskIds());
     }
 
-    public void disableTemplateById(Long templateId){
-        dagService.updateTemplateStatus(templateId,StatusConstant.FORBIDDEN);
+    public void disableTemplateById(Long templateId) {
+        dagService.updateTemplateStatus(templateId, StatusConstant.FORBIDDEN);
     }
 }
