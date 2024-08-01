@@ -15,6 +15,11 @@ import java.io.IOException;
 public class Commander {
 
 
+    public void commandWithVisualGraph(VisualGraph graph) {
+        graph.execute();
+    }
+
+
     public void commandWithJsonString(String json) {
         Gson gson = new Gson();
         VisualGraph visualGraph = gson.fromJson(json, VisualGraph.class);

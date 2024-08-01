@@ -9,15 +9,11 @@ import java.util.List;
 
 public interface DAGService {
 
-//    void saveTemplate(DAGTemplate dagTemplate);
-
     Page<DAGTemplate> getTemplateList(Pageable pageable);
 
     Page<DAGInstance> getInstanceList(Pageable pageable);
 
     void saveTemplateByPack(LogicFlowPack pack);
-
-//    DAGInstance createInstanceByTemplateId(Long templateId);
 
     List<Edge> findNextEdges(TaskKey taskKey);
 

@@ -8,7 +8,6 @@ import com.visualisation.model.Response;
 import com.visualisation.model.dag.DAGInstance;
 import com.visualisation.model.dag.DAGTemplate;
 import com.visualisation.model.dag.PortalDAGInstance;
-import com.visualisation.model.dag.logicflow.DraftTask;
 import com.visualisation.model.dag.logicflow.LogicGraph;
 import com.visualisation.model.portal.PortalDAGTemplate;
 import com.visualisation.service.DAGService;
@@ -55,12 +54,6 @@ public class PortalController {
         List<PortalDAGInstance> collect = templateList.getContent().stream().map(DAGInstance::convert).collect(Collectors.toList());
         return PageResponse.success(collect, templateList.getNumberOfElements());
 
-    }
-
-    @PostMapping("/saveTask")
-    public Response<Object> saveDraftTask(@RequestBody DraftTask task) {
-        logicFlowManager.saveDraftTask(task);
-        return Response.success("任务保存成功！");
     }
 
 

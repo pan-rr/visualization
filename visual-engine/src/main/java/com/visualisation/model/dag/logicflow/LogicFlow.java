@@ -3,19 +3,14 @@ package com.visualisation.model.dag.logicflow;
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.exception.DAGException;
 import com.visualisation.jpa.SnowIdWorker;
-import com.visualisation.model.dag.DAGPointer;
-import com.visualisation.model.dag.DAGValidator;
-import com.visualisation.model.dag.Edge;
+import com.visualisation.model.dag.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -26,8 +21,20 @@ public class LogicFlow {
 
     private List<LogicFlowNode> nodes;
     private List<LogicFlowEdge> edges;
+    private Map<String, String> idMap = new HashMap<>();
 
-    public void overrideId(Map<String, String> idMap) {
+    public List<Task> getTasks() {
+        List<Task> res = new ArrayList<>(nodes.size());
+        for (LogicFlowNode node : nodes) {
+            Task task = node.convertTask();
+            idMap.put(node.getId(), String.valueOf(task.getTaskId()));
+            res.add(task);
+        }
+        overrideId();
+        return res;
+    }
+
+    public void overrideId() {
         nodes.forEach(node -> node.setId(idMap.get(node.getId())));
         edges.forEach(e -> {
             e.setSourceNodeId(idMap.get(e.getSourceNodeId()));
@@ -49,7 +56,7 @@ public class LogicFlow {
     }
 
 
-    public Pair<List<Edge>, List<DAGPointer>> translateDAG(Integer retryMaxCount) {
+    public Pair<List<Edge>, List<DAGPointer>> translateDAG(DAGTemplate template, Integer retryMaxCount) {
         SnowIdWorker snowIdWorker = new SnowIdWorker(0, 0);
         long instanceId = snowIdWorker.nextId();
         Set<String> roots = nodes.stream().map(LogicFlowNode::getId).collect(Collectors.toSet());
@@ -58,15 +65,13 @@ public class LogicFlow {
             data.add(new String[]{e.getSourceNodeId(), e.getTargetNodeId()});
             roots.remove(e.getTargetNodeId());
         });
-        DAGValidator<String> validator = new DAGValidator<>(data);
-        if (!validator.validate()) {
-            throw new DAGException("流程出现环！请检查！");
-        }
         List<DAGPointer> dagPointers = roots.stream().map(nodeId -> DAGPointer.builder()
                 .instanceId(instanceId)
                 .count(0)
                 .retryMaxCount(retryMaxCount)
                 .taskId(Long.valueOf(nodeId))
+                .templateId(template.getTemplateId())
+                .space(template.getSpace())
                 .status(StatusConstant.NORMAL)
                 .build()).collect(Collectors.toList());
         List<Edge> dagEdges = edges.stream().map(e -> Edge

@@ -28,7 +28,7 @@
 
 // import {getId}  from "@/api/dag";
 import vueJsonEditor from 'vue-json-editor'
-import { saveTask } from '../../../api/dag';
+// import { saveTask } from '../../../api/dag';
 
 export default {
   components:{vueJsonEditor},
@@ -64,12 +64,12 @@ export default {
       this.$props.lf.setProperties(id, {
         ...this.$data.formData
       });
-      let task = {
-        id : id,
-        name : this.$data.formData.text,
-        json : JSON.stringify(this.$data.formData.json),
-      }
-      saveTask(task)
+      // let task = {
+      //   id : id,
+      //   name : this.$data.formData.text,
+      //   json : JSON.stringify(this.$data.formData.json),
+      // }
+      // saveTask(task)
       this.$props.lf.updateText(id, this.$data.formData.text);
       this.$emit('onClose')
     },

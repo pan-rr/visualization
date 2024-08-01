@@ -1,6 +1,7 @@
 package com.visualisation.view.out;
 
 import com.visualisation.constant.LocalFileConstant;
+import com.visualisation.constant.ViewConstant;
 import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.FileManager;
 import com.visualisation.manager.ViewManager;
@@ -33,7 +34,7 @@ public class CSVOutPutView extends BaseView implements OutputView {
         view.properties = p.getFirst();
         view.federationDataSource = viewManager.getFederationDataSource();
         view.jdbcTemplate = new JdbcTemplate(view.federationDataSource);
-        view.param = (Map<String, String>) view.properties.get("param");
+        view.param = (Map<String, Object>) view.properties.get(ViewConstant.PARAM);
         return view;
     }
 

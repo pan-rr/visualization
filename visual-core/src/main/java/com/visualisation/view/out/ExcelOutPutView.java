@@ -5,6 +5,7 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.WriteTable;
 import com.visualisation.constant.LocalFileConstant;
+import com.visualisation.constant.ViewConstant;
 import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.FileManager;
 import com.visualisation.manager.ViewManager;
@@ -32,10 +33,10 @@ public class ExcelOutPutView extends BaseView implements OutputView {
         ViewManager viewManager = p.getSecond();
         view.id = viewManager.getId();
         view.properties = p.getFirst();
-        view.setParam((Map<String, String>) view.properties.get("param"));
+        view.setParam((Map<String, Object>) view.properties.get(ViewConstant.PARAM));
         view.federationDataSource = viewManager.getFederationDataSource();
         view.jdbcTemplate = new JdbcTemplate(view.federationDataSource);
-        view.script = String.valueOf(view.properties.get("script"));
+        view.script = String.valueOf(view.properties.get(ViewConstant.SCRIPT));
         return view;
     }
 
@@ -71,7 +72,7 @@ public class ExcelOutPutView extends BaseView implements OutputView {
         String[] split = targetPath.split("/");
         String tempFilePath = LocalFileConstant.getRandomTempFilePath(split[split.length - 1]);
         File tempFile = getTempFile(tempFilePath);
-        List<List<String>> headers = (List<List<String>>) properties.get("headers");
+        List<List<String>> headers = (List<List<String>>) param.get("headers");
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
         SqlRowSetMetaData metaData = sqlRowSet.getMetaData();
         String[] columnNames = metaData.getColumnNames();

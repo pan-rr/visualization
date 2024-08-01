@@ -1,5 +1,6 @@
 package com.visualisation.view.in;
 
+import com.visualisation.constant.ViewConstant;
 import com.visualisation.manager.FileManager;
 import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.ViewManager;
@@ -55,7 +56,7 @@ public class CSVInputView extends BaseView implements InputView {
         view.properties = p.getFirst();
         view.federationDataSource = viewManager.getFederationDataSource();
         view.jdbcTemplate = new JdbcTemplate(view.federationDataSource);
-        view.param = (Map<String, String>) view.properties.get("param");
+        view.param = (Map<String, Object>) view.properties.get(ViewConstant.PARAM);
         return view;
     }
 
@@ -69,7 +70,7 @@ public class CSVInputView extends BaseView implements InputView {
         StringBuilder sb = new StringBuilder();
         if (!CollectionUtils.isEmpty(param)) {
             String headers;
-            if ((headers = param.get("headers")) != null) {
+            if ((headers = String.valueOf(param.get("headers"))) != null) {
                 sb.append(",'").append(headers).append('\'');
                 param.remove("headers");
             }

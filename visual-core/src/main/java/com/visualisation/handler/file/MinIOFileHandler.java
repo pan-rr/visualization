@@ -46,9 +46,10 @@ public class MinIOFileHandler implements FileHandler {
             file = new File(filePath);
             makeSureDirectoryExist(file);
             byte[] buffer = new byte[1024];
+            int len;
             BufferedOutputStream os = new BufferedOutputStream(Files.newOutputStream(file.toPath()));
-            while (is.read(buffer) > -1) {
-                os.write(buffer);
+            while ((len = is.read(buffer)) > -1) {
+                os.write(buffer, 0, len);
             }
             os.close();
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |

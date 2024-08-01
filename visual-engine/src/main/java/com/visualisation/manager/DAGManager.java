@@ -1,12 +1,12 @@
 package com.visualisation.manager;
 
-import com.visualisation.Commander;
 import com.visualisation.constant.StatusConstant;
-import com.visualisation.exception.DAGException;
 import com.visualisation.model.dag.*;
 import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import com.visualisation.service.DAGService;
+import com.visualisation.service.MinIOService;
 import com.visualisation.service.TaskService;
+import com.visualisation.view.VisualGraph;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
@@ -32,22 +32,18 @@ public class DAGManager {
     @Resource
     private TaskService taskService;
 
-    @Resource
-    private Commander commander;
-
     @Resource(name = "dagTransactionTemplate")
     private TransactionTemplate transactionTemplate;
 
+    @Resource
+    private MinIOService minIOService;
 
-    //    @Transactional(transactionManager = "transactionManagerDAG")
+
     public void executeTask(DAGPointer pointer) {
-        TaskKey taskKey = pointer.getTaskKey();
-        Task task = taskService.getTaskById(taskKey.getTaskId());
-        if (Objects.isNull(task)) {
-            throw new DAGException("任务为空，id:" + taskKey);
-        }
+        TaskKey taskKey = pointer.generateTaskKey();
         List<Edge> nextEdges = dagService.findNextEdges(taskKey);
-        commander.commandWithJsonString(task.getJson());
+        VisualGraph visualGraph = pointer.buildGraph(taskService);
+        visualGraph.execute();
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -71,19 +67,12 @@ public class DAGManager {
         });
     }
 
-//    @Transactional(transactionManager = "transactionManagerDAG")
-//    public DAGInstance createInstanceByTemplateId(Long templateId) {
-//        return dagService.createInstanceByTemplateId(templateId);
-//    }
 
     @Transactional(transactionManager = "transactionManagerDAG")
     public DAGInstance createLogicFlowInstanceByTemplateId(Long templateId) {
         return dagService.createLogicFlowInstanceByTemplateId(templateId);
     }
 
-//    public void saveTemplate(DAGTemplate dagTemplate) {
-//        dagService.saveTemplate(dagTemplate);
-//    }
 
     public void saveTask(Task task) {
         taskService.saveTask(task);
@@ -105,10 +94,14 @@ public class DAGManager {
     public void saveDAGPack(LogicFlowPack pack) {
         dagService.saveTemplateByPack(pack);
         taskService.saveTask(pack.getTasks());
-        taskService.deleteDraftTaskByIDList(pack.getDraftTaskIds());
+        uploadTemplate(pack);
     }
 
     public void disableTemplateById(Long templateId) {
         dagService.updateTemplateStatus(templateId, StatusConstant.FORBIDDEN);
+    }
+
+    private void uploadTemplate(LogicFlowPack pack) {
+        minIOService.uploadTemplateStr(pack.getTemplate());
     }
 }

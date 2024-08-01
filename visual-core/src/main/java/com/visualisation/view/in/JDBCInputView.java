@@ -23,7 +23,7 @@ public class JDBCInputView extends JDBCBaseView implements InputView {
         ViewManager viewManager = p.getSecond();
         view.id = viewManager.getId();
         view.properties = p.getFirst();
-        view.setParam((Map<String, String>) view.properties.get("param"));
+        view.setParam((Map<String, Object>) view.properties.get("param"));
         view.initHandler(view.param);
         view.federationDataSource = viewManager.getFederationDataSource();
         view.jdbcTemplate = new JdbcTemplate(view.federationDataSource);

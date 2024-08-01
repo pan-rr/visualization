@@ -11,8 +11,12 @@ public class StatusConstant {
 
     public static final int FORBIDDEN = -3;
 
+    public static final int TEMP = -4;
+
     public static String getStatusName(int status) {
         switch (status) {
+            case TEMP:
+                return "待使用";
             case BLOCK:
                 return "阻塞";
             case FINISHED:

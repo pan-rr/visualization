@@ -8,7 +8,7 @@ import java.util.Map;
 
 public abstract class BaseView implements View {
 
-    protected Map<String, String> param;
+    protected Map<String, Object> param;
 
     protected Map<String, Object> properties;
 
@@ -48,11 +48,11 @@ public abstract class BaseView implements View {
         return script;
     }
 
-    public Map<String, String> getParam() {
+    public Map<String, Object> getParam() {
         return param;
     }
 
-    public void setParam(Map<String, String> param) {
+    public void setParam(Map<String, Object> param) {
         this.param = param;
     }
 

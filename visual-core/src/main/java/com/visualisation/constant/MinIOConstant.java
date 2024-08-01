@@ -4,7 +4,7 @@ public class MinIOConstant {
 
     public static final String BUCKET_NAME = "visual";
     public static final String PUBLIC = "public";
-    public static final String VISUAL_BASE = "/visual/";
+    public static final String VISUAL_BASE = "visual/";
     public static final String VISUAL_STORAGE_PREFIX = VISUAL_BASE + "storage/";
     public static final String VISUAL_CONFIG_PREFIX = VISUAL_BASE + "config/";
 
