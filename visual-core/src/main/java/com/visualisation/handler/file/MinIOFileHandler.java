@@ -1,6 +1,6 @@
 package com.visualisation.handler.file;
 
-import com.visualisation.constant.MinIOConstant;
+import com.visualisation.constant.OSSConstant;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
@@ -23,22 +23,16 @@ public class MinIOFileHandler implements FileHandler {
     @Resource(name = "visualMinioClient")
     private MinioClient minioClient;
 
-    private static final String VISUAL_STORAGE_PREFIX = MinIOConstant.VISUAL_STORAGE_PREFIX;
-
-    private static final String BUCKET_NAME = MinIOConstant.BUCKET_NAME;
 
     @Override
     public int getPriority() {
         return 1;
     }
 
-    private String getObjectName(String path) {
-        return VISUAL_STORAGE_PREFIX + path;
-    }
 
     @Override
     public File download(String sourcePath, Map<?, ?> uploadParam) {
-        GetObjectArgs args = GetObjectArgs.builder().bucket(BUCKET_NAME).object(getObjectName(sourcePath)).build();
+        GetObjectArgs args = GetObjectArgs.builder().bucket(OSSConstant.BUCKET_NAME).object(sourcePath).build();
         File file;
         try {
             GetObjectResponse is = minioClient.getObject(args);
@@ -65,8 +59,8 @@ public class MinIOFileHandler implements FileHandler {
         try {
             FileInputStream is = new FileInputStream(file);
             PutObjectArgs args = PutObjectArgs.builder()
-                    .bucket(BUCKET_NAME)
-                    .object(getObjectName(targetPath))
+                    .bucket(OSSConstant.BUCKET_NAME)
+                    .object(targetPath)
                     .stream(is, is.available(), -1)
                     .build();
             minioClient.putObject(args);

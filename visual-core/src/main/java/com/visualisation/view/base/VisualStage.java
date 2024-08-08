@@ -1,9 +1,10 @@
-package com.visualisation.view;
+package com.visualisation.view.base;
 
 import com.visualisation.handler.rewrite.ViewRewriteHandler;
 import com.visualisation.handler.SpringApplicationHandler;
 import com.visualisation.manager.ViewManager;
 import com.visualisation.manager.orphan.SQLManager;
+import com.visualisation.view.base.ViewConf;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class VisualGraph {
+public class VisualStage {
 
     private List<Map<String, Object>> input;
     private Map<String, Object> output;
@@ -41,7 +42,7 @@ public class VisualGraph {
         return input.stream().map(ViewConf::new).collect(Collectors.toList());
     }
 
-    public VisualGraph() {
+    public VisualStage() {
     }
 
     public void filter(Collection<ViewRewriteHandler> filters) {

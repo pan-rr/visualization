@@ -1,7 +1,7 @@
 package com.visualisation.factory;
 
 import com.visualisation.manager.ViewManager;
-import com.visualisation.view.ViewConf;
+import com.visualisation.view.base.ViewConf;
 import com.visualisation.view.in.CSVInputView;
 import com.visualisation.view.in.InputView;
 import com.visualisation.view.in.JDBCInputView;

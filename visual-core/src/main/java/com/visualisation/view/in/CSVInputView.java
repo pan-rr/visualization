@@ -4,7 +4,7 @@ import com.visualisation.constant.ViewConstant;
 import com.visualisation.manager.FileManager;
 import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.ViewManager;
-import com.visualisation.view.BaseView;
+import com.visualisation.view.base.BaseView;
 import net.sf.jsqlparser.JSQLParserException;
 import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,6 +1,6 @@
 package com.visualisation.view.in;
 
-import com.visualisation.view.View;
+import com.visualisation.view.base.View;
 
 import java.util.Map;
 

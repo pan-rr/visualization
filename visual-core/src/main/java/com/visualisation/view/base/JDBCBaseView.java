@@ -1,6 +1,7 @@
-package com.visualisation.view;
+package com.visualisation.view.base;
 
 import com.visualisation.handler.JDBCHandler;
+import com.visualisation.view.base.BaseView;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.HashMap;

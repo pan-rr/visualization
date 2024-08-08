@@ -1,7 +1,7 @@
 package com.visualisation.factory;
 
 import com.visualisation.manager.ViewManager;
-import com.visualisation.view.ViewConf;
+import com.visualisation.view.base.ViewConf;
 import com.visualisation.view.out.*;
 import org.springframework.data.util.Pair;
 

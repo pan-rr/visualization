@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public Response handle(Exception e) {
-        log.error("global "+e.getMessage() + "---" + Arrays.toString(e.getStackTrace()));
+        log.error("global error: {} ===> {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
         return Response.error(e.getMessage());
     }
 }

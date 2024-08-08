@@ -1,11 +1,11 @@
 package com.visualisation.handler.rewrite;
 
+import com.visualisation.constant.ViewConstant;
+import com.visualisation.constant.ViewTypeConstant;
 import com.visualisation.manager.FileManager;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class CSVRewriteHandler implements ViewRewriteHandler {
 
     @Override
     public void handle(Map<String, Object> conf) {
-        if (!"csv".equals(String.valueOf(conf.get("viewType")))) return;
+        if (!ViewTypeConstant.CSV.equals(String.valueOf(conf.get(ViewConstant.VIEW_TYPE)))) return;
         for (Consumer<Map<String, Object>> consumer : chain) {
             consumer.accept(conf);
         }
@@ -36,19 +36,20 @@ public class CSVRewriteHandler implements ViewRewriteHandler {
      * @param conf view conf
      */
     private static void handlerId(Map<String, Object> conf) {
-        conf.compute("fileHandlerId", (k, v) -> {
+        conf.compute(ViewConstant.FILE_HANDLER_ID, (k, v) -> {
             if (v != null) return v;
             v = FileManager.getDefaultFileHandlerId();
-            String filePath = String.valueOf(conf.get("filePath"));
-            try {
-                if (filePath.startsWith("classpath:"))return "localFileHandler";
-                String protocol = new URL(filePath).getProtocol();
-                if ("http".equals(protocol)) {
-                    return "httpFileHandler";
-                }
-            } catch (MalformedURLException e) {
-                // 默认值
-            }
+            String filePath = String.valueOf(conf.get(ViewConstant.FILE_PATH));
+//            try {
+            if (filePath.startsWith("classpath:")) return "localFileHandler";
+            if (filePath.startsWith("http")) return "httpFileHandler";
+//                String protocol = new URL(filePath).getProtocol();
+//                if ("http".equals(protocol)) {
+//                    return "httpFileHandler";
+//                }
+//            } catch (MalformedURLException e) {
+//                // 默认值
+//            }
             return v;
         });
 

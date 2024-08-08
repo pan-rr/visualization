@@ -1,11 +1,11 @@
 package com.visualisation.model.dag;
 
 import com.google.gson.Gson;
-import com.visualisation.constant.MinIOConstant;
 import com.visualisation.constant.ViewConstant;
 import com.visualisation.exception.DAGException;
 import com.visualisation.service.TaskService;
-import com.visualisation.view.VisualGraph;
+import com.visualisation.utils.FilePathUtil;
+import com.visualisation.view.base.VisualStage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,40 +48,43 @@ public class DAGPointer implements Serializable {
                 .build();
     }
 
-    public VisualGraph buildGraph(TaskService taskService) {
+    public VisualStage buildStage(TaskService taskService) {
         Task task = taskService.getTaskById(taskId);
         if (Objects.isNull(task)) {
             throw new DAGException("任务为空，id:" + taskId);
         }
         Gson gson = new Gson();
-        VisualGraph visualGraph = gson.fromJson(task.getJson(), VisualGraph.class);
-        rewriteFilePath(visualGraph);
-        return visualGraph;
+        VisualStage visualStage = gson.fromJson(task.getJson(), VisualStage.class);
+        rewriteFilePath(visualStage);
+        return visualStage;
     }
 
     private String handleFilePath(Object suffix) {
-        if (StringUtils.hasText(space)) {
-            return space + "/" + suffix;
+        if (suffix == null) return null;
+        String s = String.valueOf(suffix);
+        if (s.contains("://")) return s;
+        Map<String, Object> params = new HashMap<>();
+        if (s.startsWith(FilePathUtil.SPACE_SHARE)) {
+            params.put(FilePathUtil.SPACE_SHARE, true);
+            s = s.replace(FilePathUtil.SPACE_SHARE, "");
         }
-        return MinIOConstant.PUBLIC + "/" + suffix;
+        params.put("space", StringUtils.hasText(space) ? space : FilePathUtil.PUBLIC_SPACE);
+        params.put("instanceId", instanceId);
+        params.put("templateId", templateId);
+        params.put("filePath", s);
+        return FilePathUtil.getStoragePath(params);
     }
 
-    private void rewriteFilePath(VisualGraph graph) {
+    private void rewriteFilePath(VisualStage graph) {
         List<Map<String, Object>> input = graph.getInput();
         if (!CollectionUtils.isEmpty(input)) {
             for (Map<String, Object> conf : input) {
-                conf.compute(ViewConstant.FILE_PATH, (k, v) -> {
-                    if (v == null) return null;
-                    return handleFilePath(v);
-                });
+                conf.compute(ViewConstant.FILE_PATH, (k, v) -> handleFilePath(v));
             }
         }
         Map<String, Object> output = graph.getOutput();
         if (!CollectionUtils.isEmpty(output)) {
-            output.compute(ViewConstant.FILE_PATH, (k, v) -> {
-                if (v == null) return null;
-                return handleFilePath(v);
-            });
+            output.compute(ViewConstant.FILE_PATH, (k, v) -> handleFilePath(v));
         }
     }
 }

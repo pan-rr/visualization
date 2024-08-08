@@ -1,4 +1,4 @@
-package com.visualisation.view;
+package com.visualisation.view.base;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 

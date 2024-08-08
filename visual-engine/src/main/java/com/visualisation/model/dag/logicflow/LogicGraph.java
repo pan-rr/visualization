@@ -2,6 +2,7 @@ package com.visualisation.model.dag.logicflow;
 
 import com.google.gson.Gson;
 import com.visualisation.constant.StatusConstant;
+import com.visualisation.constant.VisualConstant;
 import com.visualisation.exception.DAGException;
 import com.visualisation.jpa.SnowIdWorker;
 import com.visualisation.model.dag.DAGTemplate;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -21,6 +23,7 @@ import java.util.List;
 public class LogicGraph {
     private LogicFlow logicFlow;
     private String name;
+    private String space;
 
     public LogicFlowPack getPack(){
         this.validateDAG();
@@ -44,16 +47,12 @@ public class LogicGraph {
                 .name(this.getName())
                 .templateId(snowIdWorker.nextId())
                 .json(flowJSON)
+                .space(Objects.nonNull(space) ? space : VisualConstant.DEFAULT_SPACE)
                 .status(StatusConstant.NORMAL)
                 .build();
     }
 
     public List<Task> getTasks(){
         return logicFlow.getTasks();
-    }
-    public void validateTaskCount(int draftCount , int realCount){
-        if (draftCount != realCount){
-            throw new DAGException("存在未配置的任务!");
-        }
     }
 }

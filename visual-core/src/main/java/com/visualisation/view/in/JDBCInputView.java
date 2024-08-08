@@ -2,7 +2,7 @@ package com.visualisation.view.in;
 
 import com.visualisation.handler.SQLHandler;
 import com.visualisation.manager.ViewManager;
-import com.visualisation.view.JDBCBaseView;
+import com.visualisation.view.base.JDBCBaseView;
 import net.sf.jsqlparser.JSQLParserException;
 import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;

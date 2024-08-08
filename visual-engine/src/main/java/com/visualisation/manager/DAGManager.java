@@ -6,7 +6,7 @@ import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import com.visualisation.service.DAGService;
 import com.visualisation.service.MinIOService;
 import com.visualisation.service.TaskService;
-import com.visualisation.view.VisualGraph;
+import com.visualisation.view.base.VisualStage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
@@ -42,8 +42,8 @@ public class DAGManager {
     public void executeTask(DAGPointer pointer) {
         TaskKey taskKey = pointer.generateTaskKey();
         List<Edge> nextEdges = dagService.findNextEdges(taskKey);
-        VisualGraph visualGraph = pointer.buildGraph(taskService);
-        visualGraph.execute();
+        VisualStage visualStage = pointer.buildStage(taskService);
+        visualStage.execute();
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {

@@ -2,12 +2,12 @@
   "input": [
     {
       "viewType": "csv",
-      "filePath": "classpath:csv/student.csv",
+      "filePath": "spaceShare/csv/student.csv",
       "tableName": "student"
     },
     {
       "viewType": "csv",
-      "filePath": "classpath:csv/hobby.csv",
+      "filePath": "spaceShare/csv/hobby.csv",
       "tableName": "hobby"
     }
   ],

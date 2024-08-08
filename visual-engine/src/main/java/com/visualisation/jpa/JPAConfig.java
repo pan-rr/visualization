@@ -18,6 +18,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import java.util.Objects;
 
 
 @Configuration
@@ -39,14 +40,12 @@ public class JPAConfig {
 
     @Bean(name = "entityManagerDAG")
     public EntityManager entityManager(EntityManagerFactoryBuilder builder) {
-        return entityManagerFactoryDAG(builder).getObject().createEntityManager();
+        return Objects.requireNonNull(entityManagerFactoryDAG(builder).getObject()).createEntityManager();
     }
 
     @Bean(name = "entityManagerFactoryDAG")
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryDAG(EntityManagerFactoryBuilder builder) {
-
-        LocalContainerEntityManagerFactoryBean entityManagerFactory
-                = builder
+        return builder
                 .dataSource(DAGDataSource)
                 //设置实体类所在位置
                 .packages("com.visualisation.model.dag")
@@ -54,12 +53,11 @@ public class JPAConfig {
                 .properties(properties.determineHibernateProperties(jpaProperties.getProperties(), new
                         HibernateSettings()))
                 .build();
-        return entityManagerFactory;
     }
 
     @Bean(name = "transactionManagerDAG")
     public PlatformTransactionManager transactionManagerPrimary(EntityManagerFactoryBuilder builder) {
-        return new JpaTransactionManager(entityManagerFactoryDAG(builder).getObject());
+        return new JpaTransactionManager(Objects.requireNonNull(entityManagerFactoryDAG(builder).getObject()));
     }
 
     @Bean(name = "dagTransactionTemplate")

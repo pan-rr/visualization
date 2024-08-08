@@ -1,6 +1,6 @@
 package com.visualisation.constant;
 
-public class StatusConstant {
+public class  StatusConstant {
 
     public static final int NORMAL = 0;
 

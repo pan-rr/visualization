@@ -2,8 +2,8 @@ package com.visualisation.manager;
 
 import com.visualisation.factory.InputFactory;
 import com.visualisation.factory.OutputFactory;
-import com.visualisation.view.View;
-import com.visualisation.view.ViewConf;
+import com.visualisation.view.base.View;
+import com.visualisation.view.base.ViewConf;
 import com.visualisation.view.in.InputView;
 import com.visualisation.view.out.OutputView;
 import org.springframework.util.CollectionUtils;
@@ -58,12 +58,22 @@ public class ViewManager {
     }
 
     public void execute() {
-        List<CompletableFuture<Void>> collect = inList.stream().map((in) -> CompletableFuture.runAsync(in::generate)).collect(Collectors.toList());
-        CompletableFuture.allOf(collect.toArray(new CompletableFuture[0])).join();
-        out.generate();
-        inList.forEach(View::destroy);
-        out.destroy();
-        SessionManager.returnId(id);
+        try {
+            CompletableFuture.allOf(inList.stream().map((in) -> CompletableFuture.runAsync(in::generate)).toArray(CompletableFuture[]::new)).join();
+            out.generate();
+        } finally {
+            release(() -> inList.forEach(View::destroy));
+            release(out::destroy);
+            SessionManager.returnId(id);
+        }
+    }
+
+    private void release(Runnable r) {
+        try {
+            r.run();
+        } catch (Exception e) {
+            // do nothing;
+        }
     }
 
 
