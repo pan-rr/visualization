@@ -15,8 +15,8 @@ import java.io.IOException;
 public class Commander {
 
 
-    public void executeStage(VisualStage graph) {
-        graph.execute();
+    public void executeStage(VisualStage stage) {
+        stage.execute();
     }
 
 

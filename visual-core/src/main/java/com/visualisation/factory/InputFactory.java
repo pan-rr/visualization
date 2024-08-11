@@ -1,5 +1,7 @@
 package com.visualisation.factory;
 
+import com.visualisation.constant.ViewConstant;
+import com.visualisation.constant.ViewTypeConstant;
 import com.visualisation.manager.ViewManager;
 import com.visualisation.view.base.ViewConf;
 import com.visualisation.view.in.CSVInputView;
@@ -16,9 +18,10 @@ public class InputFactory {
     private static final Map<String, Function<Pair<Map<String, Object>, ViewManager>, ? extends InputView>> map = new HashMap<>();
 
     static {
-        InputFactory.registerFactory("csv", CSVInputView::produce);
-        InputFactory.registerFactory("jdbc", JDBCInputView::produce);
+        InputFactory.registerFactory(ViewTypeConstant.CSV, CSVInputView::produce);
+        InputFactory.registerFactory(ViewTypeConstant.JDBC, JDBCInputView::produce);
     }
+
     public static void registerFactory(String id, Function<Pair<Map<String, Object>, ViewManager>, ? extends InputView> fun) {
         if (map.containsKey(id)) throw new RuntimeException("view type重名");
         map.put(id, fun);
@@ -26,7 +29,7 @@ public class InputFactory {
 
     public static InputView produce(ViewConf viewConf, ViewManager viewManager) {
         Map<String, Object> properties = viewConf.getProperties();
-        String viewType = String.valueOf(properties.get("viewType"));
+        String viewType = String.valueOf(properties.get(ViewConstant.VIEW_TYPE));
         Function<Pair<Map<String, Object>, ViewManager>, ? extends InputView> function = map.get(viewType);
         if (function == null) throw new RuntimeException("无该viewType: " + viewType);
         return function.apply(Pair.of(properties, viewManager));

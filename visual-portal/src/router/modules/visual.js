@@ -24,5 +24,11 @@ export default {
       meta: { title: '流程实例列表', needCache: true },
       component: () => import('@/layout/components/LogicFlow/InstanceList.vue')
     },
+    {
+      path: 'uploadPage',
+      name: 'UploadPage',
+      meta: { title: '文件上传', needCache: false },
+      component: () => import('@/layout/components/File/UploadPage.vue')
+    },
   ]
 }

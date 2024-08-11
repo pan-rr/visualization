@@ -58,5 +58,6 @@ public class MinIOService {
             os.write(buffer, 0, len);
         }
         template.setJson(os.toString());
+        os.close();
     }
 }

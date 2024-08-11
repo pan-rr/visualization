@@ -26,7 +26,7 @@ import java.util.Objects;
 @EnableJpaRepositories(
         entityManagerFactoryRef = "entityManagerFactoryDAG",
         transactionManagerRef = "transactionManagerDAG",
-        basePackages = {"com.visualisation.repository.dag"}) //设置Repository所在位置
+        basePackages = {"com.visualisation.repository.dag", "com.visualisation.repository.file"}) //设置Repository所在位置
 public class JPAConfig {
 
     @Resource(name = "dag")
@@ -48,7 +48,7 @@ public class JPAConfig {
         return builder
                 .dataSource(DAGDataSource)
                 //设置实体类所在位置
-                .packages("com.visualisation.model.dag")
+                .packages("com.visualisation.model.dag", "com.visualisation.model.file")
                 .persistenceUnit("DAGPersistenceUnit")
                 .properties(properties.determineHibernateProperties(jpaProperties.getProperties(), new
                         HibernateSettings()))

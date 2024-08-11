@@ -1,5 +1,6 @@
 package com.visualisation.view.base;
 
+import com.visualisation.constant.ViewConstant;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -39,12 +40,12 @@ public abstract class BaseView implements View {
     }
 
     public String getRawTableName() {
-        rawTableName = String.valueOf(properties.get("tableName"));
+        rawTableName = String.valueOf(properties.get(ViewConstant.TABLE_NAME));
         return rawTableName;
     }
 
     public String getScript() {
-        script = String.valueOf(properties.get("script"));
+        script = String.valueOf(properties.get(ViewConstant.SCRIPT));
         return script;
     }
 
