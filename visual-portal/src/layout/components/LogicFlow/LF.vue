@@ -2,45 +2,22 @@
   <div class="logic-flow-view">
     <h3 class="demo-title">Visualization流程绘制</h3>
     <!-- 辅助工具栏 -->
-    <Control
-      class="demo-control"
-      v-if="lf"
-      :lf="lf"
-      @catData="$_catData"
-    ></Control>
+    <Control class="demo-control" v-if="lf" :lf="lf" @catData="$_catData"></Control>
     <!-- 节点面板 -->
     <NodePanel v-if="lf" :lf="lf" :nodeList="nodeList"></NodePanel>
     <!-- 画布 -->
     <div id="LF-view" ref="container"></div>
     <!-- 用户节点自定义操作面板 -->
-    <AddPanel
-      v-if="showAddPanel"
-      class="add-panel"
-      :style="addPanelStyle"
-      :lf="lf"
-      :nodeData="addClickNode"
-      @addNodeFinish="hideAddPanel"
-      >
+    <AddPanel v-if="showAddPanel" class="add-panel" :style="addPanelStyle" :lf="lf" :nodeData="addClickNode"
+      @addNodeFinish="hideAddPanel">
     </AddPanel>
     <!-- 属性面板 -->
-    <el-drawer
-      title="设置节点属性"
-      :visible.sync="dialogVisible"
-      direction="rtl"
-      size="500px"
-      :before-close="closeDialog">
-      <PropertyDialog
-        v-if="dialogVisible"
-        :nodeData="clickNode"
-        :lf="lf"
-        @setPropertiesFinish="closeDialog"
-      ></PropertyDialog>
+    <el-drawer title="设置节点属性" :visible.sync="dialogVisible" direction="rtl" size="500px" :before-close="closeDialog">
+      <PropertyDialog v-if="dialogVisible" :nodeData="clickNode" :lf="lf" @setPropertiesFinish="closeDialog">
+      </PropertyDialog>
     </el-drawer>
     <!-- 数据查看面板 -->
-    <el-dialog
-      title="数据"
-      :visible.sync="dataVisible"
-      width="50%">
+    <el-dialog title="数据" :visible.sync="dataVisible" width="50%">
       <DataDialog :graphData="graphData"></DataDialog>
     </el-dialog>
   </div>
@@ -71,8 +48,8 @@ let demoData = {}
 
 export default {
   name: 'LF',
-   components: { NodePanel, AddPanel, Control, PropertyDialog, DataDialog },
-  data () {
+  components: { NodePanel, AddPanel, Control, PropertyDialog, DataDialog },
+  data() {
     return {
       lf: null,
       showAddPanel: false,
@@ -104,11 +81,11 @@ export default {
       nodeList,
     }
   },
-  mounted () {
+  mounted() {
     this.$_initLf()
   },
   methods: {
-    $_initLf () {
+    $_initLf() {
       // 画布配置
       const lf = new LogicFlow({
         ...this.config,
@@ -155,7 +132,7 @@ export default {
       this.$_registerNode()
     },
     // 自定义
-    $_registerNode () {
+    $_registerNode() {
       registerStart(this.lf)
       registerUser(this.lf)
       registerEnd(this.lf)
@@ -166,32 +143,32 @@ export default {
       registerConnect(this.lf)
       this.$_render()
     },
-    $_render () {
+    $_render() {
       this.lf.render(demoData)
       this.$_LfEvent()
     },
-    $_getData () {
+    $_getData() {
       const data = this.lf.getGraphData()
       console.log(JSON.stringify(data))
     },
-    $_LfEvent () {
-      this.lf.on('node:click', ({data}) => {
+    $_LfEvent() {
+      this.lf.on('node:click', ({ data }) => {
         // console.log('node:click', data)
         this.$data.clickNode = data
         this.$data.dialogVisible = true
       })
-      this.lf.on('edge:click', ({data}) => {
+      this.lf.on('edge:click', ({ data }) => {
         console.log('edge:click', data)
-         this.$data.clickNode = data
-          this.$data.dialogVisible = true
+        this.$data.clickNode = data
+        this.$data.dialogVisible = true
       })
       this.lf.on('element:click', () => {
         this.hideAddPanel()
       })
-      this.lf.on('edge:add', ({data}) => {
+      this.lf.on('edge:add', ({ data }) => {
         console.log('edge:add', data)
       })
-      this.lf.on('node:mousemove', ({data}) => {
+      this.lf.on('node:mousemove', ({ data }) => {
         // console.log('node:mousemove')
         this.moveData = data
       })
@@ -208,7 +185,7 @@ export default {
         // console.log('on mousemove')
       })
     },
-    clickPlus (e, attributes) {
+    clickPlus(e, attributes) {
       e.stopPropagation()
       // console.log('clickPlus', e, attributes)
       const { clientX, clientY } = e
@@ -218,24 +195,24 @@ export default {
       this.$data.showAddPanel = true
       this.$data.addClickNode = attributes
     },
-    mouseDownPlus (e, attributes) {
+    mouseDownPlus(e, attributes) {
       e.stopPropagation()
       console.log('mouseDownPlus', e, attributes)
     },
-    hideAddPanel () {
+    hideAddPanel() {
       this.$data.showAddPanel = false
       this.$data.addPanelStyle.top = 0
       this.$data.addPanelStyle.left = 0
       this.$data.addClickNode = null
     },
-    closeDialog () {
+    closeDialog() {
       this.$data.dialogVisible = false
     },
-    $_catData(){
+    $_catData() {
       this.$data.graphData = this.$data.lf.getGraphData();
       this.$data.dataVisible = true;
     },
-    
+
   }
 }
 </script>
@@ -244,31 +221,37 @@ export default {
   height: 100vh;
   position: relative;
 }
-.demo-title{
+
+.demo-title {
   text-align: center;
   margin: 10px;
 }
-.demo-control{
+
+.demo-control {
   position: absolute;
   top: 50px;
   right: 50px;
   z-index: 2;
 }
-#LF-view{
+
+#LF-view {
   width: calc(100% - 100px);
   height: 80%;
   outline: none;
   margin-left: 50px;
 }
-.time-plus{
+
+.time-plus {
   cursor: pointer;
 }
+
 .add-panel {
   position: absolute;
   z-index: 11;
   background-color: white;
   padding: 10px 5px;
 }
+
 .el-drawer__body {
   height: 80%;
   overflow: auto;
@@ -282,6 +265,3 @@ export default {
   }
 }
 </style>
-
-
-

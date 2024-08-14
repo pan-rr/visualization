@@ -9,6 +9,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.visualisation.constant.OSSConstant;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -49,10 +50,16 @@ public class MinIOConf {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         //设置Endpoint
         AwsClientBuilder.EndpointConfiguration end_point = new AwsClientBuilder.EndpointConfiguration(endpoint, Regions.CN_NORTH_1.name());
-        return AmazonS3ClientBuilder.standard()
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard()
                 .withClientConfiguration(config)
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withEndpointConfiguration(end_point)
                 .withPathStyleAccessEnabled(true).build();
+        // 检查bucket
+        boolean flag = s3.doesBucketExistV2(OSSConstant.BUCKET_NAME);
+        if (!Boolean.TRUE.equals(flag)) {
+            s3.createBucket(OSSConstant.BUCKET_NAME);
+        }
+        return s3;
     }
 }

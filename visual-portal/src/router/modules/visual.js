@@ -30,5 +30,11 @@ export default {
       meta: { title: '文件上传', needCache: false },
       component: () => import('@/layout/components/File/UploadPage.vue')
     },
+    {
+      path: 'fileManage',
+      name: 'FileManage',
+      meta: { title: '文件管理', needCache: false },
+      component: () => import('@/views/File/index.vue')
+    },
   ]
 }

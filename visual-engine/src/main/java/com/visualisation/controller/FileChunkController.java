@@ -15,17 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-/**
- * 分片上传-分片任务记录(SysUploadTask)表控制层
- *
- * @since 2022-08-22 17:47:31
- */
 @RestController
-@RequestMapping("/portal/fileChunk")
+@RequestMapping("/portal/file/fileChunk")
 public class FileChunkController {
-    /**
-     * 服务对象
-     */
+
     @Resource
     private FileChunkService fileChunkService;
 
@@ -50,8 +43,8 @@ public class FileChunkController {
      * @param md5 文件md5
      * @return 结果
      */
-    @GetMapping("/{md5}")
-    public Response<FileChunkTask> taskInfo(@PathVariable("md5") String md5) {
+    @GetMapping("/checkFileChunkTask/{md5}")
+    public Response<FileChunkTask> checkFileChunkTask(@PathVariable("md5") String md5) {
         return Response.success(fileChunkService.checkFileChunkTask(md5));
     }
 
@@ -63,13 +56,13 @@ public class FileChunkController {
      * @param partNumber 分片
      * @return 结果
      */
-    @GetMapping("/{md5}/{partNumber}")
-    public Response<Object> preSignUploadUrl(@PathVariable("md5") String md5, @PathVariable("partNumber") Integer partNumber) {
+    @GetMapping("/generatePreSignedUrl/{md5}/{partNumber}")
+    public Response<Object> generatePreSignedUrl(@PathVariable("md5") String md5, @PathVariable("partNumber") Integer partNumber) {
         FileChunkRecord record = fileChunkService.getFileChunkRecordByMD5(md5);
         Map<String, String> params = new HashMap<>();
         params.put("partNumber", partNumber.toString());
         params.put("uploadId", record.getUploadId());
-        return Response.success(fileChunkService.genPreSignUploadUrl(record.getOssKey(), params));
+        return Response.success(fileChunkService.generatePreSignedUrl(record.getOssKey(), params));
     }
 
     /**

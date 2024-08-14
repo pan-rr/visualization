@@ -1,6 +1,6 @@
 import SparkMD5 from 'spark-md5'
 const DEFAULT_SIZE = 20 * 1024 * 1024
-const md5 = (file, chunkSize = DEFAULT_SIZE) => {
+const md5Util = (file, chunkSize = DEFAULT_SIZE) => {
     return new Promise((resolve, reject) => {
         const startMs = new Date().getTime();
         let blobSlice =
@@ -37,4 +37,4 @@ const md5 = (file, chunkSize = DEFAULT_SIZE) => {
     });
 }
 
-export default md5
+export default md5Util

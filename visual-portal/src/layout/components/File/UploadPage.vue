@@ -29,7 +29,7 @@ const getTaskInfo = async (file) => {
                 totalSize: file.size,
                 chunkSize: 2 * 1024 * 1024
             }
-        
+
             // const { code, result, message } = await initTask(initTaskData).data
             let res = await initTask(initTaskData)
             const { code, result, message } = res.data
@@ -77,14 +77,14 @@ const handleUpload = (file, fileChunkRecord, options) => {
         const start = new Number(chunkSize) * (partNumber - 1)
         const end = start + new Number(chunkSize)
         const blob = file.slice(start, end)
-        let URLRes = await preSignUrl({ md5 : md5, partNumber: partNumber} )
+        let URLRes = await preSignUrl({ md5: md5, partNumber: partNumber })
         const { code, result, message } = URLRes.data
         if (code === 0 && result) {
             await axios.request({
                 url: result,
                 method: 'PUT',
                 data: blob,
-                headers: {'Content-Type': 'application/octet-stream'}
+                headers: { 'Content-Type': 'application/octet-stream' }
             })
             return Promise.resolve({ partNumber: partNumber, uploadedSize: blob.size })
         }
@@ -105,8 +105,8 @@ const handleUpload = (file, fileChunkRecord, options) => {
             from += factor
             uploadedSize += factor
             let percent = Math.round(uploadedSize / totalSize * 100).toFixed(2);
-            if(percent > 100)percent = 100
-            onProgress({percent: percent})
+            if (percent > 100) percent = 100
+            onProgress({ percent: percent })
         }
 
         const speed = getSpeed();
@@ -122,10 +122,10 @@ const handleUpload = (file, fileChunkRecord, options) => {
         const queue = Queue(5, {
             "retry": 3,               //Number of retries
             "retryIsJump": false,     //retry now?
-            "workReject": function(reason,queue){
+            "workReject": function (reason, queue) {
                 failArr.push(reason)
             },
-            "queueEnd": function(queue){
+            "queueEnd": function (queue) {
                 resolve(failArr);
             }
         })
@@ -160,7 +160,7 @@ const handleHttpRequest = async (options) => {
     const task = await getTaskInfo(file)
     if (task) {
         const { finished, path, fileChunkRecord } = task
-        const {  md5 } = fileChunkRecord
+        const { md5 } = fileChunkRecord
         if (finished) {
             return path
         } else {
@@ -209,12 +209,7 @@ const handleRemoveFile = (uploadFile, uploadFiles) => {
 </script>
 <template>
     <el-card style="width: 80%; margin: 80px auto" header="文件分片上传">
-        <el-upload
-            class="upload-demo"
-            drag
-            action="/"
-            multiple
-            :http-request="handleHttpRequest"
+        <el-upload class="upload-demo" drag action="/" multiple :http-request="handleHttpRequest"
             :on-remove="handleRemoveFile">
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">

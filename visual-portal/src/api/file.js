@@ -15,7 +15,7 @@ const httpExtra = axiosExtra.create({
  * @returns {Promise<AxiosResponse<any>>}
  */
 const taskInfo = (md5) => {
-    return service.get(`/fileChunk/${md5}`)
+    return service.get(`/file/fileChunk/checkFileChunkTask/${md5}`)
 }
 
 /**
@@ -27,7 +27,7 @@ const taskInfo = (md5) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const initTask = ({ md5, fileName, totalSize, chunkSize }) => {
-    return service.post('/fileChunk/initFileChunk', { md5, fileName, totalSize, chunkSize })
+    return service.post('/file/fileChunk/initFileChunk', { md5, fileName, totalSize, chunkSize })
 }
 
 /**
@@ -37,7 +37,7 @@ const initTask = ({ md5, fileName, totalSize, chunkSize }) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const preSignUrl = ({ md5, partNumber }) => {
-    return service.get(`/fileChunk/${md5}/${partNumber}`)
+    return service.get(`/file/fileChunk/generatePreSignedUrl/${md5}/${partNumber}`)
 }
 
 /**
@@ -46,7 +46,7 @@ const preSignUrl = ({ md5, partNumber }) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const merge = (md5) => {
-    return service.post(`/fileChunk/merge/${md5}`)
+    return service.post(`/file/fileChunk/merge/${md5}`)
 }
 
 export {

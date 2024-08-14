@@ -62,6 +62,12 @@ public class FileChunkParam {
 
     private String ossKey;
 
+    /**
+     * 文件夹
+     */
+    @NotBlank(message = "文件夹不能为空")
+    private String folder;
+
     private void initUploadRequest(AmazonS3 amazonS3) {
         String bucketName = OSSConstant.BUCKET_NAME;
         Map<String, Object> map = new HashMap<>();
@@ -70,7 +76,7 @@ public class FileChunkParam {
             map.put(FilePathUtil.SPACE_SHARE, true);
         }
         map.put("space", space);
-        map.put("filePath", fileName);
+        map.put("filePath", folder + fileName);
         ossKey = FilePathUtil.getStoragePath(map);
         String contentType = MediaTypeFactory.getMediaType(ossKey).orElse(MediaType.APPLICATION_OCTET_STREAM).toString();
         ObjectMetadata objectMetadata = new ObjectMetadata();

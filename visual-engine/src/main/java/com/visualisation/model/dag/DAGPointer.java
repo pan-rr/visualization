@@ -66,7 +66,6 @@ public class DAGPointer implements Serializable {
         Map<String, Object> params = new HashMap<>();
         if (s.startsWith(FilePathUtil.SPACE_SHARE)) {
             params.put(FilePathUtil.SPACE_SHARE, true);
-            s = s.replace(FilePathUtil.SPACE_SHARE, "");
         }
         params.put("space", StringUtils.hasText(space) ? space : FilePathUtil.PUBLIC_SPACE);
         params.put("instanceId", instanceId);

@@ -9,6 +9,7 @@ import com.visualisation.model.file.FileChunkRecord;
 import com.visualisation.model.file.FileChunkTask;
 import com.visualisation.repository.file.FileChunkDetailRepository;
 import com.visualisation.service.FileChunkService;
+import io.minio.MinioClient;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +28,9 @@ public class FileChunkServiceImpl implements FileChunkService {
 
     @Resource(name = "visualS3Client")
     private AmazonS3 amazonS3;
+
+    @Resource(name = "visualMinioClient")
+    private MinioClient minioClient;
 
     @Value("${visual.storage.minio.endpoint}")
     private String endpoint;
@@ -66,8 +71,8 @@ public class FileChunkServiceImpl implements FileChunkService {
     @Override
     public FileChunkTask checkFileChunkTask(String md5) {
         FileChunkRecord record = getFileChunkRecordByMD5(md5);
-        if (record == null) {
-            return null;
+        if (Objects.isNull(record)) {
+            throw new RuntimeException("分片任务不存在！");
         }
         FileChunkTask task = getTaskByRecord(record);
         boolean doesObjectExist = amazonS3.doesObjectExist(OSSConstant.BUCKET_NAME, task.getPath());
@@ -83,14 +88,14 @@ public class FileChunkServiceImpl implements FileChunkService {
     }
 
     @Override
-    public String genPreSignUploadUrl(String ossKey, Map<String, String> params) {
+    public String generatePreSignedUrl(String ossKey, Map<String, String> params) {
         Date now = new Date();
-        // 3 小时内上传完
-        Date expireDate = DateUtils.addHours(now, 3);
+        // 必须在1小时内上传完
+        Date expireDate = DateUtils.addHours(now, 1);
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(OSSConstant.BUCKET_NAME, ossKey);
         request.withExpiration(expireDate).withMethod(HttpMethod.PUT);
         if (params != null) {
-            params.forEach(request::addRequestParameter);
+            request.getRequestParameters().putAll(params);
         }
         URL preSignedUrl = amazonS3.generatePresignedUrl(request);
         return preSignedUrl.toString();

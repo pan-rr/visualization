@@ -1,6 +1,7 @@
 package com.visualisation.utils;
 
 import com.visualisation.constant.VisualConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -12,12 +13,11 @@ public class FilePathUtil {
     public static final String PUBLIC_SPACE = VisualConstant.DEFAULT_SPACE;
     public static final String SPACE_SHARE = "spaceShare/";
 
-
     private static final String VISUAL_TEMPLATE_PATTERN = "visual/#{[space]}/template/#{[templateId]}.json";
 
     private static final String VISUAL_STORAGE_PATTERN = "visual/#{[space]}/storage/#{[templateId]}/#{[instanceId]}/#{[filePath]}";
 
-    private static final String VISUAL_SPACE_SHARE_STORAGE_PATTERN = "visual/#{[space]}/storage/#{[filePath]}";
+    private static final String VISUAL_SPACE_SHARE_STORAGE_PATTERN = "visual/#{[space]}/spaceShare/#{[filePath]}";
 
 
     public static String getTemplatePath(Map<String, Object> params) {
@@ -31,6 +31,17 @@ public class FilePathUtil {
         TemplateParserContext parserContext = new TemplateParserContext();
         String pattern = Boolean.TRUE.equals(params.get(SPACE_SHARE)) ? VISUAL_SPACE_SHARE_STORAGE_PATTERN : VISUAL_STORAGE_PATTERN;
         return parser.parseExpression(pattern, parserContext).getValue(params, String.class);
+    }
+
+    public static boolean isFolderPath(String path) {
+        boolean flag = StringUtils.isEmpty(path);
+        if (flag) return false;
+        return path.endsWith("/");
+    }
+
+    public static String getPortalFilePath(String suffix) {
+        suffix = "visual/" + suffix;
+        return suffix.replaceAll("//", "/");
     }
 
 }

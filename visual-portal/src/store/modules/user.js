@@ -7,6 +7,7 @@ export default {
       userId: '',
       name: '',
       avatar: '',
+      space:[],
     },
   },
   mutations: {
@@ -14,6 +15,7 @@ export default {
       state.userInfo.userId = data.userId
       state.userInfo.name = data.name
       state.userInfo.avatar = data.avatar
+      state.userInfo.space = data.space
     },
   },
   actions: {

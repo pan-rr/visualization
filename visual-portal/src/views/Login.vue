@@ -2,30 +2,16 @@
   <div class="login h_100 flex flex-justify-center">
     <div class="inner_box">
       <div class="title c_fff bold t-center">系统登录</div>
+      <el-link type="primary">账号密码随意，目前还没增加权限等功能</el-link>
       <el-form ref="form" :model="param" :rules="rules">
         <el-form-item prop="name">
-          <el-input
-            v-model="param.name"
-            placeholder="用户名"
-            prefix-icon="el-icon-user"
-          />
+          <el-input v-model="param.name" placeholder="用户名" prefix-icon="el-icon-user" />
         </el-form-item>
         <el-form-item prop="name">
-          <el-input
-            type="password"
-            prefix-icon="el-icon-lock"
-            v-model="param.password"
-            placeholder="密码"
-            show-password
-          />
+          <el-input type="password" prefix-icon="el-icon-lock" v-model="param.password" placeholder="密码"
+            show-password />
         </el-form-item>
-        <el-button
-          class="w_100"
-          type="primary"
-          :loading="loginLoading"
-          @click="login('form')"
-          >登录</el-button
-        >
+        <el-button class="w_100" type="primary" :loading="loginLoading" @click="login('form')">登录</el-button>
       </el-form>
     </div>
   </div>
@@ -47,7 +33,7 @@ export default {
       loginLoading: false
     };
   },
-  created() {},
+  created() { },
   methods: {
     login(formName) {
       this.loginLoading = true;
@@ -69,17 +55,21 @@ export default {
 <style lang="scss" scoped>
 .login {
   background-color: #2d3a4b;
+
   .inner_box {
     width: 450px;
     margin-top: 220px;
+
     .title {
       padding-bottom: 40px;
       font-size: 30px;
     }
+
     ::v-deep .el-form-item {
       background-color: #283443;
       border: 1px solid #434c58;
       border-radius: 4px;
+
       .el-input {
         input {
           height: 50px;

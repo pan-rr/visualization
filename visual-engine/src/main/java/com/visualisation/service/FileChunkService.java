@@ -15,7 +15,7 @@ public interface FileChunkService {
 
     FileChunkTask checkFileChunkTask(String md5);
 
-    String genPreSignUploadUrl(String ossKey, Map<String, String> params);
+    String generatePreSignedUrl(String ossKey, Map<String, String> params);
 
     void merge(String md5);
 }

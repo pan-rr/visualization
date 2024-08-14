@@ -9,6 +9,7 @@ Mock.mock('/api/user/login', 'post', (req) => {
     body: {
       userId: '001',
       name: data.name,
+      space: ['public',data.name+':oa'],
       // avatar: 'http://114.115.235.59/avatar.png',
     },
   }
