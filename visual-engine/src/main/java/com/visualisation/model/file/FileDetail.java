@@ -32,8 +32,14 @@ public class FileDetail {
                 .build();
     }
 
+    private static boolean judgeFileUnderFolder(String folder, String filePath){
+        String[] arr1 = folder.split("/");
+        String[] arr2 = filePath.split("/");
+        return arr2.length - arr1.length == 1;
+    }
+
     public static List<FileDetail> covertFileDetail(String folder,List<S3ObjectSummary> list) {
         if (CollectionUtils.isEmpty(list)) return new ArrayList<>();
-        return list.stream().filter(i->!folder.equals(i.getKey())).map(FileDetail::covertFileDetail).collect(Collectors.toList());
+        return list.stream().filter(i-> judgeFileUnderFolder(folder,i.getKey())).map(FileDetail::covertFileDetail).collect(Collectors.toList());
     }
 }

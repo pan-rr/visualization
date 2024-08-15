@@ -1,7 +1,22 @@
 <template>
   <div>
-    <el-input placeholder="请输入流程模版名称" v-model="templateName" clearable></el-input>
-     <el-button-group>
+
+    <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
+      <template slot="prepend">存储空间:</template>
+      <el-select v-model="space" slot="append" placeholder="请选择空间">
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
+      </el-select>
+    </el-input>
+
+    <el-input v-model="templateName" clearable>
+      <template slot="prepend">
+        <el-icon class="el-icon-collection-tag"></el-icon>
+        流程模版名称:
+      </template>
+    </el-input>
+
+    <el-button-group>
       <el-button type="plain" size="small" @click="$_zoomIn">放大</el-button>
       <el-button type="plain" size="small" @click="$_zoomOut">缩小</el-button>
       <el-button type="plain" size="small" @click="$_zoomReset">大小适应</el-button>
@@ -15,10 +30,12 @@
       <el-button type="plain" size="small" @click="$_showMiniMap">查看缩略图</el-button>
       <el-button type="plain" size="small" @click="$_createProcess">发布流程</el-button>
     </el-button-group>
+
   </div>
 </template>
 <script>
 import { createTemplate } from '../../../api/dag';
+import { Message } from 'element-ui'
 
 
 
@@ -28,51 +45,54 @@ export default {
     lf: Object || String,
     catTurboData: Boolean
   },
-  data () {
+  data() {
     return {
       undoDisable: true,
       redoDisable: true,
       graphData: null,
       dataVisible: false,
-      templateName :''
+      templateName: '',
+      options: [],
+      space: ''
     }
   },
-  mounted () {
+  mounted() {
     this.$props.lf.on('history:change', ({ data: { undoAble, redoAble } }) => {
       this.$data.undoDisable = !undoAble
       this.$data.redoDisable = !redoAble
     });
+    this.getSpace();
   },
   methods: {
-    $_zoomIn(){
+    $_zoomIn() {
       this.$props.lf.zoom(true);
     },
-    $_zoomOut(){
+    $_zoomOut() {
       this.$props.lf.zoom(false);
     },
-    $_zoomReset(){
+    $_zoomReset() {
       this.$props.lf.resetZoom();
     },
-    $_translateRest(){
+    $_translateRest() {
       this.$props.lf.resetTranslate();
     },
-    $_reset(){
+    $_reset() {
       this.$props.lf.resetZoom();
       this.$props.lf.resetTranslate();
     },
-    $_undo(){
+    $_undo() {
       this.$props.lf.undo();
     },
-    $_redo(){
+    $_redo() {
       this.$props.lf.redo();
     },
-    $_download(){
+    $_download() {
       this.$props.lf.getSnapshot();
     },
-    $_catData(){
+    $_catData() {
       this.$emit('catData');
     },
-    $_catTurboData(){
+    $_catTurboData() {
       this.$emit('catTurboData');
     },
     $_showMiniMap() {
@@ -83,18 +103,28 @@ export default {
       // this.$emit('createProcess');
       const { lf } = this.$props;
       const data = lf.getGraphData()
-      
       createTemplate({
-        name : this.$data.templateName,
-        logicFlow : data
-      }).then(response =>{
-        console.log(response);
-        this.$router.go(0)
+        name: this.$data.templateName,
+        logicFlow: data,
+        space: this.space
+      }).then(response => {
+        if (response?.data?.code === 0) {
+          this.$emit('refreash')
+          this.templateName = ''
+          Message({
+            message: response?.data?.result,
+            type: 'success',
+            duration: 5 * 1000,
+          })
+        }
       });
-
-    }
+    },
+    getSpace() {
+      let arr = this.$store.getters.userInfo.space
+      this.options = arr.map((i, idx) => { return { value: i, label: i } })
+      this.space = this.options[0].value
+    },
   }
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

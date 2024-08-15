@@ -2,7 +2,7 @@
   <div class="logic-flow-view">
     <h3 class="demo-title">Visualization流程绘制</h3>
     <!-- 辅助工具栏 -->
-    <Control class="demo-control" v-if="lf" :lf="lf" @catData="$_catData"></Control>
+    <Control class="demo-control" v-if="lf" :lf="lf" @catData="$_catData" @refreash="$_refreash"></Control>
     <!-- 节点面板 -->
     <NodePanel v-if="lf" :lf="lf" :nodeList="nodeList"></NodePanel>
     <!-- 画布 -->
@@ -147,9 +147,13 @@ export default {
       this.lf.render(demoData)
       this.$_LfEvent()
     },
+    $_refreash() {
+      this.lf.render({})
+      this.$_LfEvent()
+    },
     $_getData() {
       const data = this.lf.getGraphData()
-      console.log(JSON.stringify(data))
+      // console.log(JSON.stringify(data))
     },
     $_LfEvent() {
       this.lf.on('node:click', ({ data }) => {
@@ -224,13 +228,13 @@ export default {
 
 .demo-title {
   text-align: center;
-  margin: 10px;
+  margin: 1%;
 }
 
 .demo-control {
-  position: absolute;
-  top: 50px;
-  right: 50px;
+  /* position: absolute; */
+  top: 2%;
+  /* right: 2%; */
   z-index: 2;
 }
 

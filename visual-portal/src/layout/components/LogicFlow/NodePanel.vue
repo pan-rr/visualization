@@ -30,8 +30,8 @@ export default {
 <style>
 .node-panel {
   position: absolute;
-  top: 20%;
-  left: 1%;
+  top: 25%;
+  left: 0%;
   width: 70px;
   padding: 20px 10px;
   background-color: white;
@@ -46,7 +46,7 @@ export default {
 .node-item-icon {
   width: 30px;
   height: 30px;
-  margin-left: 20px;
+  margin-left: 10px;
   background-size: cover;
 }
 .node-label {

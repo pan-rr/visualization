@@ -26,8 +26,8 @@ const taskInfo = (md5) => {
  * @param chunkSize 分块大小
  * @returns {Promise<AxiosResponse<any>>}
  */
-const initTask = ({ md5, fileName, totalSize, chunkSize }) => {
-    return service.post('/file/fileChunk/initFileChunk', { md5, fileName, totalSize, chunkSize })
+const initTask = ({ md5, folder,fileName, totalSize, chunkSize }) => {
+    return service.post('/file/fileChunk/initFileChunk', { md5, folder,fileName, totalSize, chunkSize })
 }
 
 /**

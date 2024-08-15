@@ -18,7 +18,7 @@ const md5Util = (file, chunkSize = DEFAULT_SIZE) => {
                 loadNext();
             } else {
                 const md5 = spark.end(); //完成md5的计算，返回十六进制结果。
-                console.log('文件md5计算结束，总耗时：', (new Date().getTime() - startMs) / 1000, 's')
+                // console.log('文件md5计算结束，总耗时：', (new Date().getTime() - startMs) / 1000, 's')
                 resolve(md5);
             }
         };
@@ -27,7 +27,7 @@ const md5Util = (file, chunkSize = DEFAULT_SIZE) => {
         };
 
         function loadNext() {
-            console.log('当前part number：', currentChunk, '总块数：', chunks);
+            // console.log('当前part number：', currentChunk, '总块数：', chunks);
             let start = currentChunk * chunkSize;
             let end = start + chunkSize;
             (end > file.size) && (end = file.size);

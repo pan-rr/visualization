@@ -15,36 +15,43 @@
         <div>
             <el-card class="box-card" shadow="hover">
                 <div slot="header" style="display: flex;">
-                    <el-button type="primary" plain icon="el-icon-back" @click="exitDir"></el-button>
+                    <el-button plain icon="el-icon-back" @click="exitDir"></el-button>
+                    <el-button style="margin: 0%;" plain icon="el-icon-refresh" @click="loadDir"></el-button>
                     <el-input v-model="path" :readonly="true">
-                        <template slot="prepend">空间Path:</template>
+                        <template slot="prepend">
+                            <el-icon class="el-icon-collection-tag"></el-icon>
+                            空间路径:
+                        </template>
                     </el-input>
-                    <el-button type="success" plain icon="el-icon-folder-add" @click="createDir">新建文件夹</el-button>
+                    <el-button type="info" plain icon="el-icon-folder-add" @click="createDir">新建文件夹</el-button>
                 </div>
-                <el-container v-for="item in files" :key="item.name" type="flex" justify style="">
-                    <el-main>
-                        <el-link @click="enterDir(item.name)" :disabled="!item.isFolder">
-                            <i v-if="item.isFolder" class="el-icon-folder"></i>
-                            <i v-else class="el-icon-tickets"></i>
-                            {{ item.name }}
-                        </el-link>
-                    </el-main>
-                    <el-button v-if="!item.isFolder" round><i class="el-icon-download"></i>下载</el-button>
-                </el-container>
+                <div v-if="files.length === 0">
+                    <div><el-icon class="el-icon-loading"></el-icon>当前文件夹下暂无文件</div>
+                    <el-skeleton />
+                </div>
+                <div v-else>
+                    <el-container v-for="item in files" :key="item.name" type="flex" justify style="">
+                        <el-main>
+                            <el-link @click="enterDir(item.name)" v-if="item.isFolder">
+                                <i class="el-icon-folder"></i>
+                                {{ item.name }}
+                            </el-link>
+                            <el-link v-else type="primary">
+                                <i class="el-icon-tickets"></i>
+                                {{ item.name }}
+                            </el-link>
+                        </el-main>
+                        <el-button v-if="!item.isFolder" plain size="small" style="margin: 1%;"
+                            @click="downloadFile(path, item.name)">
+                            <el-icon class="el-icon-download"></el-icon>下载
+                        </el-button>
+                    </el-container>
+                </div>
             </el-card>
         </div>
 
         <div>
-            <!-- <el-card  class="box-card" shadow="hover">
-                <el-upload  drag action="/" multiple :http-request="handleHttpRequest"
-                    :on-remove="handleRemoveFile" >
-                    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                    <div class="el-upload__text">
-                        请拖拽文件到此处或 <em>点击此处上传</em>
-                    </div>
-                </el-upload>
-            </el-card> -->
-           
+            <UploadFile :folder="this.path" @reloadDir="loadDir"></UploadFile>
         </div>
 
     </div>
@@ -52,13 +59,17 @@
 
 <script>
 
-import { listDir, mkdir } from '../../api/fileManage';
+import { downloadFile, listDir, mkdir } from '../../api/fileManage';
+import UploadFile from '../../layout/components/File/UploadFile.vue';
+
 
 
 
 
 
 export default {
+    name: 'FileManage',
+    components: { UploadFile },
     data() {
         return {
             options: [],
@@ -66,7 +77,7 @@ export default {
             path: '',
             pathList: [],
             files: [],
-       
+
         }
     },
     methods: {
@@ -104,25 +115,26 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(({ value }) => {
-                this.files.push({ name: value, isFolder: true })
-                value = value + '/'
-                let folder = this.path + value
+
+                let folder = this.path + value + '/'
                 mkdir(folder).then(res => {
                     this.$message({
                         type: 'success',
-                        message: '创建成功 ' + res.data.result
+                        message: res.data.result + '创建成功'
                     });
+                }).then(res => {
+                    this.files.push({ name: value, isFolder: true })
                 })
             }).catch(() => {
                 this.$message({
                     type: 'info',
-                    message: '取消输入'
+                    message: '取消创建文件夹'
                 });
             });
         },
-
-
-
+        downloadFile(folder, name) {
+            downloadFile(folder, name)
+        }
 
     },
     beforeMount() {

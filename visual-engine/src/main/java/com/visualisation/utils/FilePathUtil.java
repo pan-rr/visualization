@@ -17,9 +17,15 @@ public class FilePathUtil {
 
     private static final String VISUAL_STORAGE_PATTERN = "visual/#{[space]}/storage/#{[templateId]}/#{[instanceId]}/#{[filePath]}";
 
-    private static final String VISUAL_SPACE_SHARE_STORAGE_PATTERN = "visual/#{[space]}/spaceShare/#{[filePath]}";
+    private static final String VISUAL_SPACE_SHARE_STORAGE_PATTERN = "visual/#{[space]}/#{[filePath]}";
 
+    private static final String VISUAL_NORMAL_PATTERN = "visual/#{[folder]}#{[fileName]}";
 
+    public static String getNormalPath(Map<String, Object> params) {
+        ExpressionParser parser = new SpelExpressionParser();
+        TemplateParserContext parserContext = new TemplateParserContext();
+        return parser.parseExpression(VISUAL_NORMAL_PATTERN, parserContext).getValue(params, String.class);
+    }
     public static String getTemplatePath(Map<String, Object> params) {
         ExpressionParser parser = new SpelExpressionParser();
         TemplateParserContext parserContext = new TemplateParserContext();

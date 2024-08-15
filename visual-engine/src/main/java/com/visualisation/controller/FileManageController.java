@@ -7,6 +7,7 @@ import com.visualisation.service.FileManageService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -29,5 +30,9 @@ public class FileManageController {
         return Response.success(res);
     }
 
+    @GetMapping("/download")
+    public void download(@RequestParam("path") String path, HttpServletResponse response) {
+       fileManageService.download(path,response);
+    }
 
 }

@@ -6,28 +6,37 @@
 + 基于Spring Cloud的分布式集群计算，外部依赖较少；
 + DAG任务调度，节点任务由集群自动执行；
 + 支持多数据源，目前支持CSV、JDBC(MySQL驱动)，后续会增加其他数据源；
++ 文件分片上传下、下载；
 
 #### 部分截图
 
-![1](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
+![1](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
 
 ![2](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
 
+
+![3](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
+
 #### 使用场景
 
-+ 单机可承接的数据分析。
++ excel（异步）导出
+  - 某些国企项目有excel导出需求，visual可以异步导出excel
++ 单节点可承接的数据分析。
   - 本工具目前不支持数据分片，大数据分析需自行在任务节点手动分片或使用其他OLAP工具或加大内存；
+  - 一般个位数GB的JVM可以处理百万级数据
 + 有数据分析需求，但不想搭建大数据那套集群，可使用本工具；
 + 有配置需求的场景，例如定时生成分析报表的需求。
   - 这个目前需外部定时任务组件新建流程实例，后续考虑增加定时组件；
-+ 跨数据源连接操作，例如某张表在PolarDB，另一张表在MySQL的连接操作；
-+ 取数逻辑频繁修改，例如测试环境。本工具只需修改json配置即可实现修改逻辑； 
++ 跨数据源连接操作，例如某张表在PolarDB、CSV，另一张表在MySQL的连接操作；
++ 取数逻辑频繁修改，例如某个指标。本工具只需修改json配置即可实现修改逻辑； 
 + 数据大屏的后端，类似于datav、mapv的画布工具，使用该工具可以快速构建大屏后端；
 
 
 #### 部署前置条件
 
 JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO
+
+备注：作者开发环境是Mac
 
 #### 工程结构
 
@@ -38,7 +47,7 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO
 
 #### 部署步骤
 
-1. 启动MySQL、Redis
+1. 启动MySQL、Redis、Minio
 2. 启动visual-discovery
 3. 启动visual-engine
 4. 启动visual-portal
@@ -49,13 +58,50 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO
 2. 在已定义流程列表点击运行实例
 3. 等待任务完成
 
+#### viewType类型
+
+> viewType:jdbc
+
+支持jdbc的输入和输出类型，需在viewType指定
+
+> viewType:csv
+
+支持csv的输入和输出类型，需在viewType指定
+
+> viewType:console
+
+支持console的输出类型，需在viewType指定。一般用在本地环境
+
+> viewType:excel
+
+支持excel的输出类型，需在viewType指定。headers中指定表头，目前不支持复杂表头
+
 #### 节点任务 json 属性介绍
+
+```java
+public class ViewConstant {
+    //jdbc、csv、excel、console
+    public static final String VIEW_TYPE = "viewType";
+    //导入engine后所使用的表名
+    public static final String TABLE_NAME = "tableName";
+    //操作脚本，csv视图时无意义，jdbc视图时存放取数sql
+    public static final String SCRIPT = "script";
+    // 文件路径，例如csv视图下，文件的存放路径
+    public static final String FILE_PATH = "filePath";
+    // 文件处理器。默认minio
+    public static final String FILE_HANDLER_ID = "fileHandlerId";
+    // 取数的配置参数
+    public static final String PARAM = "param";
+}
+```
+
+#### visual节点任务
 
 + intput属性
 
 > viewType: jdbc、csv
 
-> tableName: 导入h2后所使用的表名，对应output.script里面使用的表名
+> tableName: 导入engine后所使用的表名，对应output.script里面使用的表名
 
 > indexOn: 数据导入后是否建立索引，字段用逗号隔开，例如“no,sex“
 
@@ -110,7 +156,33 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO
   }
 }
 ```
+#### sql节点任务
 
++ 属性
+
+> sql: 用来做前置后置的建表等操作
+> 剩下的就是连接参数
+
++ 样例
+
+```json
+{
+  "sql": {
+    "script": "create table t_test( id varchar(10) )",
+    "url": "jdbc:mysql://localhost:3306/visualization?useUnicode=true&characterEncoding=utf8",
+    "username": "test",
+    "password": "test"
+  }
+}
+```
+
+#### 流程模版文件上传下载
+
+![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
+
++ 在文件管理页找到对应路径上传下载。
+
++ `注意:`流程模版共享的文件需在spaceShare文件夹下，否则无法识别。例如存储空间为public时，对应空间路径是"/public/spaceShare"
 
 #### 后记
 

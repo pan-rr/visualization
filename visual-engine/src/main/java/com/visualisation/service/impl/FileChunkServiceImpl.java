@@ -72,7 +72,7 @@ public class FileChunkServiceImpl implements FileChunkService {
     public FileChunkTask checkFileChunkTask(String md5) {
         FileChunkRecord record = getFileChunkRecordByMD5(md5);
         if (Objects.isNull(record)) {
-            throw new RuntimeException("分片任务不存在！");
+            return null;
         }
         FileChunkTask task = getTaskByRecord(record);
         boolean doesObjectExist = amazonS3.doesObjectExist(OSSConstant.BUCKET_NAME, task.getPath());

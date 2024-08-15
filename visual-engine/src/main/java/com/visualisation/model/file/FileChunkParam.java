@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.visualisation.constant.OSSConstant;
-import com.visualisation.constant.VisualConstant;
 import com.visualisation.utils.FilePathUtil;
 import com.visualisation.utils.SnowIdUtil;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
-import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -52,12 +50,6 @@ public class FileChunkParam {
     @NotBlank(message = "文件名称不能为空")
     private String fileName;
 
-    /**
-     * 文件存储空间
-     */
-    @NotBlank(message = "文件存储名称不能为空")
-    private String space;
-
     private String uploadId;
 
     private String ossKey;
@@ -71,13 +63,9 @@ public class FileChunkParam {
     private void initUploadRequest(AmazonS3 amazonS3) {
         String bucketName = OSSConstant.BUCKET_NAME;
         Map<String, Object> map = new HashMap<>();
-        if (StringUtils.isEmpty(space)) {
-            space = VisualConstant.DEFAULT_SPACE;
-            map.put(FilePathUtil.SPACE_SHARE, true);
-        }
-        map.put("space", space);
-        map.put("filePath", folder + fileName);
-        ossKey = FilePathUtil.getStoragePath(map);
+        map.put("folder", folder);
+        map.put("fileName",fileName);
+        ossKey = FilePathUtil.getNormalPath(map);
         String contentType = MediaTypeFactory.getMediaType(ossKey).orElse(MediaType.APPLICATION_OCTET_STREAM).toString();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(contentType);

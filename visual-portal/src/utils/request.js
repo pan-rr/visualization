@@ -21,10 +21,16 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response) => {
+    // console.log(typeof contentType)
+    let contentType = response?.headers['content-type']
+    if(contentType?.includes('application/octet-stream')){
+      // 二进制文件直接返回
+      return response
+    }
     const res = response.data
-   
+    
     if (res?.header?.code === 0)return response
-    if (res.code !== 0) {
+    if (res?.code !== 0) {
       Message({
         message: res.result || 'Error',
         type: 'error',

@@ -3,8 +3,7 @@ import { Message } from 'element-ui'
 
 
 export async function createTemplate(graph) {
-    let resp = (await request.post('/createTemplate', graph)).data
-    sendSuccessMessage(resp)
+    return await request.post('/createTemplate', graph)
 }
 
 export async function getTemplateList(pageable) {

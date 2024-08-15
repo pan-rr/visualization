@@ -2,8 +2,7 @@
 
 
 #### 介绍
- `Visualization的前端项目`，目前还在完善中
-
+ `Visualization的前端项目`，目前还在完善中。
 
 #### 安装
 ```shell
