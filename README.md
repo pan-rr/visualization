@@ -1,6 +1,6 @@
 ### Visualization分布式数据分析平台
 
-如果喜欢或者对您有帮助，请点个star吧！部分帅哥美女已经点了star，您还在等什么。：）
+如果喜欢或者对您有帮助，请点个star吧！部分帅哥美女已经点了star，您还在等什么？：）
 
 #### 特性
 
@@ -9,15 +9,17 @@
 + DAG任务调度，节点任务由集群自动执行；
 + 支持多数据源，目前支持CSV、JDBC(MySQL驱动)，后续会增加其他数据源；
 + 文件分片上传下、下载；
++ 支持流程实例任务执行时间线查询
 
 #### 部分截图
 
-![1](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
+![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
 
-![2](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
+![时间线](https://gitee.com/pan-rr/visualization/raw/master/pic/时间线.png)
 
+![流程列表](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
 
-![3](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
+![流程配置](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
 
 #### 使用场景
 
