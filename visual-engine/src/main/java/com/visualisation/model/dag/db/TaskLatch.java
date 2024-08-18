@@ -1,4 +1,4 @@
-package com.visualisation.model.dag;
+package com.visualisation.model.dag.db;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

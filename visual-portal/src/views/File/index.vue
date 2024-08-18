@@ -26,11 +26,37 @@
                     <el-button type="info" plain icon="el-icon-folder-add" @click="createDir">新建文件夹</el-button>
                 </div>
                 <div v-if="files.length === 0">
-                    <div><el-icon class="el-icon-loading"></el-icon>当前文件夹下暂无文件</div>
+                    <div><el-icon class="el-icon-search"></el-icon>当前文件夹下暂无文件</div>
                     <el-skeleton />
                 </div>
                 <div v-else>
-                    <el-container v-for="item in files" :key="item.name" type="flex" justify style="">
+
+                    <el-table :data="files" style="width: 100%">
+                        <el-table-column label="名称">
+                            <template slot-scope="scope">
+                                <el-link v-if="scope.row.isFolder" @click="enterDir(scope.row.name)">
+                                    <i class="el-icon-folder"></i>
+                                    {{ scope.row.name }}
+                                </el-link>
+                                <div v-else>
+                                    <i class="el-icon-tickets"></i>
+                                    {{ scope.row.name }}
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" fixed="right">
+                            <template slot-scope="scope" >
+                                <el-button v-if="!scope.row.isFolder" plain size="small"
+                                    @click="downloadFile(path, scope.row.name)">
+                                    <el-icon class="el-icon-download"></el-icon>下载
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+
+
+                    <!-- <el-container v-for="item in files" :key="item.name" type="flex" justify style="">
                         <el-main>
                             <el-link @click="enterDir(item.name)" v-if="item.isFolder">
                                 <i class="el-icon-folder"></i>
@@ -45,7 +71,7 @@
                             @click="downloadFile(path, item.name)">
                             <el-icon class="el-icon-download"></el-icon>下载
                         </el-button>
-                    </el-container>
+                    </el-container> -->
                 </div>
             </el-card>
         </div>
@@ -106,6 +132,7 @@ export default {
             }
         },
         loadDir() {
+            // this.files = [{name:"dsadsa",isFolder:true},{name:"dasas.csv",isFolder:false}]
             listDir(this.path).then(res => {
                 this.files = res.data.result
             })
@@ -123,7 +150,8 @@ export default {
                         message: res.data.result + '创建成功'
                     });
                 }).then(res => {
-                    this.files.push({ name: value, isFolder: true })
+                    let newFolder = value.split('/')[0]
+                    this.files.push({ name: newFolder, isFolder: true })
                 })
             }).catch(() => {
                 this.$message({

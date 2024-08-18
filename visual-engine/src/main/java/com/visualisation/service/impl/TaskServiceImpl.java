@@ -1,12 +1,15 @@
 package com.visualisation.service.impl;
 
-import com.visualisation.model.dag.Task;
+import com.visualisation.model.dag.db.TaskProject;
+import com.visualisation.model.dag.db.Task;
 import com.visualisation.repository.dag.TaskRepository;
 import com.visualisation.service.TaskService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -29,4 +32,13 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.getById(id);
     }
 
+    @Override
+    public Map<String, String> getTaskNameMap(List<Long> taskId) {
+        List<TaskProject> tasks = taskRepository.getTasks(taskId);
+        Map<String, String> map = new HashMap<>();
+        for (TaskProject task : tasks) {
+            map.put(task.getTask_id().toString(), task.getName());
+        }
+        return map;
+    }
 }

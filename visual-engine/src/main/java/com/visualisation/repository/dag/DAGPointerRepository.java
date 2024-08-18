@@ -1,7 +1,7 @@
 package com.visualisation.repository.dag;
 
-import com.visualisation.model.dag.DAGPointer;
-import com.visualisation.model.dag.PointerId;
+import com.visualisation.model.dag.db.DAGPointer;
+import com.visualisation.model.dag.db.PointerId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

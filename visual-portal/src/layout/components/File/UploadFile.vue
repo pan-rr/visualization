@@ -218,7 +218,7 @@ const handleRemoveFile = (uploadFile, uploadFiles) => {
     <el-card>
         <div slot="header" class="clearfix">
             <!-- <el-tag type="info">文件上传</el-tag> -->
-            <el-link><el-icon class="el-icon-info"></el-icon>空间共享的文件请上传在spaceShare文件夹下，否则无法识别！例如存储空间为public时，对应空间路径是"/public/spaceShare"</el-link>
+            <p><el-icon class="el-icon-info"></el-icon>空间共享的文件请上传在spaceShare文件夹下，否则无法识别！例如存储空间为public时，对应空间路径是"/public/spaceShare"</p>
         </div>
         <el-upload class="upload-demo" drag action="/" multiple :http-request="handleHttpRequest"
             :on-remove="handleRemoveFile">

@@ -1,7 +1,7 @@
 package com.visualisation.model.dag.logicflow;
 
-import com.visualisation.model.dag.DAGTemplate;
-import com.visualisation.model.dag.Task;
+import com.visualisation.model.dag.db.DAGTemplate;
+import com.visualisation.model.dag.db.Task;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

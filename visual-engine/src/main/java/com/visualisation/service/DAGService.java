@@ -1,6 +1,6 @@
 package com.visualisation.service;
 
-import com.visualisation.model.dag.*;
+import com.visualisation.model.dag.db.*;
 import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

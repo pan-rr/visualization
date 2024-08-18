@@ -2,7 +2,7 @@ package com.visualisation.controller;
 
 import com.visualisation.manager.PointerQueueManager;
 import com.visualisation.model.Response;
-import com.visualisation.model.dag.DAGPointer;
+import com.visualisation.model.dag.db.DAGPointer;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

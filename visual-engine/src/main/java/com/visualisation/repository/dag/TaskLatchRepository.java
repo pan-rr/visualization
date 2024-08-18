@@ -1,6 +1,6 @@
 package com.visualisation.repository.dag;
 
-import com.visualisation.model.dag.TaskLatch;
+import com.visualisation.model.dag.db.TaskLatch;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

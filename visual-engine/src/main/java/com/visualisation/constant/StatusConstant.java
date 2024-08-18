@@ -16,7 +16,7 @@ public class  StatusConstant {
     public static String getStatusName(int status) {
         switch (status) {
             case TEMP:
-                return "待使用";
+                return "待执行";
             case BLOCK:
                 return "阻塞";
             case FINISHED:

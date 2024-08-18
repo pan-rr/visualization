@@ -1,4 +1,4 @@
-package com.visualisation.model.dag;
+package com.visualisation.model.dag.db;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.gson.Gson;
@@ -27,8 +27,6 @@ import java.util.List;
 @EntityListeners(value = AuditingEntityListener.class)
 public class DAGTemplate implements Serializable {
     @Id
-//    @GeneratedValue(generator = "snowId")
-//    @GenericGenerator(name = "snowId", strategy = "com.visualisation.jpa.SnowIdGenerator")
     private Long templateId;
     private String name;
     @Transient
@@ -52,6 +50,7 @@ public class DAGTemplate implements Serializable {
                 .templateId(String.valueOf(templateId))
                 .graph(json)
                 .name(name)
+                .space(space)
                 .status(StatusConstant.getStatusName(status))
                 .version(version)
                 .build();

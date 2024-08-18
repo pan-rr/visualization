@@ -2,7 +2,7 @@ package com.visualisation.model.dag.logicflow;
 
 import com.google.gson.Gson;
 import com.visualisation.exception.DAGException;
-import com.visualisation.model.dag.Task;
+import com.visualisation.model.dag.db.Task;
 import com.visualisation.utils.SnowIdUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

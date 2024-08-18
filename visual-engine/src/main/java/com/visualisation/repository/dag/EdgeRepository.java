@@ -1,7 +1,7 @@
 package com.visualisation.repository.dag;
 
-import com.visualisation.model.dag.Edge;
-import com.visualisation.model.dag.EdgeId;
+import com.visualisation.model.dag.db.Edge;
+import com.visualisation.model.dag.db.EdgeId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 

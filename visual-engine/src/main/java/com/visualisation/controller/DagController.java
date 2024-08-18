@@ -2,8 +2,8 @@ package com.visualisation.controller;
 
 import com.visualisation.manager.DAGManager;
 import com.visualisation.model.Response;
-import com.visualisation.model.dag.DAGPointer;
-import com.visualisation.model.dag.Task;
+import com.visualisation.model.dag.db.DAGPointer;
+import com.visualisation.model.dag.db.Task;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

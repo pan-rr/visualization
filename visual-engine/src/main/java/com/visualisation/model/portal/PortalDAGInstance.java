@@ -1,4 +1,4 @@
-package com.visualisation.model.dag;
+package com.visualisation.model.portal;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +15,8 @@ public class PortalDAGInstance implements Serializable {
     private String instanceId;
     private String templateId;
     private String templateName;
+    private String space;
     private String status;
+    private String createTime;
+    private String finishTime;
 }

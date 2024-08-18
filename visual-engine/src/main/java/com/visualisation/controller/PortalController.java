@@ -2,12 +2,13 @@ package com.visualisation.controller;
 
 import com.visualisation.manager.DAGManager;
 import com.visualisation.manager.LogicFlowManager;
+import com.visualisation.manager.TimeLineManager;
 import com.visualisation.model.PageParameter;
 import com.visualisation.model.PageResponse;
 import com.visualisation.model.Response;
-import com.visualisation.model.dag.DAGInstance;
-import com.visualisation.model.dag.DAGTemplate;
-import com.visualisation.model.dag.PortalDAGInstance;
+import com.visualisation.model.dag.db.DAGInstance;
+import com.visualisation.model.dag.db.DAGTemplate;
+import com.visualisation.model.portal.PortalDAGInstance;
 import com.visualisation.model.dag.logicflow.LogicGraph;
 import com.visualisation.model.portal.PortalDAGTemplate;
 import com.visualisation.service.DAGService;
@@ -32,6 +33,9 @@ public class PortalController {
     @Resource
     private DAGManager dagManager;
 
+    @Resource
+    private TimeLineManager timeLineManager;
+
     @PostMapping("/createTemplate")
     public Response<Object> createTemplate(@RequestBody LogicGraph logicGraph) {
         logicFlowManager.saveTemplate(logicGraph);
@@ -50,9 +54,9 @@ public class PortalController {
     @PostMapping("/getInstanceList")
     public PageResponse getInstanceList(@RequestBody PageParameter parameter) {
         PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
-        Page<DAGInstance> templateList = dagService.getInstanceList(request);
-        List<PortalDAGInstance> collect = templateList.getContent().stream().map(DAGInstance::convert).collect(Collectors.toList());
-        return PageResponse.success(collect, templateList.getNumberOfElements());
+        Page<DAGInstance> instanceList = dagService.getInstanceList(request);
+        List<PortalDAGInstance> collect = instanceList.getContent().stream().map(DAGInstance::convert).collect(Collectors.toList());
+        return PageResponse.success(collect, instanceList.getNumberOfElements());
 
     }
 
@@ -60,8 +64,8 @@ public class PortalController {
     @GetMapping("/createInstance")
     public Response<Object> createInstance(@RequestParam("templateId") String templateId) {
         Long id = Long.valueOf(templateId);
-        dagManager.createLogicFlowInstanceByTemplateId(id);
-        return Response.success("新建实例成功");
+        DAGInstance instance = dagManager.createLogicFlowInstanceByTemplateId(id);
+        return Response.success(instance.getInstanceId().toString());
     }
 
     @GetMapping("/disableTemplateById")
@@ -71,5 +75,9 @@ public class PortalController {
         return Response.success("禁用模版成功");
     }
 
+    @GetMapping("/getLogTimeLine")
+    public Response<Object> getLogTimeLineByInstanceId(@RequestParam("instanceId") String instanceId) {
+        return Response.success(timeLineManager.getTimeLineByInstanceId(instanceId));
+    }
 
 }

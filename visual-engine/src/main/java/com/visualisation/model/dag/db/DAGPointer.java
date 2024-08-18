@@ -1,4 +1,4 @@
-package com.visualisation.model.dag;
+package com.visualisation.model.dag.db;
 
 import com.google.gson.Gson;
 import com.visualisation.constant.ViewConstant;

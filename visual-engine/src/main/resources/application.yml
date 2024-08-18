@@ -14,3 +14,11 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
+
+
+visual:
+#log 去掉后，默认使用slf4j
+  log:
+    loggerClass: com.visualisation.log.logger.TimeSeriesLogService
+    influx:
+      connectionString : http://localhost:8086?org=visual&bucket=visual_log&token=FqBDSXdY3jYuPbtEe9FeV77cYTWfbUSd7_gxSEq_Sf0VhGr2gqvkd7dEF43w2v8o08ElOVqHk8fJlWUsBzScfg==&

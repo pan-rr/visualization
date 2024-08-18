@@ -19,12 +19,6 @@ public class DataSourceConfig {
         return new HikariDataSource();
     }
 
-    @ConfigurationProperties(prefix = "visual.db2")
-    @Bean(value = "db2")
-    public DataSource db2() {
-        return new HikariDataSource();
-    }
-
 
     @Primary
     @ConfigurationProperties(prefix = "visual.dag")

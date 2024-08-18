@@ -2,7 +2,7 @@ package com.visualisation.service.impl;
 
 import com.visualisation.constant.StatusConstant;
 import com.visualisation.exception.DAGException;
-import com.visualisation.model.dag.*;
+import com.visualisation.model.dag.db.*;
 import com.visualisation.model.dag.logicflow.LogicFlowPack;
 import com.visualisation.repository.dag.*;
 import com.visualisation.service.DAGService;
@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -78,8 +80,10 @@ public class DAGServiceImpl implements DAGService {
                 .instanceId(instanceId)
                 .templateId(templateId)
                 .templateName(template.getName())
+                .space(template.getSpace())
                 .version(template.getVersion())
-                .status(StatusConstant.NORMAL)
+                .status(StatusConstant.TEMP)
+                .createTime(LocalDateTime.now())
                 .build();
         dagInstanceRepository.save(instance);
         return instance;
@@ -112,7 +116,7 @@ public class DAGServiceImpl implements DAGService {
     public void tryFinishInstance(Long instanceId) {
         Integer instancePointCount = dagPointerRepository.getInstancePointCount(instanceId);
         if (instancePointCount < 1) {
-            dagInstanceRepository.updateInstanceStatus(instanceId, StatusConstant.FINISHED);
+            dagInstanceRepository.finishInstance(instanceId, new Date(), StatusConstant.FINISHED);
         }
     }
 

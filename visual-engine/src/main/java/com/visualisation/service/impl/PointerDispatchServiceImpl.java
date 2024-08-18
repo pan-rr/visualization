@@ -2,7 +2,7 @@ package com.visualisation.service.impl;
 
 import com.visualisation.manager.DAGManager;
 import com.visualisation.manager.PointerQueueManager;
-import com.visualisation.model.dag.DAGPointer;
+import com.visualisation.model.dag.db.DAGPointer;
 import com.visualisation.service.PointerDispatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

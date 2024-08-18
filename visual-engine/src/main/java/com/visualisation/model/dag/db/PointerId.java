@@ -1,4 +1,4 @@
-package com.visualisation.model.dag;
+package com.visualisation.model.dag.db;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskKey implements Serializable {
+public class PointerId implements Serializable {
+
     private Long instanceId;
 
     private Long taskId;

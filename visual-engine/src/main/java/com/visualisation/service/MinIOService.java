@@ -1,7 +1,7 @@
 package com.visualisation.service;
 
 import com.visualisation.constant.OSSConstant;
-import com.visualisation.model.dag.DAGTemplate;
+import com.visualisation.model.dag.db.DAGTemplate;
 import com.visualisation.utils.FilePathUtil;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;

@@ -1,6 +1,6 @@
 package com.visualisation.manager;
 
-import com.visualisation.model.dag.DAGPointer;
+import com.visualisation.model.dag.db.DAGPointer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

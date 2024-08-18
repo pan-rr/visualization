@@ -16,13 +16,13 @@ export default {
       path: 'templateList',
       name: 'VisualTemplateList',
       meta: { title: '已定义流程列表', needCache: true },
-      component: () => import('@/layout/components/LogicFlow/TemplateList.vue')
+      component: () => import('@/views/Dag/TemplateList.vue')
     },
     {
       path: 'instanceList',
       name: 'VisualInstanceList',
-      meta: { title: '流程实例列表', needCache: true },
-      component: () => import('@/layout/components/LogicFlow/InstanceList.vue')
+      meta: { title: '流程实例列表', needCache: false },
+      component: () => import('@/views/Dag/InstanceList.vue')
     },
     {
       path: 'fileManage',

@@ -1,6 +1,8 @@
 package com.visualisation.manager;
 
-import com.visualisation.model.dag.DAGPointer;
+import com.visualisation.log.logger.VisualLogService;
+import com.visualisation.log.model.VisualStageWrapper;
+import com.visualisation.model.dag.db.DAGPointer;
 import com.visualisation.service.PointerDispatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +43,9 @@ public class WorkerManager {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Resource
+    private VisualLogService visualLogService;
+
     private int watermark;
 
     private LinkedBlockingQueue<DAGPointer> pointerQ;
@@ -74,9 +79,10 @@ public class WorkerManager {
                         map.put(Thread.currentThread(), pointer);
                         dagManager.executeTask(pointer);
                         redisTemplate.delete(key);
+                        visualLogService.accept(VisualStageWrapper.success(pointer));
                     } catch (Exception e) {
-                        log.error("处理失败，原因：{} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                         DAGPointer pointer = map.get(Thread.currentThread());
+                        visualLogService.accept(VisualStageWrapper.fail(pointer, e));
                         failTaskQ.offer(pointer);
                     }
                 }
