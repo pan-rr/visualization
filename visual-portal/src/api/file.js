@@ -26,8 +26,20 @@ const taskInfo = (md5) => {
  * @param chunkSize 分块大小
  * @returns {Promise<AxiosResponse<any>>}
  */
-const initTask = ({ md5, folder,fileName, totalSize, chunkSize }) => {
-    return service.post('/file/fileChunk/initFileChunk', { md5, folder,fileName, totalSize, chunkSize })
+const initTask = ({ md5, folder, fileName, totalSize, chunkSize }) => {
+    return service.post('/file/fileChunk/initFileChunk', { md5, folder, fileName, totalSize, chunkSize })
+}
+
+/**
+ * 尝试秒传
+ * @param md5 文件md5
+ * @param fileName 文件名称
+ * @param totalSize 文件大小
+ * @param chunkSize 分块大小
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+const tryQuickUpload = ({ md5, folder, fileName, totalSize, chunkSize }) => {
+    return service.post('/file/fileChunk/tryQuickUpload', { md5, folder, fileName, totalSize, chunkSize })
 }
 
 /**
@@ -52,6 +64,7 @@ const merge = (md5) => {
 export {
     taskInfo,
     initTask,
+    tryQuickUpload,
     preSignUrl,
     merge,
     httpExtra

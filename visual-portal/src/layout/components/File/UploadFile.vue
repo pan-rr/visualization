@@ -1,11 +1,9 @@
-
-
 <script setup>
 import { UploadFilled } from '@element-plus/icons-vue'
 
 import { Message } from 'element-ui'
 import md5Util from "../../../utils/md5";
-import { taskInfo, initTask, preSignUrl, merge } from '../../../api/file';
+import { taskInfo, initTask, preSignUrl, merge, tryQuickUpload } from '../../../api/file';
 
 import Queue from 'promise-queue-plus';
 import axios from 'axios'
@@ -16,45 +14,60 @@ const fileUploadChunkQueue = ref({}).value
 
 
 const props = defineProps({
-  folder: String
+    folder: String
 })
 
 const emit = defineEmits(['reloadDir'])
+
+const quickUpload = async (initTaskData) => {
+    let tryQuickUploadRes = await tryQuickUpload(initTaskData)
+    return tryQuickUploadRes?.data?.result;
+}
+
+const initUpload = async (initTaskData) => {
+    let res = await initTask(initTaskData)
+    const { code, result, message } = res.data
+    if (code === 0) {
+        return result
+    } else {
+        Message({
+            message: res.result,
+            type: 'error',
+            duration: 5 * 1000,
+        })
+    }
+    return null
+}
+
+const getInitTaskData = async (file) => {
+    const md5 = await md5Util(file)
+    const { folder } = toRefs(props)
+    let initTaskData = {
+        md5: md5,
+        folder: folder.value,
+        fileName: file.name,
+        totalSize: file.size,
+        // 5MB
+        chunkSize: 5 * 1024 * 1024
+    }
+    return initTaskData;
+}
 /**
  * 获取一个上传任务，没有则初始化一个
  */
-const getTaskInfo = async (file) => {
+const getTaskInfo = async (initTaskData) => {
+    
     let task;
-    const md5 = await md5Util(file)
-    let t = await taskInfo(md5)
+    let t = await taskInfo(initTaskData.md5)
     const { code, result, message } = t.data
     if (code === 0) {
         task = result
         if (!task) {
-            const {folder} = toRefs(props)
-            const initTaskData = {
-                md5: md5,
-                folder:folder.value,
-                fileName: file.name,
-                totalSize: file.size,
-                // 5MB
-                chunkSize: 5 * 1024 * 1024
-            }
-            let res = await initTask(initTaskData)
-            const { code, result, message } = res.data
-            if (code === 0) {
-                task = result
-            } else {
-                Message({
-                    message: resp.result,
-                    type: 'error',
-                    duration: 5 * 1000,
-                })
-            }
+            task = await initUpload(initTaskData)
         }
     } else {
         Message({
-            message: resp.result,
+            message: t.result,
             type: 'error',
             duration: 5 * 1000,
         })
@@ -166,7 +179,13 @@ const handleUpload = (file, fileChunkRecord, options) => {
  */
 const handleHttpRequest = async (options) => {
     const file = options.file
-    const task = await getTaskInfo(file)
+    const initTaskData = await getInitTaskData(file)
+    let finished = await quickUpload(initTaskData)
+    if (finished){
+        emit('reloadDir')
+        return
+    }
+    const task = await getTaskInfo(initTaskData)
     if (task) {
         const { finished, path, fileChunkRecord } = task
         const { md5 } = fileChunkRecord
@@ -218,7 +237,9 @@ const handleRemoveFile = (uploadFile, uploadFiles) => {
     <el-card>
         <div slot="header" class="clearfix">
             <!-- <el-tag type="info">文件上传</el-tag> -->
-            <p><el-icon class="el-icon-info"></el-icon>空间共享的文件请上传在spaceShare文件夹下，否则无法识别！例如存储空间为public时，对应空间路径是"/public/spaceShare"</p>
+            <p><el-icon
+                    class="el-icon-info"></el-icon>空间共享的文件请上传在spaceShare文件夹下，否则无法识别！例如存储空间为public时，对应空间路径是"/public/spaceShare"
+            </p>
         </div>
         <el-upload class="upload-demo" drag action="/" multiple :http-request="handleHttpRequest"
             :on-remove="handleRemoveFile">

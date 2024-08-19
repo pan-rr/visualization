@@ -40,7 +40,7 @@
 
 JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO
 
-备注：作者开发环境是Mac
+`备注：`作者开发环境是Mac，部分依赖可能和Windows有区别
 
 #### 工程结构
 
@@ -191,6 +191,8 @@ public class ViewConstant {
 ![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
 
 + 在文件管理页找到对应路径上传下载。
+
++ 支持分片上传、秒传、下载
 
 + `注意:`流程模版共享的文件需在spaceShare文件夹下，否则无法识别。例如存储空间为public时，对应空间路径是"/public/spaceShare"
 

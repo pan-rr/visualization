@@ -45,7 +45,7 @@
                             </template>
                         </el-table-column>
                         <el-table-column label="操作" fixed="right">
-                            <template slot-scope="scope" >
+                            <template slot-scope="scope">
                                 <el-button v-if="!scope.row.isFolder" plain size="small"
                                     @click="downloadFile(path, scope.row.name)">
                                     <el-icon class="el-icon-download"></el-icon>下载

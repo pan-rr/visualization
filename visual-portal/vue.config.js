@@ -1,6 +1,6 @@
 'use strict'
 const path = require('path')
-console.log(process.env.VUE_APP_BASE_API)
+
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
