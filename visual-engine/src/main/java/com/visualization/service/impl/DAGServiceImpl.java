@@ -4,21 +4,24 @@ import com.visualization.constant.StatusConstant;
 import com.visualization.exception.DAGException;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
+import com.visualization.model.param.NormalParam;
+import com.visualization.model.param.PageParameter;
 import com.visualization.repository.dag.*;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,8 +54,27 @@ public class DAGServiceImpl implements DAGService {
     }
 
     @Override
-    public Page<DAGInstance> getInstanceList(Pageable pageable) {
-        return dagInstanceRepository.findAll(pageable);
+    public Page<DAGInstance> getInstanceList(PageParameter<NormalParam> parameter) {
+        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
+        request.withSort(Sort.by("instance_id").descending());
+        NormalParam param = parameter.getParam();
+        if (Objects.nonNull(param)) {
+            Specification<DAGInstance> sp = (root,query,builder)->{
+                List<Predicate> list = new ArrayList<>();
+                list.add(builder.equal(root.get("space"),param.getSpace()));
+                List<Integer> status = param.getStatus();
+                if (!CollectionUtils.isEmpty(status)){
+                    CriteriaBuilder.In<Object> statusIn = builder.in(root.get("status"));
+                    for (Integer i : status) {
+                        statusIn.value(i);
+                    }
+                    list.add(statusIn);
+                }
+                return builder.and(list.toArray(new Predicate[0]));
+            };
+            return dagInstanceRepository.findAll(sp, request);
+        }
+        return dagInstanceRepository.findAll(request);
     }
 
     @Override

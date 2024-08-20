@@ -2,6 +2,8 @@ package com.visualization.service;
 
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
+import com.visualization.model.param.NormalParam;
+import com.visualization.model.param.PageParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,7 +13,7 @@ public interface DAGService {
 
     Page<DAGTemplate> getTemplateList(Pageable pageable);
 
-    Page<DAGInstance> getInstanceList(Pageable pageable);
+    Page<DAGInstance> getInstanceList(PageParameter<NormalParam> parameter);
 
     void saveTemplateByPack(LogicFlowPack pack);
 

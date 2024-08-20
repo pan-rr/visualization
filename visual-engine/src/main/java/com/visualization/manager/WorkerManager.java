@@ -4,6 +4,7 @@ import com.visualization.log.logger.VisualLogService;
 import com.visualization.log.model.VisualStageWrapper;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.service.PointerDispatchService;
+import com.visualization.thread.Worker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -68,15 +69,16 @@ public class WorkerManager {
         watermark = Math.max(workerCount / 2, 5);
         Worker t;
         for (int i = 0; i < workerCount; i++) {
-            t = new Worker(() -> {
+            t = Worker.createDeamonWorker(() -> {
                 while (true) {
                     try {
                         DAGPointer pointer = pointerQ.take();
-                        String key = "visual_pointer_" + pointer.getTaskId();
+                        String key = pointer.computeLockKey();
                         Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, key, 1, TimeUnit.HOURS);
                         // 拿不到锁就放弃任务
                         if (Boolean.FALSE.equals(flag)) continue;
                         map.put(Thread.currentThread(), pointer);
+                        visualLogService.accept(VisualStageWrapper.start(pointer));
                         dagManager.executeTask(pointer);
                         redisTemplate.delete(key);
                         visualLogService.accept(VisualStageWrapper.success(pointer));
@@ -86,14 +88,12 @@ public class WorkerManager {
                         failTaskQ.offer(pointer);
                     }
                 }
-            });
-            t.setDaemon(true);
-            t.setName("dag-worker-" + i);
+            }, "dag-worker-" + i);
             t.start();
             workers.add(t);
         }
 
-        keeper = new Worker(() -> {
+        keeper = Worker.createDeamonWorker(() -> {
             while (true) {
                 try {
                     signalQ.take();
@@ -105,12 +105,10 @@ public class WorkerManager {
                     log.error("keeper error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 }
             }
-        });
-        keeper.setDaemon(true);
-        keeper.setName("dag-keeper");
+        }, "dag-keeper");
         keeper.start();
 
-        failTaskWorker = new Worker(() -> {
+        failTaskWorker = Worker.createDeamonWorker(() -> {
             while (true) {
                 try {
                     DAGPointer pointer = failTaskQ.take();
@@ -119,9 +117,7 @@ public class WorkerManager {
                     log.error("failTaskWorker error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 }
             }
-        });
-        failTaskWorker.setDaemon(true);
-        failTaskWorker.setName("dag-failTaskWorker");
+        }, "dag-failTaskWorker");
         failTaskWorker.start();
 
     }
@@ -131,10 +127,5 @@ public class WorkerManager {
         signalQ.offer(1);
     }
 
-    private static class Worker extends Thread {
-        public Worker(Runnable r) {
-            super(r);
-        }
-    }
 
 }

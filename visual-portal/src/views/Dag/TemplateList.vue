@@ -1,19 +1,19 @@
 <template>
   <div>
-    <el-table :data="tableData" style="width: 100%" max-height="100%">
+    <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe>
 
-      <el-table-column prop="templateId" label="流程模版ID" >
+      <el-table-column prop="templateId" label="流程模版ID">
       </el-table-column>
       <el-table-column prop="name" label="流程模版名称">
       </el-table-column>
-      <el-table-column prop="version" label="发布时间" >
+      <el-table-column prop="version" label="发布时间">
       </el-table-column>
       <el-table-column label="流程模版状态">
         <template slot-scope="scope">
           <el-tag size="medium">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" >
+      <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
             运行实例
@@ -26,8 +26,9 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination @size-change="getList" @current-change="getList" :current-page=currentPage
-      :page-sizes="[100, 200, 300]" :page-size=pageSize layout="total, sizes, prev, pager, next, jumper" :total=total>
+    <el-pagination @size-change="changeSize" @current-change="changePage" @prev-click="changePage"
+      @next-click="changePage" :current-page=currentPage :page-sizes="[10, 20, 50, 100]" :page-size=pageSize
+      layout="total, sizes, prev, pager, next, jumper" :total=total>
     </el-pagination>
   </div>
 
@@ -49,6 +50,12 @@ export default {
     }
   },
   methods: {
+    changePage(val) {
+      this.currentPage = val
+    },
+    changeSize(val) {
+      this.pageSize = val
+    },
     createInstance(templateId) {
       createInstanceById(templateId).then(res => {
         let data = res.data
@@ -64,8 +71,9 @@ export default {
       rows.splice(index, 1);
     },
     disableTemplate(status, templateId) {
-      disableTemplateById(templateId)
-      this.getList()
+      disableTemplateById(templateId).then(res=>{
+        this.getList()
+      })
     },
     getList() {
       let pageable = {
@@ -84,6 +92,21 @@ export default {
   mounted() {
     this.getList();
   },
-
+  watch: {
+    currentPage: {
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
+      }
+    },
+    pageSize: {
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
+      }
+    },
+  }
 }
 </script>

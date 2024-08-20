@@ -1,15 +1,17 @@
-package com.visualization.model;
+package com.visualization.model.param;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PageParameter {
-    private Integer page = 0;
-    private Integer size = 10;
+public class NormalParam {
+    private String space;
+    private List<Integer> status;
 }

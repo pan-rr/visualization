@@ -86,4 +86,8 @@ public class DAGPointer implements Serializable {
             output.compute(ViewConstant.FILE_PATH, (k, v) -> handleFilePath(v));
         }
     }
+
+    public String computeLockKey(){
+        return "visual_pointer_" + taskId;
+    }
 }

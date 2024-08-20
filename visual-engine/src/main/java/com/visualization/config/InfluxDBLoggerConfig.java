@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(name = "visual.log.loggerClass", havingValue = "com.visualisation.log.logger.TimeSeriesLogService")
+@ConditionalOnProperty(name = "visual.log.loggerClass", havingValue = "com.visualization.log.logger.TimeSeriesLogService")
 public class InfluxDBLoggerConfig {
 
     @Bean(name = "visualInfluxDBClient")

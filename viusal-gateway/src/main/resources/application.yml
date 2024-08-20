@@ -1,11 +1,19 @@
 server:
   port: 8375
   servlet:
-    context-path: /visual
+    context-path: /gateway
 spring:
   application:
     name: VISUAL-GATEWAY
   cloud:
+    gateway:
+      routes:
+        - id: engine
+          uri: lb://VISUAL-ENGINE
+          predicates:
+            - Path=/gateway/engine/**
+          filters:
+            - StripPrefix=1
     discovery:
       enabled: true
 eureka:

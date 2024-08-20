@@ -3,6 +3,7 @@ package com.visualization.log.logger;
 import com.visualization.exception.StageLogException;
 import com.visualization.log.model.StageLogPoint;
 import com.visualization.log.model.VisualStageWrapper;
+import com.visualization.thread.Worker;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,7 @@ public abstract class VisualLogService {
 
     @PostConstruct
     public void init() {
-        LogWorker logWorker = new VisualLogService.LogWorker(() -> {
+        Worker logWorker = Worker.createDeamonWorker(() -> {
             while (true) {
                 try {
                     handleLog(take());
@@ -26,9 +27,7 @@ public abstract class VisualLogService {
                     log.error("visual-log 异常:", e);
                 }
             }
-        });
-        logWorker.setDaemon(true);
-        logWorker.setName("visual-logWorker");
+        }, "visual-logWorker");
         logWorker.start();
     }
 
@@ -52,13 +51,7 @@ public abstract class VisualLogService {
         return res;
     }
 
-    private static class LogWorker extends Thread {
-        public LogWorker(Runnable r) {
-            super(r);
-        }
-    }
-
-    public List<StageLogPoint> getLogPointsByInstanceId(String instanceId){
+    public List<StageLogPoint> getLogPointsByInstanceId(String instanceId) {
         throw new StageLogException("未实现日志查询操作");
     }
 }

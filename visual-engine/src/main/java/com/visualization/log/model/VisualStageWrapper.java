@@ -1,5 +1,6 @@
 package com.visualization.log.model;
 
+import com.visualization.enums.StageEnum;
 import com.visualization.model.dag.db.DAGPointer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Objects;
+
 
 @Data
 @AllArgsConstructor
@@ -23,22 +25,28 @@ public class VisualStageWrapper {
 
     private Instant time;
 
-    private static final String SUCCESS_MESSAGE_EXPRESSION = "任务ID：{0}，执行成功";
+    private StageEnum stageEnum;
 
-    private static final String FAIL_MESSAGE_EXPRESSION = "任务ID：{0}执行失败，原因：{1}";
+    private static final String FAIL_MESSAGE_EXPRESSION = "执行失败，原因：{0}";
 
     public static VisualStageWrapper success(DAGPointer pointer) {
-        return new VisualStageWrapper(pointer, null, Instant.now());
+        return new VisualStageWrapper(pointer, null, Instant.now(), StageEnum.STAGE_SUCCESS);
+    }
+
+    public static VisualStageWrapper start(DAGPointer pointer) {
+        return new VisualStageWrapper(pointer, null, Instant.now(), StageEnum.STAGE_START);
     }
 
     public static VisualStageWrapper fail(DAGPointer pointer, Throwable e) {
-        return new VisualStageWrapper(pointer, e, Instant.now());
+        return new VisualStageWrapper(pointer, e, Instant.now(), StageEnum.STAGE_FAIL);
     }
 
 
     public String getStageExecuteMessage() {
-        return Objects.isNull(exception) ? MessageFormat.format(SUCCESS_MESSAGE_EXPRESSION, pointer.getTaskId().toString())
-                : MessageFormat.format(FAIL_MESSAGE_EXPRESSION, pointer.getTaskId(), exception.getMessage());
+        if (Objects.requireNonNull(stageEnum) == StageEnum.STAGE_FAIL) {
+            return MessageFormat.format(FAIL_MESSAGE_EXPRESSION, exception.getMessage());
+        }
+        return stageEnum.getMessage();
 
     }
 

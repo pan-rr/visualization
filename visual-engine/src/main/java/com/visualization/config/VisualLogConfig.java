@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class VisualLogConfig {
 
-    @Value("${visual.log.loggerClass:com.visualisation.log.logger.NormalLogService}")
+    @Value("${visual.log.loggerClass:com.visualization.log.logger.NormalLogService}")
     private String loggerClassName ;
 
     @SneakyThrows

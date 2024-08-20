@@ -3,7 +3,8 @@ package com.visualization.controller;
 import com.visualization.manager.DAGManager;
 import com.visualization.manager.LogicFlowManager;
 import com.visualization.manager.TimeLineManager;
-import com.visualization.model.PageParameter;
+import com.visualization.model.param.NormalParam;
+import com.visualization.model.param.PageParameter;
 import com.visualization.model.PageResponse;
 import com.visualization.model.Response;
 import com.visualization.model.dag.db.DAGInstance;
@@ -47,16 +48,15 @@ public class PortalController {
         PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
         Page<DAGTemplate> templateList = dagService.getTemplateList(request);
         List<PortalDAGTemplate> collect = templateList.getContent().stream().map(DAGTemplate::convert).collect(Collectors.toList());
-        return PageResponse.success(collect, templateList.getNumberOfElements());
+        return PageResponse.success(collect, (int) templateList.getTotalElements());
 
     }
 
     @PostMapping("/getInstanceList")
-    public PageResponse getInstanceList(@RequestBody PageParameter parameter) {
-        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
-        Page<DAGInstance> instanceList = dagService.getInstanceList(request);
+    public PageResponse getInstanceList(@RequestBody PageParameter<NormalParam> parameter) {
+        Page<DAGInstance> instanceList = dagService.getInstanceList(parameter);
         List<PortalDAGInstance> collect = instanceList.getContent().stream().map(DAGInstance::convert).collect(Collectors.toList());
-        return PageResponse.success(collect, instanceList.getNumberOfElements());
+        return PageResponse.success(collect, (int) instanceList.getTotalElements());
 
     }
 

@@ -42,7 +42,7 @@ module.exports = {
         changeOrigin: true, // 允许跨域
         secure: false,
         ws: true,
-        // logLevel: 'debug',
+        logLevel: 'debug',
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''  // 重写请求
         },

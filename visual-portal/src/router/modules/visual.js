@@ -2,7 +2,6 @@ import Layout from '@/layout/index.vue'
 export default {
   path: '/visual',
   name: 'Visual',
-  // redirect: '/visual/define',
   meta: { title: '流程管理', icon: 'el-icon-s-data', needCache: true },
   component: Layout,
   children: [
