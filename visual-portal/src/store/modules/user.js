@@ -1,4 +1,5 @@
-import { apiLogin, apiLogout } from '@/api/user'
+import { apiLogout } from '@/api/user'
+import { userLogin } from '../../api/auth'
 
 export default {
   namespaced: true,
@@ -7,22 +8,29 @@ export default {
       userId: '',
       name: '',
       avatar: '',
-      space:[],
+      spaceOptions:[],
+      tenantOptions :[],
+      choosenTenant:''
     },
+    token: '',
   },
   mutations: {
     SET_USER_INFO(state, data) {
       state.userInfo.userId = data.userId
       state.userInfo.name = data.name
-      state.userInfo.avatar = data.avatar
-      state.userInfo.space = data.space
+      state.userInfo.avatar = ''
+      state.userInfo.spaceOptions = data.spaceOptions
+      state.userInfo.tenantOptions = data.tenantOptions
+      state.userInfo.choosenTenant = data.tenantOptions[0]
+      localStorage.setItem('visual',data.token)
     },
   },
   actions: {
     login({ commit, dispatch }, data) {
       return new Promise((resolve) => {
-        apiLogin(data).then(async (res) => {
-          commit('SET_USER_INFO', res.data.body)
+        userLogin(data).then(async (res) => {
+          commit('SET_USER_INFO', res.data.result)
+          
           await dispatch('permission/handleRoutes', null, { root: true })
           resolve('success')
         })

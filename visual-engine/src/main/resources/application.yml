@@ -57,7 +57,13 @@ visual:
       retryMaxCount: 5
     worker:
       count: 10
-#log 去掉后，默认使用slf4j
+  storage:
+    minio:
+      enable: true
+      endpoint: http://127.0.0.1:9000
+      accessKey: ndF8eqVrmDnzURusQGuo
+      secretKey: 6YUXohif1UNYRj5dtnr82ogLnEomewVdjqkuFR3a
+#log配置去掉后，默认使用slf4j，只是无法查询执行日志
   log:
     loggerClass: com.visualization.log.logger.TimeSeriesLogService
     influx:

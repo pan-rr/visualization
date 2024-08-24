@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class TimeSeriesLogService extends VisualLogService {
 
-    private static final String queryByInstanceIdExp = "from(bucket: \"#{[bucketName]}\")\n" +
+    private static final String QUERY_BY_INSTANCE_ID_EXP = "from(bucket: \"#{[bucketName]}\")\n" +
             "  |> range(start: -15d, stop: now())\n" +
             "  |> filter(fn: (r) => r._measurement == \"#{[measurement]}\" )  \n" +
             "  |> filter(fn: (r) => r.instance_id == \"#{[instanceId]}\" )  \n" +
@@ -41,7 +41,7 @@ public class TimeSeriesLogService extends VisualLogService {
         map.put("bucketName", "visual_log");
         map.put("measurement", "visual_stage_log");
         map.put("instanceId", instanceId);
-        String q = SPELUtils.parseExpression(queryByInstanceIdExp, map);
+        String q = SPELUtils.parseExpression(QUERY_BY_INSTANCE_ID_EXP, map);
         QueryApi api = influxDBClient.getQueryApi();
         return api.query(q, StageLogPoint.class);
     }

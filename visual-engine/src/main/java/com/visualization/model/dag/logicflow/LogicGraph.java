@@ -1,8 +1,8 @@
 package com.visualization.model.dag.logicflow;
 
 import com.google.gson.Gson;
-import com.visualization.constant.StatusConstant;
 import com.visualization.constant.VisualConstant;
+import com.visualization.enums.StatusEnum;
 import com.visualization.exception.DAGException;
 import com.visualization.jpa.SnowIdWorker;
 import com.visualization.model.dag.db.DAGTemplate;
@@ -48,7 +48,7 @@ public class LogicGraph {
                 .templateId(snowIdWorker.nextId())
                 .json(flowJSON)
                 .space(Objects.nonNull(space) ? space : VisualConstant.DEFAULT_SPACE)
-                .status(StatusConstant.NORMAL)
+                .status(StatusEnum.NORMAL.getStatus())
                 .build();
     }
 

@@ -27,7 +27,7 @@ const taskInfo = (md5) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const initTask = ({ md5, folder, fileName, totalSize, chunkSize }) => {
-    return service.post('/file/fileChunk/initFileChunk', { md5, folder, fileName, totalSize, chunkSize })
+    return service.post('engine/portal/file/fileChunk/initFileChunk', { md5, folder, fileName, totalSize, chunkSize })
 }
 
 /**
@@ -39,7 +39,7 @@ const initTask = ({ md5, folder, fileName, totalSize, chunkSize }) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const tryQuickUpload = ({ md5, folder, fileName, totalSize, chunkSize }) => {
-    return service.post('/file/fileChunk/tryQuickUpload', { md5, folder, fileName, totalSize, chunkSize })
+    return service.post('engine/portal/file/fileChunk/tryQuickUpload', { md5, folder, fileName, totalSize, chunkSize })
 }
 
 /**
@@ -49,7 +49,7 @@ const tryQuickUpload = ({ md5, folder, fileName, totalSize, chunkSize }) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const preSignUrl = ({ md5, partNumber }) => {
-    return service.get(`/file/fileChunk/generatePreSignedUrl/${md5}/${partNumber}`)
+    return service.get(`engine/portal/file/fileChunk/generatePreSignedUrl/${md5}/${partNumber}`)
 }
 
 /**
@@ -58,7 +58,7 @@ const preSignUrl = ({ md5, partNumber }) => {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const merge = (md5) => {
-    return service.post(`/file/fileChunk/merge/${md5}`)
+    return service.post(`engine/portal/file/fileChunk/merge/${md5}`)
 }
 
 export {

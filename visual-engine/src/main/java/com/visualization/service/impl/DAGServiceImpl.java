@@ -1,6 +1,6 @@
 package com.visualization.service.impl;
 
-import com.visualization.constant.StatusConstant;
+import com.visualization.enums.StatusEnum;
 import com.visualization.exception.DAGException;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
@@ -10,7 +10,9 @@ import com.visualization.repository.dag.*;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -49,8 +51,27 @@ public class DAGServiceImpl implements DAGService {
 
 
     @Override
-    public Page<DAGTemplate> getTemplateList(Pageable pageable) {
-        return dagTemplateRepository.findAll(pageable);
+    public Page<DAGTemplate> getTemplateList(PageParameter<NormalParam> parameter) {
+        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
+        request.withSort(Sort.by("instance_id").descending());
+        NormalParam param = parameter.getParam();
+        if (Objects.nonNull(param)) {
+            Specification<DAGTemplate> sp = (root, query, builder) -> {
+                List<Predicate> list = new ArrayList<>();
+                list.add(builder.equal(root.get("space"), param.getSpace()));
+                List<Integer> status = param.getStatus();
+                if (!CollectionUtils.isEmpty(status)) {
+                    CriteriaBuilder.In<Object> statusIn = builder.in(root.get("status"));
+                    for (Integer i : status) {
+                        statusIn.value(i);
+                    }
+                    list.add(statusIn);
+                }
+                return builder.and(list.toArray(new Predicate[0]));
+            };
+            return dagTemplateRepository.findAll(sp, request);
+        }
+        return dagTemplateRepository.findAll(request);
     }
 
     @Override
@@ -59,11 +80,11 @@ public class DAGServiceImpl implements DAGService {
         request.withSort(Sort.by("instance_id").descending());
         NormalParam param = parameter.getParam();
         if (Objects.nonNull(param)) {
-            Specification<DAGInstance> sp = (root,query,builder)->{
+            Specification<DAGInstance> sp = (root, query, builder) -> {
                 List<Predicate> list = new ArrayList<>();
-                list.add(builder.equal(root.get("space"),param.getSpace()));
+                list.add(builder.equal(root.get("space"), param.getSpace()));
                 List<Integer> status = param.getStatus();
-                if (!CollectionUtils.isEmpty(status)){
+                if (!CollectionUtils.isEmpty(status)) {
                     CriteriaBuilder.In<Object> statusIn = builder.in(root.get("status"));
                     for (Integer i : status) {
                         statusIn.value(i);
@@ -84,9 +105,9 @@ public class DAGServiceImpl implements DAGService {
 
 
     @Override
-    public DAGInstance createLogicFlowInstanceByTemplateId(Long templateId) {
+    public DAGInstance createInstanceByTemplateId(Long templateId) {
         DAGTemplate template = dagTemplateRepository.getById(templateId);
-        if (template.getStatus() != StatusConstant.NORMAL) {
+        if (!Objects.equals(template.getStatus(), StatusEnum.NORMAL.getStatus())) {
             throw new DAGException("该流程状态不允许启动实例");
         }
         minIOService.getTemplateStr(template);
@@ -104,7 +125,7 @@ public class DAGServiceImpl implements DAGService {
                 .templateName(template.getName())
                 .space(template.getSpace())
                 .version(template.getVersion())
-                .status(StatusConstant.TEMP)
+                .status(StatusEnum.NEW.getStatus())
                 .createTime(LocalDateTime.now())
                 .build();
         dagInstanceRepository.save(instance);
@@ -138,7 +159,7 @@ public class DAGServiceImpl implements DAGService {
     public void tryFinishInstance(Long instanceId) {
         Integer instancePointCount = dagPointerRepository.getInstancePointCount(instanceId);
         if (instancePointCount < 1) {
-            dagInstanceRepository.finishInstance(instanceId, new Date(), StatusConstant.FINISHED);
+            dagInstanceRepository.finishInstance(instanceId, new Date(), StatusEnum.FINISHED.getStatus());
         }
     }
 
@@ -156,9 +177,11 @@ public class DAGServiceImpl implements DAGService {
         return dagPointerRepository.getPointers(limit);
     }
 
-    @Transactional(transactionManager = "transactionManagerDAG")
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     @Override
     public void updateTemplateStatus(Long templateId, int status) {
         dagTemplateRepository.updateTemplateStatus(templateId, status);
     }
+
+
 }

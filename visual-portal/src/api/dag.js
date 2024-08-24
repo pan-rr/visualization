@@ -3,31 +3,31 @@ import { Message } from 'element-ui'
 
 
 export async function createTemplate(graph) {
-    return await service.post('/createTemplate', graph)
+    return await service.post('engine/portal/createTemplate', graph)
 }
 
 export async function getTemplateList(pageable) {
-    return await service.post('/getTemplateList', pageable)  
+    return await service.post('engine/portal/getTemplateList', pageable)  
 }
 
 export async function getInstanceList(pageable) {
-    return await service.post('/getInstanceList', pageable)  
+    return await service.post('engine/portal/getInstanceList', pageable)  
 }
 
 export async function getLogTimeLine(instanceId) {
-    return await service.get('/getLogTimeLine', { params: { instanceId } })
+    return await service.get('engine/portal/getLogTimeLine', { params: { instanceId } })
 }
 
 export async function createInstanceById(templateId) {
-    return await service.get('/createInstance', { params: { templateId } })
+    return await service.get('engine/portal/createInstance', { params: { templateId } })
 }
 
 export async function disableTemplateById(templateId) {
-    await service.get('/disableTemplateById', { params: { templateId } })
+    await service.get('engine/portal/disableTemplateById', { params: { templateId } })
 }
 
 export async function saveTask(task) {
-    let resp = (await service.post('/saveTask', task)).data
+    let resp = (await service.post('engine/portal/saveTask', task)).data
     sendSuccessMessage(resp)
     return resp
 }

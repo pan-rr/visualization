@@ -14,6 +14,12 @@ spring:
             - Path=/gateway/engine/**
           filters:
             - StripPrefix=1
+        - id: auth
+          uri: lb://VISUAL-AUTH
+          predicates:
+            - Path=/gateway/auth/**
+          filters:
+            - StripPrefix=1
     discovery:
       enabled: true
 eureka:
@@ -25,6 +31,9 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
+
+visual:
+  token-name: visual
 
 
 

@@ -4,6 +4,11 @@ spring:
   application:
     name: eureka
 eureka:
+  server:
+    response-cache-update-interval-ms: 3000
+    eviction-interval-timer-in-ms: 3000
   client:
     registerWithEureka: false # 不注册自己
-    fetchRegistry: false
+    fetchRegistry: true
+  instance:
+    prefer-ip-address: true

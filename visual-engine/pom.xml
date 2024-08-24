@@ -29,7 +29,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${springboot.version}</version>
         </dependency>
 
 
@@ -42,7 +41,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
 
@@ -72,7 +70,11 @@
             <version>6.9.0</version>
         </dependency>
 
-
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
     </dependencies>
 

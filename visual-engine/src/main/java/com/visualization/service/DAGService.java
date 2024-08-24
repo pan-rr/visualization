@@ -5,13 +5,12 @@ import com.visualization.model.dag.logicflow.LogicFlowPack;
 import com.visualization.model.param.NormalParam;
 import com.visualization.model.param.PageParameter;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface DAGService {
 
-    Page<DAGTemplate> getTemplateList(Pageable pageable);
+    Page<DAGTemplate> getTemplateList(PageParameter<NormalParam> parameter);
 
     Page<DAGInstance> getInstanceList(PageParameter<NormalParam> parameter);
 
@@ -31,7 +30,7 @@ public interface DAGService {
 
     List<DAGPointer> getPointers(int limit);
 
-    DAGInstance createLogicFlowInstanceByTemplateId(Long templateId);
+    DAGInstance createInstanceByTemplateId(Long templateId);
 
     void updateTemplateStatus(Long templateId, int status);
 }

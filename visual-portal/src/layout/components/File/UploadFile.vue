@@ -14,7 +14,8 @@ const fileUploadChunkQueue = ref({}).value
 
 
 const props = defineProps({
-    folder: String
+    folder: String,
+    buttonStyle: Boolean,
 })
 
 const emit = defineEmits(['reloadDir'])
@@ -56,7 +57,7 @@ const getInitTaskData = async (file) => {
  * 获取一个上传任务，没有则初始化一个
  */
 const getTaskInfo = async (initTaskData) => {
-    
+
     let task;
     let t = await taskInfo(initTaskData.md5)
     const { code, result, message } = t.data
@@ -181,7 +182,7 @@ const handleHttpRequest = async (options) => {
     const file = options.file
     const initTaskData = await getInitTaskData(file)
     let finished = await quickUpload(initTaskData)
-    if (finished){
+    if (finished) {
         emit('reloadDir')
         return
     }
@@ -234,7 +235,11 @@ const handleRemoveFile = (uploadFile, uploadFiles) => {
 
 </script>
 <template>
-    <el-card>
+    <el-upload v-if="buttonStyle === true" action="/" multiple :http-request="handleHttpRequest" :on-remove="handleRemoveFile">
+        <el-button type="success" plain icon="el-icon-upload">上传文件</el-button>
+    </el-upload>
+
+    <el-card v-else>
         <div slot="header" class="clearfix">
             <!-- <el-tag type="info">文件上传</el-tag> -->
             <p><el-icon

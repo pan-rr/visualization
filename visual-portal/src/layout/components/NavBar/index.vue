@@ -5,6 +5,13 @@
         <Collapse />
         <Breadcrumb />
       </div>
+      <div style="margin-left: auto;">
+       <el-icon class="el-icon-office-building"></el-icon><span>企业/组织/团队</span>
+      <el-select v-model="choosenTenant" slot="append" placeholder="请选择空间" @change="changeTenant">
+        <el-option v-for="item in tenantOptions" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
+      </el-select>
+    </div>
       <AvatarDropDown />
     </div>
     <VisitedViews />
@@ -20,7 +27,24 @@ export default {
   name: "",
   components: { Collapse, Breadcrumb, AvatarDropDown, VisitedViews },
   data() {
-    return {};
+    return {
+      tenantOptions: this.$store.getters.userInfo.tenantOptions,
+      choosenTenant: this.$store.getters.userInfo.choosenTenant,
+    };
+  },
+  methods:{
+    changeTenant(value) {
+      this.$store.getters.userInfo.choosenTenant = value;
+    },
+  },
+  watch: {
+    choosenTenant: {
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        console.log(this.choosenTenant)
+      }
+    }
   }
 };
 </script>

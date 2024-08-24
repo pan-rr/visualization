@@ -14,7 +14,6 @@ import com.visualization.model.dag.logicflow.LogicGraph;
 import com.visualization.model.portal.PortalDAGTemplate;
 import com.visualization.service.DAGService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,9 +43,8 @@ public class PortalController {
     }
 
     @PostMapping("/getTemplateList")
-    public PageResponse getTemplateList(@RequestBody PageParameter parameter) {
-        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
-        Page<DAGTemplate> templateList = dagService.getTemplateList(request);
+    public PageResponse getTemplateList(@RequestBody PageParameter<NormalParam> parameter) {
+        Page<DAGTemplate> templateList = dagService.getTemplateList(parameter);
         List<PortalDAGTemplate> collect = templateList.getContent().stream().map(DAGTemplate::convert).collect(Collectors.toList());
         return PageResponse.success(collect, (int) templateList.getTotalElements());
 
@@ -64,7 +62,7 @@ public class PortalController {
     @GetMapping("/createInstance")
     public Response<Object> createInstance(@RequestParam("templateId") String templateId) {
         Long id = Long.valueOf(templateId);
-        DAGInstance instance = dagManager.createLogicFlowInstanceByTemplateId(id);
+        DAGInstance instance = dagManager.createInstanceByTemplateId(id);
         return Response.success(instance.getInstanceId().toString());
     }
 
@@ -73,6 +71,13 @@ public class PortalController {
         Long id = Long.valueOf(templateId);
         dagManager.disableTemplateById(id);
         return Response.success("禁用模版成功");
+    }
+
+    @GetMapping("/changeTemplateStatus")
+    public Response<Object> changeTemplateStatus(@RequestParam("templateId") String templateId, @RequestParam("status") int status) {
+        Long id = Long.valueOf(templateId);
+        dagManager.changeTemplateStatus(id, status);
+        return Response.success("修改模版状态成功");
     }
 
     @GetMapping("/getLogTimeLine")

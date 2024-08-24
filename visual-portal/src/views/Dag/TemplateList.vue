@@ -1,41 +1,54 @@
 <template>
   <div>
-    <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe>
 
-      <el-table-column prop="templateId" label="流程模版ID">
-      </el-table-column>
-      <el-table-column prop="name" label="流程模版名称">
-      </el-table-column>
-      <el-table-column prop="version" label="发布时间">
-      </el-table-column>
-      <el-table-column label="流程模版状态">
-        <template slot-scope="scope">
-          <el-tag size="medium">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column fixed="right" label="操作">
-        <template slot-scope="scope">
-          <el-button @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
-            运行实例
-          </el-button>
-          <el-button @click.native.prevent="disableTemplate(scope.row.status, scope.row.templateId)" type="text"
-            size="mini" :disabled="scope.row.status === '禁用'">
-            停用
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div>
+      <div class="text item">
+        <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
+          <template slot="prepend">存储空间:</template>
+          <el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
+            <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-input>
+      </div>
+    </div>
+    <div>
+      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
+        <el-table-column prop="templateId" label="流程模版ID">
+        </el-table-column>
+        <el-table-column prop="name" label="流程模版名称">
+        </el-table-column>
+        <el-table-column prop="version" label="发布时间">
+        </el-table-column>
+        <el-table-column label="流程模版状态" :filters="statusOptions" column-key="status">
+          <template slot-scope="scope">
+            <el-tag size="medium">{{ scope.row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作">
+          <template slot-scope="scope">
+            <el-button @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
+              运行实例
+            </el-button>
+            <el-button @click.native.prevent="disableTemplate(scope.row.status, scope.row.templateId)" type="text"
+              size="mini" :disabled="scope.row.status === '禁用'">
+              停用
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <el-pagination @size-change="changeSize" @current-change="changePage" @prev-click="changePage"
-      @next-click="changePage" :current-page=currentPage :page-sizes="[10, 20, 50, 100]" :page-size=pageSize
-      layout="total, sizes, prev, pager, next, jumper" :total=total>
-    </el-pagination>
+      <el-pagination @size-change="changeSize" @current-change="changePage" @prev-click="changePage"
+        @next-click="changePage" :current-page=currentPage :page-sizes="[10, 20, 50, 100]" :page-size=pageSize
+        layout="total, sizes, prev, pager, next, jumper" :total=total>
+      </el-pagination>
+    </div>
+
   </div>
-
-
 </template>
 
 <script>
+
 import { createInstanceById, getTemplateList, disableTemplateById } from '../../api/dag';
 import { Message } from 'element-ui'
 
@@ -43,13 +56,32 @@ export default {
   name: 'VisualTemplateList',
   data() {
     return {
+      space: '',
+      spaceOptions: [],
       tableData: [],
       total: 10,
       pageSize: 10,
       currentPage: 1,
+      choosenStatus: [],
+      statusOptions: [{ text: '完成', value: '1' }, { text: '待执行', value: '-4' }
+        , { text: '终止', value: '-2' }]
     }
   },
   methods: {
+    filterChange(filter) {
+      if (filter['status']) {
+        console.log(Object.values(filter['status']).map(i => parseInt(i)))
+        this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
+
+      }
+    },
+    getSpace() {
+      let arr = this.$store.getters.userInfo.space
+      this.spaceOptions = arr.map((i, idx) => { return { value: i, label: i } })
+    },
+    changeSpace(value) {
+      this.space = value
+    },
     changePage(val) {
       this.currentPage = val
     },
@@ -71,25 +103,31 @@ export default {
       rows.splice(index, 1);
     },
     disableTemplate(status, templateId) {
-      disableTemplateById(templateId).then(res=>{
+      disableTemplateById(templateId).then(res => {
         this.getList()
       })
     },
     getList() {
       let pageable = {
         page: this.currentPage,
-        size: this.pageSize
+        size: this.pageSize,
+        param: {
+          space: this.space,
+          status: this.choosenStatus
+        }
       }
       getTemplateList(pageable).then(res => {
         let _this = this
         _this.tableData = res.data.result
         _this.total = res.data.total
-        // console.log(_this.tableData)
       })
 
     }
   },
   mounted() {
+    this.getSpace();
+    this.changeSpace(this.spaceOptions[0].value)
+    this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },
   watch: {
@@ -107,6 +145,20 @@ export default {
         this.getList()
       }
     },
+    choosenStatus: {
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
+      }
+    },
+    space:{
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
+      }
+    }
   }
 }
 </script>

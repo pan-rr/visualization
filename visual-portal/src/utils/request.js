@@ -12,6 +12,10 @@ const service = axios.create({
 
 service.interceptors.request.use(
   (config) => {
+    let token = localStorage.getItem('visual')
+    if(token){
+      config.headers['visual'] = token
+    }
     return config
   },
   (error) => {

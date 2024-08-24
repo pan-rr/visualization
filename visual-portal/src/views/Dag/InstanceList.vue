@@ -12,10 +12,7 @@
       </div>
     </div>
     <div>
-      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe 
-        @filter-change="filterChange" >
-        <el-table-column type="index">
-        </el-table-column>
+      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
         <el-table-column prop="templateId" label="流程模版ID">
         </el-table-column>
         <el-table-column prop="templateName" label="流程模版名称">
@@ -26,7 +23,7 @@
         </el-table-column>
         <el-table-column prop="finishTime" label="流程实例完成时间">
         </el-table-column>
-        <el-table-column label="流程实例状态" :filters="statusOptions" column-key="status" >
+        <el-table-column label="流程实例状态" :filters="statusOptions" column-key="status">
 
           <template slot-scope="scope">
             <el-tag size="medium">{{ scope.row.status }}</el-tag>
@@ -96,9 +93,8 @@ export default {
   methods: {
     filterChange(filter) {
       if (filter['status']) {
-        console.log(Object.values(filter['status']).map(i=>parseInt(i)))
-        this.choosenStatus = Object.values(filter['status']).map(i=>parseInt(i))
-    
+        this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
+
       }
     },
     getSpace() {
@@ -143,7 +139,7 @@ export default {
   mounted() {
     this.getSpace();
     this.changeSpace(this.spaceOptions[0].value)
-    this.choosenStatus =this.statusOptions.map(o=> parseInt(o.value))
+    this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },
   watch: {
@@ -168,6 +164,13 @@ export default {
         this.getList()
       }
     },
+    space:{
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
+      }
+    }
   }
 }
 </script>

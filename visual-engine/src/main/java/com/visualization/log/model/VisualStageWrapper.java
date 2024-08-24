@@ -30,7 +30,7 @@ public class VisualStageWrapper {
     private static final String FAIL_MESSAGE_EXPRESSION = "执行失败，原因：{0}";
 
     public static VisualStageWrapper success(DAGPointer pointer) {
-        return new VisualStageWrapper(pointer, null, Instant.now(), StageEnum.STAGE_SUCCESS);
+        return new VisualStageWrapper(pointer, null, Instant.now(), StageEnum.STAGE_FINISHED);
     }
 
     public static VisualStageWrapper start(DAGPointer pointer) {

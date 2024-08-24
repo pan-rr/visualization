@@ -1,6 +1,6 @@
 package com.visualization.manager;
 
-import com.visualization.constant.StatusConstant;
+import com.visualization.enums.StatusEnum;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
 import com.visualization.service.DAGService;
@@ -56,7 +56,7 @@ public class DAGManager {
                                     .instanceId(edge.getInstanceId())
                                     .taskId(edge.getToTaskId())
                                     .count(0)
-                                    .status(StatusConstant.NORMAL)
+                                    .status(StatusEnum.NORMAL.getStatus())
                                     .retryMaxCount(retryMaxCount)
                                     .build()).collect(Collectors.toList());
                     dagService.saveReadyPointers(pointers);
@@ -68,9 +68,9 @@ public class DAGManager {
     }
 
 
-    @Transactional(transactionManager = "transactionManagerDAG")
-    public DAGInstance createLogicFlowInstanceByTemplateId(Long templateId) {
-        return dagService.createLogicFlowInstanceByTemplateId(templateId);
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
+    public DAGInstance createInstanceByTemplateId(Long templateId) {
+        return dagService.createInstanceByTemplateId(templateId);
     }
 
 
@@ -78,11 +78,11 @@ public class DAGManager {
         taskService.saveTask(task);
     }
 
-    @Transactional(transactionManager = "transactionManagerDAG")
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     public void updateTaskInfo(DAGPointer pointer) {
         dagService.updatePointer(pointer);
         if (pointer.getRetryMaxCount() - pointer.getCount() < 1) {
-            dagService.updateInstanceStatus(pointer.getInstanceId(), StatusConstant.BLOCK);
+            dagService.updateInstanceStatus(pointer.getInstanceId(), StatusEnum.BLOCK.getStatus());
         }
     }
 
@@ -90,7 +90,7 @@ public class DAGManager {
         return dagService.getPointers(limit);
     }
 
-    @Transactional(transactionManager = "transactionManagerDAG")
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     public void saveDAGPack(LogicFlowPack pack) {
         dagService.saveTemplateByPack(pack);
         taskService.saveTask(pack.getTasks());
@@ -98,7 +98,12 @@ public class DAGManager {
     }
 
     public void disableTemplateById(Long templateId) {
-        dagService.updateTemplateStatus(templateId, StatusConstant.FORBIDDEN);
+        dagService.updateTemplateStatus(templateId, StatusEnum.FORBIDDEN.getStatus());
+    }
+
+    public void changeTemplateStatus(Long templateId, int status) {
+        StatusEnum.validateStatus(status);
+        dagService.updateTemplateStatus(templateId, status);
     }
 
     private void uploadTemplate(LogicFlowPack pack) {

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-card class="box-card" shadow="hover">
+        <!-- <el-card class="box-card" shadow="hover"> -->
             <div class="text item">
                 <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
                     <template slot="prepend">存储空间:</template>
@@ -10,7 +10,7 @@
                     </el-select>
                 </el-input>
             </div>
-        </el-card>
+        <!-- </el-card> -->
 
         <div>
             <el-card class="box-card" shadow="hover">
@@ -24,9 +24,12 @@
                         </template>
                     </el-input>
                     <el-button type="info" plain icon="el-icon-folder-add" @click="createDir">新建文件夹</el-button>
+
+                    <UploadFile :buttonStyle="true" :folder="this.path" @reloadDir="loadDir"></UploadFile>
+                    
                 </div>
                 <div v-if="files.length === 0">
-                    <div><el-icon class="el-icon-search"></el-icon>当前文件夹下暂无文件</div>
+                    <h3><el-icon class="el-icon-search"></el-icon>当前文件夹下暂无文件</h3>
                     <el-skeleton />
                 </div>
                 <div v-else>

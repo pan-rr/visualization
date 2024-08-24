@@ -1,9 +1,9 @@
 package com.visualization.model.dag.logicflow;
 
-import com.visualization.constant.StatusConstant;
+import com.visualization.enums.StatusEnum;
 import com.visualization.exception.DAGException;
 import com.visualization.jpa.SnowIdWorker;
-import com.visualization.model.dag.*;
+import com.visualization.model.dag.DAGValidator;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.model.dag.db.DAGTemplate;
 import com.visualization.model.dag.db.Edge;
@@ -76,7 +76,7 @@ public class LogicFlow {
                 .taskId(Long.valueOf(nodeId))
                 .templateId(template.getTemplateId())
                 .space(template.getSpace())
-                .status(StatusConstant.NORMAL)
+                .status(StatusEnum.NORMAL.getStatus())
                 .build()).collect(Collectors.toList());
         List<Edge> dagEdges = edges.stream().map(e -> Edge
                         .builder()
