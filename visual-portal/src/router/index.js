@@ -6,6 +6,7 @@ import store from '@/store'
 // import list from './modules/list'
 // import personCenter from './modules/personCenter'
 import visual from './modules/visual'
+import auth from './modules/auth'
 
 Vue.use(VueRouter)
 
@@ -42,6 +43,7 @@ export const permissionRoutes = [
   },
   // list,
   visual,
+  auth,
   // personCenter,
   {
     path: '*',

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class GlobalHandler {
 
     @ExceptionHandler(value = Throwable.class)
-    public Response handle(Throwable e){
-        System.err.println(e);
+    public Response handle(Throwable e) {
+        e.printStackTrace();
         return Response.error(e.getMessage());
     }
 }

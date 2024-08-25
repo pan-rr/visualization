@@ -2,7 +2,6 @@ package com.visualization;
 
 import com.visualization.enums.UserTypeEnum;
 import com.visualization.model.db.SystemPermission;
-import com.visualization.model.db.SystemResource;
 import com.visualization.model.db.SystemUser;
 import com.visualization.model.db.SystemUserPermission;
 import com.visualization.service.PermissionService;
@@ -37,15 +36,7 @@ public class DBTest {
         userService.createUser(user);
     }
 
-    @Test
-    public void test3() {
-        SystemResource resource = SystemResource.builder()
-                .resourceId(SnowIdUtil.generateId())
-                .resourceName("resource")
-                .tenantId(1276916670077599744L)
-                .build();
-        resourceService.createResource(resource);
-    }
+
 
     @Test
     public void test4() {
@@ -59,14 +50,7 @@ public class DBTest {
 
     }
 
-    @Test
-    public void test5() {
 
-        SystemUserPermission userPermission = SystemUserPermission.builder()
-                .userId(1276690573041860608L)
-                .permissionId(1276926846335713281L).build();
-        permissionService.grantPermissionToUser(userPermission);
-    }
 
     @Test
     public void test6() {

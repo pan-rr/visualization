@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @TableName(value = "t_system_user_permission")
 public class SystemUserPermission {
 
+
     private Long userId;
 
     private Long permissionId;

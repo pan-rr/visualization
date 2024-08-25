@@ -14,18 +14,18 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
-        <el-table-column prop="templateId" label="流程模版ID">
+        <el-table-column align="center" prop="templateId" label="流程模版ID">
         </el-table-column>
-        <el-table-column prop="name" label="流程模版名称">
+        <el-table-column align="center" prop="name" label="流程模版名称">
         </el-table-column>
-        <el-table-column prop="version" label="发布时间">
+        <el-table-column align="center" prop="version" label="发布时间">
         </el-table-column>
-        <el-table-column label="流程模版状态" :filters="statusOptions" column-key="status">
+        <el-table-column align="center" label="流程模版状态" :filters="statusOptions" column-key="status">
           <template slot-scope="scope">
             <el-tag size="medium">{{ scope.row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作">
+        <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
               运行实例
@@ -152,7 +152,7 @@ export default {
         this.getList()
       }
     },
-    space:{
+    space: {
       immediate: true,
       deep: true,
       handler(newVal, oldVal) {

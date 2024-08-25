@@ -13,24 +13,24 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
-        <el-table-column prop="templateId" label="流程模版ID">
+        <el-table-column align="center" prop="templateId" label="流程模版ID">
         </el-table-column>
-        <el-table-column prop="templateName" label="流程模版名称">
+        <el-table-column align="center" prop="templateName" label="流程模版名称">
         </el-table-column>
-        <el-table-column prop="instanceId" label="流程实例ID">
+        <el-table-column align="center" prop="instanceId" label="流程实例ID">
         </el-table-column>
-        <el-table-column prop="createTime" label="流程实例创建时间">
+        <el-table-column align="center" prop="createTime" label="流程实例创建时间">
         </el-table-column>
-        <el-table-column prop="finishTime" label="流程实例完成时间">
+        <el-table-column align="center" prop="finishTime" label="流程实例完成时间">
         </el-table-column>
-        <el-table-column label="流程实例状态" :filters="statusOptions" column-key="status">
+        <el-table-column align="center" label="流程实例状态" :filters="statusOptions" column-key="status">
 
           <template slot-scope="scope">
             <el-tag size="medium">{{ scope.row.status }}</el-tag>
           </template>
 
         </el-table-column>
-        <el-table-column fixed="right" label="操作">
+        <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
               查看执行日志

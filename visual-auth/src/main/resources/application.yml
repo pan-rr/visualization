@@ -34,6 +34,10 @@ visual:
     jdbc-url: jdbc:mysql://localhost:3306/visual_auth?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
     username: tmp
     password: tmp
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
 

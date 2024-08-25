@@ -21,7 +21,7 @@ export default {
       state.userInfo.avatar = ''
       state.userInfo.spaceOptions = data.spaceOptions
       state.userInfo.tenantOptions = data.tenantOptions
-      state.userInfo.choosenTenant = data.tenantOptions[0]
+      state.userInfo.choosenTenant = data.tenantOptions[0].value
       localStorage.setItem('visual',data.token)
     },
   },
@@ -30,7 +30,6 @@ export default {
       return new Promise((resolve) => {
         userLogin(data).then(async (res) => {
           commit('SET_USER_INFO', res.data.result)
-          
           await dispatch('permission/handleRoutes', null, { root: true })
           resolve('success')
         })

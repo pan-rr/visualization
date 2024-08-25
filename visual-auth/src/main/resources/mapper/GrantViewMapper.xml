@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.visualization.mapper.GrantViewMapper">
+
+    <select id="selectGrantViewList" resultType="com.visualization.model.api.GrantView">
+        SELECT a.username , a.oa , c.permission_name ,c.tenant_id , c.permission_id
+        FROM t_system_user a INNER JOIN  t_system_user_permission b INNER JOIN
+        (SELECT t.tenant_id , t.permission_id ,t.permission_name
+        FROM t_system_permission t
+        WHERE t.tenant_id = #{data.tenantId}) c
+        ON (a.user_id = b.user_id AND b.permission_id = c.permission_id )
+        <where>
+            <if test="data.oa != null and data.oa != ''">
+                AND a.oa = #{data.oa}
+            </if>
+        </where>
+    </select>
+
+    <delete id="retractPermission">
+        delete from t_system_user_permission where user_id = #{userId} and permission_id = #{permissionId} limit 1
+    </delete>
+</mapper>
