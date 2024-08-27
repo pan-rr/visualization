@@ -41,7 +41,7 @@
             </el-radio-group>
           </el-form-item>
           <el-link type="primary" @click="disableRegister">返回登录</el-link>
-          <el-button class="w_100" type="primary" :loading="loginLoading" @click="reisterUser">登录</el-button>
+          <el-button class="w_100" type="primary" :loading="loginLoading" @click="reisterUser">注册</el-button>
         
         </el-form>
       </div>
@@ -119,13 +119,13 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$store.dispatch("user/login", this.param).then(() => {
-            this.loginLoading = false;
             this.$router.push({ name: "Home" });
           });
         } else {
           return false;
         }
       });
+      this.loginLoading = false;
     }
   }
 };

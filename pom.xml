@@ -17,6 +17,7 @@
         <module>viusal-gateway</module>
         <module>visual-auth</module>
         <module>visual-common</module>
+        <module>visual-auth-api</module>
     </modules>
 
     <properties>
@@ -104,6 +105,14 @@
                 <version>1.18.30</version>
                 <scope>provided</scope>
             </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+
 
 
             <dependency>

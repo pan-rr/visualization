@@ -3,7 +3,6 @@ package com.visualization;
 import com.visualization.enums.UserTypeEnum;
 import com.visualization.model.db.SystemPermission;
 import com.visualization.model.db.SystemUser;
-import com.visualization.model.db.SystemUserPermission;
 import com.visualization.service.PermissionService;
 import com.visualization.service.ResourceService;
 import com.visualization.service.UserService;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @SpringBootTest
 public class DBTest {
@@ -52,10 +50,5 @@ public class DBTest {
 
 
 
-    @Test
-    public void test6() {
 
-        List<String> permission = userService.getPermission(1276690573041860608L);
-        System.err.println(permission);
-    }
 }

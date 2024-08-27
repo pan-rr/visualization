@@ -1,6 +1,6 @@
 <template>
   <div class="box t-center">
-    <img src="@/assets/img/snail.png" alt="" />
+    <img src="@/assets/img/v.svg" alt="" />
     <h1 class="home pt_20 t-center font-size-20 c-3477F2">
       {{ message }}
     </h1>
@@ -21,7 +21,8 @@ export default {
 <style lang="scss" scoped>
 .box {
   padding-top: 100px;
-  > img {
+
+  >img {
     width: 100px;
     height: auto;
     margin-bottom: 20px;

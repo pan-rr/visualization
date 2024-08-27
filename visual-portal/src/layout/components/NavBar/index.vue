@@ -6,12 +6,12 @@
         <Breadcrumb />
       </div>
       <div style="margin-left: auto;">
-       <el-icon class="el-icon-office-building"></el-icon><span>企业/组织/团队</span>
-      <el-select v-model="choosenTenant" slot="append" placeholder="请选择空间" @change="changeTenant">
-        <el-option v-for="item in tenantOptions" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
-      </el-select>
-    </div>
+        <el-icon class="el-icon-office-building"></el-icon><span>企业/组织/团队</span>
+        <el-select v-model="choosenTenant" slot="append" placeholder="请选择空间" @change="changeTenant">
+          <el-option v-for="item in tenantOptions" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
       <AvatarDropDown />
     </div>
     <VisitedViews />
@@ -32,20 +32,18 @@ export default {
       choosenTenant: this.$store.getters.userInfo.choosenTenant,
     };
   },
-  methods:{
+  methods: {
     changeTenant(value) {
       this.$store.getters.userInfo.choosenTenant = value;
+      this.$store.dispatch("permission/userPermissionResource", value).then(() => {
+        this.$store.commit("user/SET_TENANT",value)
+        if (this.$route.path != '/home') {
+          this.$router.replace('/home')
+        }
+      });
     },
   },
-  watch: {
-    choosenTenant: {
-      immediate: true,
-      deep: true,
-      handler(newVal, oldVal) {
-        console.log(this.choosenTenant)
-      }
-    }
-  }
+  
 };
 </script>
 

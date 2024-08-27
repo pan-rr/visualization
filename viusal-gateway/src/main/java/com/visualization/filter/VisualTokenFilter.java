@@ -38,6 +38,7 @@ public class VisualTokenFilter implements GlobalFilter {
                 .header(tokenName, list.toArray(list.toArray(new String[0])))
                 .build();
         ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
+
         return chain.filter(newExchange);
     }
 }

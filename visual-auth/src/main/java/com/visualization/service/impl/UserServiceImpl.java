@@ -1,13 +1,15 @@
 package com.visualization.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
-import com.visualization.enums.RoleEnum;
 import com.visualization.enums.UserTypeEnum;
 import com.visualization.exeception.AuthException;
+import com.visualization.handler.AuthResourceHandler;
+import com.visualization.handler.LoginHandler;
+import com.visualization.handler.RoleHandler;
+import com.visualization.mapper.ResourceMapper;
 import com.visualization.mapper.TenantMapper;
 import com.visualization.mapper.UserMapper;
-import com.visualization.mapper.ResourceMapper;
-import com.visualization.model.api.Option;
+import com.visualization.model.api.AuthResource;
+import com.visualization.model.api.PortalTenantUser;
 import com.visualization.model.api.UserInfo;
 import com.visualization.model.db.SystemResource;
 import com.visualization.model.db.SystemTenant;
@@ -15,7 +17,6 @@ import com.visualization.model.db.SystemUser;
 import com.visualization.service.UserService;
 import com.visualization.utils.MD5Utils;
 import com.visualization.utils.SnowIdUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,10 +58,24 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(user);
     }
 
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public void createSubTenant(PortalTenantUser tenantUser) {
+        SystemUser systemUser = tenantUser.buildUser();
+        SystemTenant systemTenant = tenantUser.buildTenant();
+        SystemTenant father = tenantMapper.selectById(tenantUser.getFatherId());
+        if (Objects.isNull(father)) {
+            throw new AuthException("不存在该父账号，请检查！");
+        }
+        systemTenant.setRootId(father.getRootId() == null ? father.getTenantId() : father.getRootId());
+        userMapper.insert(systemUser);
+        tenantMapper.insert(systemTenant);
+    }
+
     @Override
     public SystemUser getNonNullUser(String oa) {
         SystemUser user = userMapper.selectOneByOA(oa);
-        if (Objects.isNull(user)){
+        if (Objects.isNull(user)) {
             throw new AuthException("查无此账号！");
         }
         return user;
@@ -68,25 +83,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfo login(SystemUser user) {
-        SystemUser dbUser = getNonNullUser(user.getOa());
-        Long userId = dbUser.getUserId();
-        String password = MD5Utils.md5Encode(user.getPassword());
-        boolean flag = StringUtils.equals(password, dbUser.getPassword());
-        if (Boolean.FALSE.equals(flag)){
-            throw new AuthException("账号密码不匹配！");
-        }
-        StpUtil.login(userId);
-        String tokenValue = StpUtil.getTokenValue();
-        List<Option> tenant = tenantMapper.selectUserTenant(userId);
-        UserInfo userInfo = UserInfo.builder()
-                .oa(dbUser.getOa())
-                .name(dbUser.getUsername())
-                .token(tokenValue)
-                .userId(String.valueOf(dbUser.getUserId()))
-                .tenantOptions(tenant)
+        LoginHandler loginHandler = LoginHandler.builder()
+                .user(user)
+                .userMapper(userMapper)
+                .tenantMapper(tenantMapper)
                 .build();
-        userInfo.computeOptions();
-        return userInfo;
+        return loginHandler.login();
     }
 
     @Override
@@ -103,11 +105,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RoleEnum getRole(Long userId) {
-        SystemTenant systemTenant = tenantMapper.selectById(userId);
-        if (Objects.isNull(systemTenant) || Objects.nonNull(systemTenant.getRootId())){
-            return RoleEnum.NORMAL;
-        }
-        return RoleEnum.ADMIN;
+    public List<String> getRole(Long userId) {
+        RoleHandler handler = RoleHandler.builder()
+                .id(userId)
+                .tenantMapper(tenantMapper)
+                .build();
+        return handler.computeRole();
+    }
+
+    @Override
+    public AuthResource getUserTenantPermission(String tenantId) {
+        return AuthResourceHandler.builder().tenantId(tenantId).tenantMapper(tenantMapper).build().handle();
     }
 }

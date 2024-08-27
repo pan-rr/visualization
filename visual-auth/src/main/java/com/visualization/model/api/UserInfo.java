@@ -1,5 +1,6 @@
 package com.visualization.model.api;
 
+import com.visualization.constant.TenantConstant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -27,7 +29,8 @@ public class UserInfo {
     private List<Option> spaceOptions;
 
     public void computeOptions() {
-        tenantOptions.add(Option.builder().value("public").label("public").build());
+        tenantOptions.add(TenantConstant.PUBLIC_TENANT_OPTION.get());
+        tenantOptions = tenantOptions.stream().distinct().collect(Collectors.toList());
         spaceOptions = new ArrayList<>(tenantOptions.size() + 1);
         spaceOptions.add(Option.builder()
                 .label(oa)
