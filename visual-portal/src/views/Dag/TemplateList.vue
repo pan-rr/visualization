@@ -49,6 +49,7 @@
 
 <script>
 
+import { computed } from 'vue';
 import { createInstanceById, getTemplateList, disableTemplateById } from '../../api/dag';
 import { Message } from 'element-ui'
 
@@ -57,28 +58,28 @@ export default {
   data() {
     return {
       space: '',
-      spaceOptions: [],
+      // spaceOptions: [],
       tableData: [],
       total: 10,
       pageSize: 10,
       currentPage: 1,
       choosenStatus: [],
-      statusOptions: [{ text: '完成', value: '1' }, { text: '待执行', value: '-4' }
+      statusOptions: [{ text: '正常', value: '0' },{ text: '完成', value: '1' }, { text: '待执行', value: '-4' }
         , { text: '终止', value: '-2' }]
     }
   },
   methods: {
     filterChange(filter) {
       if (filter['status']) {
-        console.log(Object.values(filter['status']).map(i => parseInt(i)))
+     
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
 
       }
     },
-    getSpace() {
-      let arr = this.$store.getters.userInfo.space
-      this.spaceOptions = arr.map((i, idx) => { return { value: i, label: i } })
-    },
+    // getSpace() {
+    //   let arr = this.$store.getters.userInfo.space
+    //   this.spaceOptions = arr.map((i, idx) => { return { value: i, label: i } })
+    // },
     changeSpace(value) {
       this.space = value
     },
@@ -122,11 +123,17 @@ export default {
         _this.total = res.data.total
       })
 
+    },
+
+  },
+  computed: {
+    spaceOptions() {
+      return this.$store.getters.userInfo.spaceOptions;
     }
   },
   mounted() {
-    this.getSpace();
-    this.changeSpace(this.spaceOptions[0].value)
+    // this.getSpace();
+    if(this.spaceOptions.length > 0)this.changeSpace(this.spaceOptions[0].value)
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },

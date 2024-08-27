@@ -52,7 +52,7 @@ export default {
       graphData: null,
       dataVisible: false,
       templateName: '',
-      options: [],
+      // options: [],
       space: ''
     }
   },
@@ -120,10 +120,17 @@ export default {
       });
     },
     getSpace() {
-      let arr = this.$store.getters.userInfo.space
-      this.options = arr.map((i, idx) => { return { value: i, label: i } })
-      this.space = this.options[0].value
+      this.space = this.options ? this.options[0].value : ''
+
     },
+  },
+  computed: {
+    options() {
+      return this.$store.getters.userInfo.spaceOptions;
+    },
+    // space() {
+    //   return this.options ? this.options[0].value : ''
+    // }
   }
 }
 </script>

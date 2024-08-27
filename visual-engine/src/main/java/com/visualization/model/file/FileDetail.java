@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -32,14 +33,19 @@ public class FileDetail {
                 .build();
     }
 
-    private static boolean judgeFileUnderFolder(String folder, String filePath){
-        String[] arr1 = folder.split("/");
-        String[] arr2 = filePath.split("/");
-        return arr2.length - arr1.length == 1;
-    }
 
-    public static List<FileDetail> covertFileDetail(String folder,List<S3ObjectSummary> list) {
+    public static List<FileDetail> covertFileDetail(String folder, List<S3ObjectSummary> list) {
         if (CollectionUtils.isEmpty(list)) return new ArrayList<>();
-        return list.stream().filter(i-> judgeFileUnderFolder(folder,i.getKey())).map(FileDetail::covertFileDetail).collect(Collectors.toList());
+        return list.stream()
+                .map(i -> i.getKey().replace(folder, ""))
+                .map(i -> {
+                    if ("".equals(i)) return null;
+                    String[] split = i.split("/");
+                    if (split.length == 1 && !i.endsWith("/")) {
+                        return FileDetail.builder().name(i).isFolder(false).build();
+                    }
+                    return FileDetail.builder().name(split[0]).isFolder(true).build();
+                }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+
     }
 }

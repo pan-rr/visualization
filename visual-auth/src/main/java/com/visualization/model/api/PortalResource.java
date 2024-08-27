@@ -8,6 +8,7 @@ import com.visualization.model.db.SystemResource;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,10 +21,10 @@ public class PortalResource {
 
     private String resourceId;
 
-    @NonNull
+    @NotBlank(message = "租户ID不能为空")
     private String tenantId;
 
-    @NonNull
+    @NotBlank(message = "资源名称不能为空")
     private String resourceName;
 
     public SystemResource convert(){

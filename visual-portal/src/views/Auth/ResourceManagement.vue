@@ -2,7 +2,8 @@
     <div>
         <el-form :inline="true" :model="form" class="demo-form-inline">
             <el-form-item label="资源归属者ID：">
-                <el-input v-model="form.tenantId" placeholder="资源归属者ID" readonly></el-input>
+                <span>{{ form.tenantId }}</span>
+                <!-- <el-input v-model="form.tenantId" placeholder="资源归属者ID" readonly></el-input> -->
             </el-form-item>
             <el-form-item label="资源名称：">
                 <el-input v-model="form.resourceName" placeholder="资源名称"></el-input>
@@ -13,12 +14,12 @@
             </el-button-group>
         </el-form>
         <el-table :data="resourceList" border stripe>
-            <el-table-column align="center" prop="tenantId" label="资源归属者ID">
-            </el-table-column>
+            <!-- <el-table-column align="center" prop="tenantId" label="资源归属者ID">
+            </el-table-column> -->
             <el-table-column align="center" prop="tenantName" label="资源归属者ID">
             </el-table-column>
-            <el-table-column align="center" prop="resourceId" label="资源ID">
-            </el-table-column>
+            <!-- <el-table-column align="center" prop="resourceId" label="资源ID">
+            </el-table-column> -->
             <el-table-column align="center" prop="resourceName" label="资源名称">
             </el-table-column>
         </el-table>

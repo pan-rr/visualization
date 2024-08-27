@@ -10,10 +10,14 @@
 + 支持多数据源，目前支持CSV、JDBC(MySQL驱动)，后续会增加其他数据源；
 + 文件分片上传下、下载；
 + 支持流程实例任务执行时间线查询
++ 支持多租户权限管理，允许父子租户
 
 #### 部分截图
 
 ![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
+
+![权限控制](https://gitee.com/pan-rr/visualization/raw/master/pic/权限控制.png)
+
 
 ![时间线](https://gitee.com/pan-rr/visualization/raw/master/pic/时间线.png)
 
@@ -198,4 +202,5 @@ public class ViewConstant {
 
 #### 后记
 
-更多功能需日后完善
+更多功能需日后完善。
+尊重劳动成果，未经允许禁止商业闭源修改使用。

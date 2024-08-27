@@ -17,7 +17,7 @@ public class SystemResource {
     private String resourceName;
 
     public String computeResourceKey() {
-        return tenantId + ":" + resourceName + ":" + resourceId;
+        return tenantId + "::" + resourceName;
     }
 
 }

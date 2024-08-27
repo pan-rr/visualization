@@ -41,13 +41,13 @@
             </el-radio-group>
           </el-form-item>
           <el-link type="primary" @click="disableRegister">返回登录</el-link>
-          <el-button class="w_100" type="primary" :loading="loginLoading" @click="reisterUser">登录</el-button>
+          <el-button class="w_100" type="primary" :loading="loginLoading" @click="reisterUser">注册</el-button>
         
         </el-form>
       </div>
 
       <div v-else>
-        <div class="title c_fff bold t-center">系统登录</div>
+        <div class="title c_fff bold t-center"><img src="@/assets/img/v.svg" style="width: 10%; height: 10%;" />Visualization</div>
         <el-form ref="form" :model="param" :rules="rules">
           <el-form-item prop="oa">
             <el-input v-model="param.oa" placeholder="用户名" prefix-icon="el-icon-user" />
@@ -119,13 +119,13 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$store.dispatch("user/login", this.param).then(() => {
-            this.loginLoading = false;
             this.$router.push({ name: "Home" });
           });
         } else {
           return false;
         }
       });
+      this.loginLoading = false;
     }
   }
 };

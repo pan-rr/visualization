@@ -101,7 +101,6 @@ export default {
     components: { UploadFile },
     data() {
         return {
-            options: [],
             space: '',
             path: '',
             pathList: [],
@@ -111,16 +110,13 @@ export default {
     },
     methods: {
         initData() {
-            this.getSpace();
+           
             this.intiDir()
         },
         intiDir() {
-            this.changeSpace(this.options[0].value)
+            this.changeSpace(this?.options[0].value)
         },
-        getSpace() {
-            let arr = this.$store.getters.userInfo.space
-            this.options = arr.map((i, idx) => { return { value: i, label: i } })
-        },
+        
         changeSpace(value) {
             this.space = value
             this.pathList = []
@@ -170,6 +166,11 @@ export default {
     },
     beforeMount() {
         this.initData()
+    },
+    computed:{
+        options(){
+            return this.$store.getters.userInfo.spaceOptions;
+        }
     },
     watch: {
         pathList: {

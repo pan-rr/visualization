@@ -1,3 +1,6 @@
+jasypt:
+  encryptor:
+    password: visualization
 server:
   port: 8374
   servlet:
@@ -15,8 +18,7 @@ spring:
           auto: update
         ddl-auto: update
         enable_lazy_load_no_trans: true
-  data:
-    redis:
+  redis:
       host: 127.0.0.1
       port: 6379
       database: 0
@@ -52,7 +54,7 @@ visual:
     driver-class-name: com.mysql.cj.jdbc.Driver
     jdbc-url: jdbc:mysql://localhost:3306/visual_dag?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
     username: tmp
-    password: tmp
+    password: ENC(4SCEneIfzIVS0l85g8AzOWz33Puqe3/gfJo5T9o4x4+1nrtM1olLYZPm8MTHL8Zd)
     edge:
       retryMaxCount: 5
     worker:

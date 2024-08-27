@@ -1,5 +1,6 @@
 package com.visualization.model.db;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @TableName(value = "t_system_tenant")
 public class SystemTenant {
 
+    @TableId
     private Long tenantId;
 
     private String tenantName;
@@ -21,4 +23,7 @@ public class SystemTenant {
 
     private Long rootId;
 
+    public String computeOwnerRole() {
+        return tenantId + "::owner";
+    }
 }

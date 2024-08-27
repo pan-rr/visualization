@@ -25,6 +25,7 @@
 import { createResource } from '../../../api/resource';
 import { Message } from 'element-ui';
 import tenantUtil from '../../../utils/tenantUtil';
+
 export default {
   name: "ResourceCreate",
   data() {

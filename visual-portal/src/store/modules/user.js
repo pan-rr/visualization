@@ -1,5 +1,5 @@
-import { apiLogout } from '@/api/user'
-import { userLogin } from '../../api/auth'
+
+import { userLogin, userLogout } from '../../api/auth'
 
 export default {
   namespaced: true,
@@ -8,11 +8,10 @@ export default {
       userId: '',
       name: '',
       avatar: '',
-      spaceOptions:[],
-      tenantOptions :[],
-      choosenTenant:''
+      spaceOptions: [],
+      tenantOptions: [],
+      choosenTenant: ''
     },
-    token: '',
   },
   mutations: {
     SET_USER_INFO(state, data) {
@@ -21,23 +20,27 @@ export default {
       state.userInfo.avatar = ''
       state.userInfo.spaceOptions = data.spaceOptions
       state.userInfo.tenantOptions = data.tenantOptions
-      state.userInfo.choosenTenant = data.tenantOptions[0].value
-      localStorage.setItem('visual',data.token)
+      state.userInfo.choosenTenant = data.tenantOptions ? data.tenantOptions[0].value : ''
+      localStorage.setItem('visual', data.token)
+    },
+    SET_TENANT(state, data) {
+      state.userInfo.choosenTenant = data
     },
   },
   actions: {
-    login({ commit, dispatch }, data) {
+    login({ commit, dispatch, state }, data) {
       return new Promise((resolve) => {
         userLogin(data).then(async (res) => {
           commit('SET_USER_INFO', res.data.result)
-          await dispatch('permission/handleRoutes', null, { root: true })
+          await dispatch('permission/userPermissionResource', state.userInfo.choosenTenant,{root:true})
+          // await dispatch('permission/handleRoutes', null, { root: true })
           resolve('success')
         })
       })
     },
     logout({ commit, dispatch }) {
       return new Promise((resolve) => {
-        apiLogout().then(async () => {
+        userLogout().then(async () => {
           commit('SET_USER_INFO', {
             name: '',
             avatar: '',

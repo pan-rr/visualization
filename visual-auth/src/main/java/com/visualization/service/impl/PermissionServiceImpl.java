@@ -3,7 +3,6 @@ package com.visualization.service.impl;
 import com.visualization.exeception.AuthException;
 import com.visualization.mapper.GrantViewMapper;
 import com.visualization.mapper.PermissionMapper;
-import com.visualization.mapper.UserMapper;
 import com.visualization.mapper.UserPermissionMapper;
 import com.visualization.model.api.GrantView;
 import com.visualization.model.api.PortalPermission;
@@ -12,6 +11,7 @@ import com.visualization.model.db.SystemPermission;
 import com.visualization.model.db.SystemUser;
 import com.visualization.model.db.SystemUserPermission;
 import com.visualization.service.PermissionService;
+import com.visualization.service.UserService;
 import com.visualization.utils.SnowIdUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ public class PermissionServiceImpl implements PermissionService {
     private PermissionMapper permissionMapper;
 
     @Resource
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Resource
     private GrantViewMapper grantViewMapper;
@@ -44,10 +44,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public void grantPermissionToUser(PortalUserPermission portalUserPermission) {
-        SystemUser systemUser = userMapper.selectOneByOA(portalUserPermission.getOa());
-        if (Objects.isNull(systemUser)) {
-            throw new AuthException("该OA暂未注册！");
-        }
+        SystemUser systemUser = userService.getNonNullUser(portalUserPermission.getOa());
         SystemUserPermission build = SystemUserPermission.builder()
                 .userId(systemUser.getUserId())
                 .permissionId(Long.valueOf(portalUserPermission.getPermissionId()))
@@ -72,7 +69,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void retractPermission(GrantView grantView) {
-        SystemUser systemUser = userMapper.selectOneByOA(grantView.getOa());
+        SystemUser systemUser = userService.getNonNullUser(grantView.getOa());
         grantViewMapper.retractPermission(systemUser.getUserId(), Long.valueOf(grantView.getPermissionId()));
     }
 }

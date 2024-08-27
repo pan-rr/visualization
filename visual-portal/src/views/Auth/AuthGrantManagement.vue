@@ -2,7 +2,8 @@
     <div>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
             <el-form-item label="权限归属者ID：">
-                <el-input v-model="searchForm.tenantId" placeholder="权限归属者ID" readonly></el-input>
+                <span>{{ searchForm.tenantId }}</span>
+                <!-- <el-input v-model="searchForm.tenantId" placeholder="权限归属者ID" readonly></el-input> -->
             </el-form-item>
             <el-form-item label="已赋权人员OA：">
                 <el-input v-model="searchForm.oa" placeholder="已赋权人员OA"></el-input>

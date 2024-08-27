@@ -2,7 +2,8 @@
     <div>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
             <el-form-item label="权限归属者ID：">
-                <el-input v-model="searchForm.tenantId" placeholder="权限归属者ID" readonly></el-input>
+                <span>{{ searchForm.tenantId }}</span>
+                <!-- <el-input v-model="searchForm.tenantId" placeholder="权限归属者ID" readonly></el-input> -->
             </el-form-item>
             <el-form-item label="权限名称：">
                 <el-input v-model="searchForm.permissionName" placeholder="权限名称"></el-input>
@@ -127,20 +128,15 @@ export default {
             this.searchForm = this.$options.data().searchForm
             this.searchForm.tenantId = this.tenant.id;
             this.searchForm.tenantName = this.tenant.name;
-            this.getOption();
             this.getList();
         },
-        getOption() {
-            getResourceOption(this.tenant.id).then(res => {
-                this.resourceOptions = res.data.result;
+        getList() {
+            Promise.all([getResourceOption(this.tenant.id), getPermissionList(this.searchForm)]).then(res => {
+                this.resourceOptions = res[0].data.result;
                 for (let item of this.resourceOptions) {
                     this.resourceMap.set(item.key, item.label)
                 }
-            })
-        },
-        getList() {
-            getPermissionList(this.searchForm).then(res => {
-                this.permissionList = res.data.result
+                this.permissionList = res[1].data.result
                 for (let item of this.permissionList) {
                     item.tenantName = this.tenant.name
                     item.resourceList = item.resourceList.map(i => { return this.resourceMap.get(i) })
@@ -160,12 +156,10 @@ export default {
             })
         },
         selectRow(row) {
-
             this.drawerVisible = true
             this.drawerData = row
         },
         grant() {
-            console.log(this.drawerData)
             grantPermission(this.drawerData).then(res => {
                 Message({
                     message: res.data.result,

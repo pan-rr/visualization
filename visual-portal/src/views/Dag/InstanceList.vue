@@ -78,7 +78,6 @@ export default {
   data() {
     return {
       space: '',
-      spaceOptions: [],
       tableData: [],
       total: 10,
       pageSize: 10,
@@ -96,10 +95,6 @@ export default {
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
 
       }
-    },
-    getSpace() {
-      let arr = this.$store.getters.userInfo.space
-      this.spaceOptions = arr.map((i, idx) => { return { value: i, label: i } })
     },
     changeSpace(value) {
       this.space = value
@@ -137,10 +132,14 @@ export default {
     }
   },
   mounted() {
-    this.getSpace();
     this.changeSpace(this.spaceOptions[0].value)
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
+  },
+  computed:{
+    spaceOptions(){
+      return this.$store.getters.userInfo.spaceOptions;
+    }
   },
   watch: {
     currentPage: {

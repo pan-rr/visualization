@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class PortalPermission {
 
-    @NonNull
     private String tenantId;
 
     private String permissionId;

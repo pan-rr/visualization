@@ -19,7 +19,7 @@ export default {
   .logo {
     min-width: 30px;
     height: 30px;
-    background: url("../../../assets/img/logo/logo.png");
+    background: url("../../../assets/img/v.svg");
     background-size: 100% 100%;
   }
 }
