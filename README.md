@@ -63,16 +63,18 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 部署步骤
 
-1. 启动MySQL、Redis、Minio
-2. 启动visual-discovery
-3. 启动visual-engine
-4. 启动visual-portal
+1. 启动MySQL、Redis、Minio、InfluxDB
+2. 启动visual-discovery (springboot 的启动方式)
+3. 启动visual-gateway (springboot 的启动方式)
+4. 启动visual-auth (springboot 的启动方式)
+5. 启动visual-engine (springboot 的启动方式)
+6. 启动visual-portal (yarn test，其他环境目前就不配置了)
 
-#### 样例流程
+#### 任务流程
 
 1. 在流程管理-流程定义新建流程模版。拖拽左侧“任务节点”到画布，点击节点进行配置。配置完成后点击发布流程
 2. 在已定义流程列表点击运行实例
-3. 等待任务完成
+3. 等待任务完成，在“流程管理-流程实例列表-查看执行日志”里查看任务的执行情况
 
 
 #### 流程模版文件上传下载
