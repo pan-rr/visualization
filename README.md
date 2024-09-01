@@ -56,23 +56,25 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 工程结构
 
-1. visual-discovery：注册中心eureka
-2. visual-engine：计算节点，分布式集群请启动多实例
-3. visual-core：配置化的基础实现
-4. visual-portal：前端项目
++ visual-discovery：注册中心eureka
++ visual-engine：计算节点，分布式集群请启动多实例
++ visual-core：配置化的基础实现
++ visual-portal：前端项目
++ visual-gateway：网关服务
++ visual-auth：权限服务
 
 #### 部署步骤
 
 1. 启动MySQL、Redis、Minio、InfluxDB
-2. 启动visual-discovery (springboot 的启动方式)
-3. 启动visual-gateway (springboot 的启动方式)
-4. 启动visual-auth (springboot 的启动方式)
-5. 启动visual-engine (springboot 的启动方式)
-6. 启动visual-portal (yarn test，其他环境目前就不配置了)
+2. 启动visual-discovery (SpringBoot的启动方式)
+3. 启动visual-gateway (SpringBoot的启动方式)
+4. 启动visual-auth (SpringBoot的启动方式)
+5. 启动visual-engine (SpringBoot的启动方式)
+6. 启动visual-portal (yarn test，其他环境指令目前就不配置了)
 
 #### 任务流程
 
-节点任务配置说明在visua_task.md
+节点任务配置说明在visual_task.md
 
 1. 在流程管理-流程定义新建流程模版。拖拽左侧“任务节点”到画布，点击节点进行配置。配置完成后点击发布流程
 2. 在已定义流程列表点击运行实例
