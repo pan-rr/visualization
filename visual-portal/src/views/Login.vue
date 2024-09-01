@@ -50,7 +50,7 @@
         <div class="title c_fff bold t-center"><img src="@/assets/img/v.svg" style="width: 10%; height: 10%;" />Visualization</div>
         <el-form ref="form" :model="param" :rules="rules">
           <el-form-item prop="oa">
-            <el-input v-model="param.oa" placeholder="用户名" prefix-icon="el-icon-user" />
+            <el-input v-model="param.oa" placeholder="oa账号" prefix-icon="el-icon-user" />
           </el-form-item>
           <el-form-item prop="password">
             <el-input type="password" prefix-icon="el-icon-lock" v-model="param.password" placeholder="密码"

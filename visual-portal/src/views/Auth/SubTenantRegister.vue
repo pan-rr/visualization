@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin: 2%">
     <el-form :model="registerForm" label-position="left">
       <el-form-item prop="fatherId" label="父账号名称：">
         <el-input v-model="registerForm.fatherName" placeholder="父账号名称" prefix-icon="el-icon-user" />

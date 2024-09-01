@@ -34,15 +34,17 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog title="新建权限" :visible.sync="dialogVisible" width="53%">
+        <el-dialog title="新建权限" :visible.sync="dialogVisible" width="53%" style="margin: auto;">
             <div>
                 <el-form ref="createForm" :model="createForm">
                     <el-form-item label="权限归属者名称：">
-                        <el-input v-model="createForm.tenantName" readonly></el-input>
+                        <!-- <el-input v-model="createForm.tenantName" readonly></el-input> -->
+                        {{ createForm.tenantName }}
                     </el-form-item>
 
                     <el-form-item label="权限归属者ID：">
-                        <el-input v-model="createForm.tenantId" readonly></el-input>
+                        {{ createForm.tenantId }}
+                        <!-- <el-input v-model="createForm.tenantId" readonly></el-input> -->
                     </el-form-item>
 
                     <el-form-item label="权限名称：">
@@ -52,7 +54,7 @@
                         <el-transfer :titles="['可选资源', '已选资源']" v-model="createForm.chossenOptions"
                             :data="resourceOptions"></el-transfer>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item style="margin: auto;">
                         <el-button type="primary" @click="submitCreatePermission">立即创建</el-button>
                         <el-button type="primary" @click="closeDialog">取消</el-button>
                     </el-form-item>

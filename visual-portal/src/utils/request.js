@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
+import { Message } from 'element-ui'
 
+import {  validateResponse } from './responseValid'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
@@ -13,7 +13,7 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     let token = localStorage.getItem('visual')
-    if(token){
+    if (token != 'undefined') {
       config.headers['visual'] = token
     }
     return config
@@ -25,33 +25,41 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response) => {
-    // console.log(typeof contentType)
     let contentType = response?.headers['content-type']
-    if(contentType?.includes('application/octet-stream')){
+    if (contentType?.includes('application/octet-stream')) {
       // 二进制文件直接返回
       return response
     }
     const res = response.data
-    
-    if (res?.header?.code === 0)return response
-    if (res?.code !== 0) {
+
+    // if (res?.header?.code === 0)return response
+    let check = validateResponse(res)
+    if (check == false) {
       Message({
         message: res.result || 'Error',
         type: 'error',
         duration: 5 * 1000,
       })
 
-      if (res.code === 5000) {
-        MessageBox.confirm('您已经退出登录状态，您可以点击取消留在当前页面或者重新登录', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
+
+
+
+      // if (res?.code === -999) {
+      //   if (route.path != '/login') {
+      //     router.replace('/login')
+      //   }
+      // }
+      // if (res.code === 5000) {
+      //   MessageBox.confirm('您已经退出登录状态，您可以点击取消留在当前页面或者重新登录', {
+      //     confirmButtonText: '重新登录',
+      //     cancelButtonText: '取消',
+      //     type: 'warning',
+      //   }).then(() => {
+      //     store.dispatch('user/resetToken').then(() => {
+      //       location.reload()
+      //     })
+      //   })
+      // }
 
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
@@ -62,7 +70,7 @@ service.interceptors.response.use(
     Message({
       message: error.header ? error.header.msg : '请求超时，请稍后重试',
       type: 'error',
-      duration: 5 * 1000, 
+      duration: 5 * 1000,
     })
 
     return Promise.reject(error)

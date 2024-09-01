@@ -36,7 +36,7 @@ public class AuthResourceHandler {
         long user = Long.parseLong(StpUtil.getLoginId().toString());
         long tenant = Long.parseLong(tenantId);
         if (user > tenant) return false;
-        List<SystemTenant> list = tenantMapper.selectTenantByTenantId(user);
+        List<SystemTenant> list = tenantMapper.selectSameRootTenant(user);
         if (CollectionUtils.isEmpty(list)) return false;
         Map<Long, List<SystemTenant>> map = list.stream().collect(Collectors.groupingBy(SystemTenant::getFatherId));
         LinkedList<SystemTenant> q = new LinkedList<>(map.get(user));

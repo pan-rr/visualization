@@ -45,3 +45,6 @@ build/
 /visual-web/target/**
 /visual-web/target/classes/com/visualisation/Application.class
 /visual-engine/.idea/
+/out
+/out/**
+package.json

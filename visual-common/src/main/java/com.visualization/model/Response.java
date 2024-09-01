@@ -35,6 +35,14 @@ public class Response<T> {
                 .build();
     }
 
+    public static <T> Response error(ResponseEnum responseEnum) {
+        return Response.builder()
+                .result(responseEnum.getMessage())
+                .code(responseEnum.getCode())
+                .message(responseEnum.getMessage())
+                .build();
+    }
+
     public T getResult() {
         return result;
     }

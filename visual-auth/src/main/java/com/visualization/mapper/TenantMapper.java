@@ -15,5 +15,5 @@ public interface TenantMapper extends BaseMapper<SystemTenant> {
 
 
     @Select(value = "SELECT * FROM t_system_tenant WHERE (root_id = #{tenantId} or (SELECT root_id FROM t_system_tenant WHERE tenant_id = #{tenantId}))")
-    List<SystemTenant> selectTenantByTenantId(@Param("tenantId") Long tenantId);
+    List<SystemTenant> selectSameRootTenant(@Param("tenantId") Long tenantId);
 }

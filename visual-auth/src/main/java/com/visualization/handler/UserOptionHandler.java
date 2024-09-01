@@ -23,7 +23,7 @@ public class UserOptionHandler {
         Set<Option> res = new HashSet<>(tenantMapper.selectUserTenant(user.getUserId()));
         res.add(TenantConstant.PUBLIC_TENANT_OPTION.get());
         if (UserTypeEnum.isTenant(user.getUserType())) {
-            List<SystemTenant> list = tenantMapper.selectTenantByTenantId(user.getUserId());
+            List<SystemTenant> list = tenantMapper.selectSameRootTenant(user.getUserId());
             Map<Long, List<SystemTenant>> map = list.stream().collect(Collectors.groupingBy(SystemTenant::getFatherId));
             LinkedList<Long> q = new LinkedList<>();
             res.add(Option.builder().label(user.getUsername()).value(String.valueOf(user.getUserId())).build());
@@ -44,6 +44,10 @@ public class UserOptionHandler {
                 }
             }
         }
-        return new ArrayList<>(res);
+        String publicValue = TenantConstant.PUBLIC_TENANT_OPTION.get().getValue();
+        return res.stream().sorted((o1, o2) -> {
+            if (o2.getValue().equals(publicValue)) return -1;
+            return o1.getValue().compareTo(o2.getValue());
+        }).collect(Collectors.toList());
     }
 }

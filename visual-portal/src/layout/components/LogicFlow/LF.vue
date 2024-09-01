@@ -89,6 +89,7 @@ export default {
       // 画布配置
       const lf = new LogicFlow({
         ...this.config,
+        grid: true,
         plugins: [
           Menu,
           MiniMap,

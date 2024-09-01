@@ -4,15 +4,12 @@
       <el-form-item label="资源归属者名称：">
         <el-input v-model="form.tenantName" readonly></el-input>
       </el-form-item>
-
       <el-form-item label="资源归属者ID：">
         <el-input v-model="form.tenantId" readonly></el-input>
       </el-form-item>
-
       <el-form-item label="资源名称：">
         <el-input v-model="form.resourceName"></el-input>
       </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button type="primary" @click="finish">取消</el-button>

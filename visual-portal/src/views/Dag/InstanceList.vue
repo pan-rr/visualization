@@ -47,7 +47,7 @@
 
 
       <el-dialog title="实例执行日志时间线" :visible.sync="openTimeLine" center>
-        <div class="block">
+        <div  style="margin: 2%;">
           <span v-if="timeLine.length < 1">暂无时间日志或日志已过期</span>
           <el-timeline :reverse="true" v-else>
             <el-timeline-item v-for="(item, index) in timeLine" :key="index" :timestamp="item.time" placement="top">

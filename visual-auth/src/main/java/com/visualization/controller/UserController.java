@@ -1,7 +1,7 @@
 package com.visualization.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.visualization.constant.AuthConstant;
+import com.visualization.api.handler.AuthMessageHandler;
 import com.visualization.model.Response;
 import com.visualization.model.api.PortalTenantUser;
 import com.visualization.model.api.UserInfo;
@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -22,6 +21,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private AuthMessageHandler authMessageHandler;
 
     @PostMapping("/register")
     public Response register(@Valid @RequestBody SystemUser systemUser, BindingResult bindingResult) {
@@ -40,15 +42,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody SystemUser systemUser, HttpServletResponse response) {
+    public Response login(@RequestBody SystemUser systemUser) {
         UserInfo info = userService.login(systemUser);
         return Response.success(info);
     }
 
     @GetMapping("/logout")
-    public Response logout(HttpServletResponse response) {
+    public Response logout() {
+        authMessageHandler.publishLogoutMessage(StpUtil.getTokenValue());
         StpUtil.logout();
-        response.addHeader(AuthConstant.LOGOUT, AuthConstant.LOGOUT);
         return Response.success("登出成功！");
     }
 

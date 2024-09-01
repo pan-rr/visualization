@@ -3,32 +3,36 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.visualization</groupId>
-    <artifactId>Visualisation</artifactId>
+    <artifactId>Visualization</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>Visualisation</name>
+    <name>Visualization</name>
 
     <modules>
         <module>visual-core</module>
         <module>visual-engine</module>
         <module>visual-discovery</module>
         <module>visual-file</module>
-        <module>viusal-gateway</module>
-        <module>visual-auth</module>
+        <module>visual-gateway</module>
         <module>visual-common</module>
-        <module>visual-auth-api</module>
+        <module>visual-auth</module>
+        <module>visual-auth-api-model</module>
+        <module>visual-auth-api-core-reactor</module>
     </modules>
 
     <properties>
         <maven.complier.source>1.8</maven.complier.source>
         <maven.complier.target>1.8</maven.complier.target>
         <maven.complier.compilerVersion>1.8</maven.complier.compilerVersion>
-        <visual.core.version>1.0.5</visual.core.version>
+        <visual.core.version>1.0.6</visual.core.version>
         <visual.common.version>1.0.0</visual.common.version>
+        <visual.auth-api-model.version>1.0.4</visual.auth-api-model.version>
+        <visual.auth-api-core.version>1.0.4</visual.auth-api-core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springboot.version>2.6.11</springboot.version>
         <spring-cloud.version>3.1.4</spring-cloud.version>
+        <feign.version>4.1.2</feign.version>
         <gson.version>2.10.1</gson.version>
         <mysql.version>8.0.33</mysql.version>
         <okhttp.version>4.9.3</okhttp.version>
@@ -36,8 +40,6 @@
     </properties>
 
     <dependencyManagement>
-
-
 
         <dependencies>
 
@@ -111,8 +113,9 @@
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
-                <version>3.1.8</version>
+                <version>2.9.3</version>
             </dependency>
+
             <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -127,6 +130,13 @@
                 <version>3.0.4</version>
             </dependency>
 
+<!--            &lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign &ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-starter-openfeign</artifactId>-->
+<!--                <version>${feign.version}</version>-->
+<!--            </dependency>-->
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-parent</artifactId>
@@ -134,7 +144,10 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+
         </dependencies>
+
     </dependencyManagement>
 
     <build>
@@ -142,9 +155,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.9.0</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <encoding>utf-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

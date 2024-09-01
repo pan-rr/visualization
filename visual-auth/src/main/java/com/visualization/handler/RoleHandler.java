@@ -24,7 +24,7 @@ public class RoleHandler {
         if (Objects.isNull(root)) {
             return new ArrayList<>();
         }
-        children = tenantMapper.selectTenantByTenantId(id);
+        children = tenantMapper.selectSameRootTenant(id);
         Map<Long, List<SystemTenant>> map = children.stream().collect(Collectors.groupingBy(SystemTenant::getFatherId));
         LinkedList<SystemTenant> q = new LinkedList<>();
         q.offer(root);
