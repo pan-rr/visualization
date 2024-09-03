@@ -90,4 +90,8 @@ public class DAGPointer implements Serializable {
     public String computeLockKey(){
         return "visual_pointer_" + taskId;
     }
+
+    public boolean checkBlock(){
+        return retryMaxCount < count;
+    }
 }

@@ -143,7 +143,7 @@ public class DAGServiceImpl implements DAGService {
     }
 
     @Override
-    public void saveReadyPointers(List<DAGPointer> pointers) {
+    public List<Long> saveReadyPointers(List<DAGPointer> pointers) {
         List<Long> list = pointers.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
         taskLatchRepository.decreaseCount(list);
         Set<Long> unreadyTask = taskLatchRepository.getUnreadyTask(list);
@@ -152,6 +152,7 @@ public class DAGServiceImpl implements DAGService {
         List<Long> readyIds = readyTask.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
         dagPointerRepository.saveAll(readyTask);
         taskLatchRepository.deleteLatchByIds(readyIds);
+        return readyIds;
     }
 
 
@@ -184,4 +185,8 @@ public class DAGServiceImpl implements DAGService {
     }
 
 
+    @Override
+    public void deleteEdges(List<EdgeId> ids) {
+        edgeRepository.deleteAllById(ids);
+    }
 }

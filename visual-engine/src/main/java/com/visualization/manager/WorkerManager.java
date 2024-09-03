@@ -86,6 +86,7 @@ public class WorkerManager {
                         DAGPointer pointer = map.get(Thread.currentThread());
                         visualLogService.accept(VisualStageWrapper.fail(pointer, e));
                         failTaskQ.offer(pointer);
+                        log.error("[stage execute] error {}", e);
                     }
                 }
             }, "dag-worker-" + i);

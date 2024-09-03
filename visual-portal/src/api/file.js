@@ -15,7 +15,7 @@ const httpExtra = axiosExtra.create({
  * @returns {Promise<AxiosResponse<any>>}
  */
 const taskInfo = (md5) => {
-    return service.get(`/file/fileChunk/checkFileChunkTask/${md5}`)
+    return service.get(`engine/portal/file/fileChunk/checkFileChunkTask/${md5}`)
 }
 
 /**

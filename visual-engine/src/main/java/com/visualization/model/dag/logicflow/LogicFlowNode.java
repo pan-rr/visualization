@@ -8,7 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDateTime;
 
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +35,7 @@ public class LogicFlowNode {
     public Task convertTask() {
         String taskName = String.valueOf(properties.get("text"));
         Object json = properties.get("json");
-        if (StringUtils.isEmpty(taskName) || Objects.isNull(json)) {
+        if (StringUtils.isBlank(taskName) || Objects.isNull(json)) {
             throw new DAGException(taskName + "任务详情配置不完整，请检查！");
         }
         Gson gson = new Gson();
@@ -44,6 +45,7 @@ public class LogicFlowNode {
                 .taskId(SnowIdUtil.nextId())
                 .name(taskName)
                 .json(str)
+                .createTime(LocalDateTime.now())
                 .build();
     }
 }

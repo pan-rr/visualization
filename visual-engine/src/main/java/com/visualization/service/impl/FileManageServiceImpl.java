@@ -5,10 +5,14 @@ import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.visualization.constant.OSSConstant;
 import com.visualization.model.file.FileDetail;
+import com.visualization.model.file.FilePathMapping;
+import com.visualization.repository.file.FilePathMappingRepository;
 import com.visualization.service.FileManageService;
 import com.visualization.utils.FilePathUtil;
+import com.visualization.utils.ShortLinkUtil;
 import io.minio.*;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +20,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +33,9 @@ public class FileManageServiceImpl implements FileManageService {
 
     @Resource(name = "visualMinioClient")
     private MinioClient minioClient;
+
+    @Resource
+    private FilePathMappingRepository filePathMappingRepository;
 
     private String rewriteFolderPath(String dirPath) {
         return FilePathUtil.getPortalFilePath(dirPath);
@@ -51,7 +59,11 @@ public class FileManageServiceImpl implements FileManageService {
         }
         ListObjectsV2Result result = amazonS3.listObjectsV2(OSSConstant.BUCKET_NAME, folderPath);
         List<S3ObjectSummary> summaries = result.getObjectSummaries();
-        return FileDetail.covertFileDetail(folderPath, summaries);
+        List<FileDetail> list = FileDetail.covertFileDetail(folderPath, summaries);
+        Example<FilePathMapping> example = Example.of(FilePathMapping.buildExampleByFolder(folderPath));
+        List<FileDetail> list2 = FilePathMapping.covert(filePathMappingRepository.findAll(example));
+        list.addAll(list2);
+        return list;
     }
 
     @SneakyThrows
@@ -76,6 +88,10 @@ public class FileManageServiceImpl implements FileManageService {
         String key = FilePathUtil.getPortalFilePath(path);
         String[] split = key.split("/");
         String fileName = split[split.length - 1];
+        FilePathMapping mapping = filePathMappingRepository.getById(ShortLinkUtil.zipToInt(key));
+        if (mapping != null){
+            key = mapping.getSourcePath();
+        }
         GetObjectArgs args = GetObjectArgs.builder()
                 .bucket(OSSConstant.BUCKET_NAME)
                 .object(key)
@@ -85,7 +101,8 @@ public class FileManageServiceImpl implements FileManageService {
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentLength(Integer.parseInt(Objects.requireNonNull(is.headers().get("Content-Length"))));
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        String encode = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
+        response.setHeader("Content-Disposition", "attachment;filename=" + encode);
         try (BufferedInputStream bis = new BufferedInputStream(is)) {
             byte[] buff = new byte[1024];
             ServletOutputStream os = response.getOutputStream();

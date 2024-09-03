@@ -38,12 +38,14 @@ public class APIController {
     @PostMapping("/checkPermission")
     AuthResponse checkPermission(@RequestBody AuthRequest authRequest) {
         AuthResponse res = new AuthResponse();
+        res.setPermissionLegal(StpUtil.hasPermission(authRequest.getPermission()));
         return res;
     }
 
     @PostMapping("/checkRole")
     AuthResponse checkRole(@RequestBody AuthRequest authRequest) {
         AuthResponse res = new AuthResponse();
+        res.setRoleLegal(StpUtil.hasRole(authRequest.getRole()));
         return res;
     }
 

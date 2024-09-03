@@ -31,6 +31,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.visualization</groupId>
+            <artifactId>visual-common</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -56,8 +61,7 @@
         </dependency>
 
 
-
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java &ndash;&gt;-->
+        <!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java -->
         <dependency>
             <groupId>com.influxdb</groupId>
             <artifactId>influxdb-client-java</artifactId>
@@ -69,6 +73,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
         <dependency>

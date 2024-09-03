@@ -8,8 +8,11 @@ import com.visualization.exception.UploadException;
 import com.visualization.model.file.FileChunkParam;
 import com.visualization.model.file.FileChunkRecord;
 import com.visualization.model.file.FileChunkTask;
+import com.visualization.model.file.FilePathMapping;
 import com.visualization.repository.file.FileChunkDetailRepository;
+import com.visualization.repository.file.FilePathMappingRepository;
 import com.visualization.service.FileChunkService;
+import com.visualization.utils.ShortLinkUtil;
 import io.minio.MinioClient;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +22,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -45,6 +49,9 @@ public class FileChunkServiceImpl implements FileChunkService {
 
     @Resource
     private FileChunkDetailRepository fileChunkDetailRepository;
+
+    @Resource
+    private FilePathMappingRepository filePathMappingRepository;
 
     private String getPath(String ossKey) {
         return MessageFormat.format("{0}/{1}/{2}", endpoint, OSSConstant.BUCKET_NAME, ossKey);
@@ -90,7 +97,16 @@ public class FileChunkServiceImpl implements FileChunkService {
             return true;
         }
         if (Boolean.TRUE.equals(record.getFinished())) {
-            amazonS3.copyObject(record.getBucketName(), sourceOSSKey, OSSConstant.BUCKET_NAME, targetOSSKey);
+            File file = new File(targetOSSKey);
+            String parent = file.getParent();
+            FilePathMapping mapping = FilePathMapping.builder()
+                    .fileName(param.getFileName())
+                    .sourcePath(record.getOssKey())
+                    .filePathHash(ShortLinkUtil.zipToInt(targetOSSKey))
+                    .filePrefixHash(ShortLinkUtil.zipToInt(parent))
+                    .build();
+            filePathMappingRepository.save(mapping);
+            //amazonS3.copyObject(record.getBucketName(), sourceOSSKey, OSSConstant.BUCKET_NAME, targetOSSKey);
             return true;
         }
         return false;

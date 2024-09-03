@@ -20,7 +20,7 @@ public interface DAGService {
 
     void deletePointer(TaskKey taskKey);
 
-    void saveReadyPointers(List<DAGPointer> pointers);
+    List<Long> saveReadyPointers(List<DAGPointer> pointers);
 
     void tryFinishInstance(Long instanceId);
 
@@ -33,4 +33,6 @@ public interface DAGService {
     DAGInstance createInstanceByTemplateId(Long templateId);
 
     void updateTemplateStatus(Long templateId, int status);
+
+    void deleteEdges(List<EdgeId> ids);
 }

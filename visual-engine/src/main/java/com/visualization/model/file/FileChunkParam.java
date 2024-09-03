@@ -83,6 +83,10 @@ public class FileChunkParam {
         return ossKey;
     }
 
+    public String computeSpace() {
+        return folder.split("/")[0];
+    }
+
     public String computeUploadLockKey() {
         return "visual_upload_" + md5;
     }

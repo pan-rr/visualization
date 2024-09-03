@@ -3,7 +3,7 @@ package com.visualization.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CompressNumberStringUtil {
+public class Base62Util {
 
     private static final String MASK62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -43,7 +43,5 @@ public class CompressNumberStringUtil {
         return res;
     }
 
-    public static void main(String[] args) {
-        System.err.println(MASK62.length());
-    }
+
 }

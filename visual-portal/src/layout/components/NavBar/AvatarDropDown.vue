@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" @command="handleClick">
     <span class="el-dropdown-link">
-      <el-avatar shape="square" :size="36" :src="avatar"></el-avatar>
+      <el-avatar shape="square"  :src="avatar"></el-avatar>
     </span>
     <el-dropdown-menu>
       <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
@@ -12,11 +12,13 @@
 </template>
 
 <script>
+import avatar from '@/assets/img/avatar.svg';
+
 export default {
   name: "",
   data() {
     return {
-      avatar: this.$store.getters.userInfo.avatar
+      avatar: avatar
     };
   },
   methods: {

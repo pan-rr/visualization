@@ -1,8 +1,10 @@
 package com.visualization.manager;
 
+import com.visualization.builder.VisualStageBuilder;
 import com.visualization.enums.StatusEnum;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
+import com.visualization.repository.file.FilePathMappingRepository;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import com.visualization.service.TaskService;
@@ -38,11 +40,19 @@ public class DAGManager {
     @Resource
     private MinIOService minIOService;
 
+    @Resource
+    private FilePathMappingRepository filePathMappingRepository;
+
 
     public void executeTask(DAGPointer pointer) {
         TaskKey taskKey = pointer.generateTaskKey();
         List<Edge> nextEdges = dagService.findNextEdges(taskKey);
-        VisualStage visualStage = pointer.buildStage(taskService);
+        VisualStage visualStage = VisualStageBuilder.builder()
+                .dagPointer(pointer)
+                .taskService(taskService)
+                .filePathMappingRepository(filePathMappingRepository)
+                .build().buildStage();
+        ;
         visualStage.execute();
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -57,9 +67,11 @@ public class DAGManager {
                                     .taskId(edge.getToTaskId())
                                     .count(0)
                                     .status(StatusEnum.NORMAL.getStatus())
+                                    .space(pointer.getSpace())
                                     .retryMaxCount(retryMaxCount)
                                     .build()).collect(Collectors.toList());
-                    dagService.saveReadyPointers(pointers);
+                    List<Long> readyIds = dagService.saveReadyPointers(pointers);
+                    dagService.deleteEdges(EdgeId.computeId(pointer, readyIds));
                 } else {
                     dagService.tryFinishInstance(taskKey.getInstanceId());
                 }
@@ -81,7 +93,7 @@ public class DAGManager {
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     public void updateTaskInfo(DAGPointer pointer) {
         dagService.updatePointer(pointer);
-        if (pointer.getRetryMaxCount() - pointer.getCount() < 1) {
+        if (pointer.checkBlock()) {
             dagService.updateInstanceStatus(pointer.getInstanceId(), StatusEnum.BLOCK.getStatus());
         }
     }

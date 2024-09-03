@@ -3,7 +3,6 @@ package com.visualization.controller;
 import com.visualization.manager.DAGManager;
 import com.visualization.model.Response;
 import com.visualization.model.dag.db.DAGPointer;
-import com.visualization.model.dag.db.Task;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +17,11 @@ public class DagController {
     @Resource
     private DAGManager dagManager;
 
-    @PostMapping("/saveTask")
-    public Response<Object> createProcessTemplate(@RequestBody Task task) {
-        dagManager.saveTask(task);
-        return Response.builder().result(Boolean.TRUE).build();
-    }
+//    @PostMapping("/saveTask")
+//    public Response<Object> createProcessTemplate(@RequestBody Task task) {
+//        dagManager.saveTask(task);
+//        return Response.builder().result(Boolean.TRUE).build();
+//    }
 
     /**
      * 此接口只为手动调用，正常流程应该由程序调用

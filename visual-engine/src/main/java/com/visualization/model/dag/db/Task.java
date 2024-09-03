@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,5 +27,8 @@ public class Task implements Serializable {
 
     @Column(columnDefinition = "text")
     private String json;
+
+    @Column
+    private LocalDateTime createTime;
 
 }

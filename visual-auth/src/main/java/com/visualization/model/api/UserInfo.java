@@ -1,6 +1,6 @@
 package com.visualization.model.api;
 
-import com.visualization.utils.CompressNumberStringUtil;
+import com.visualization.utils.Base62Util;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +31,7 @@ public class UserInfo {
         spaceOptions = new ArrayList<>(tenantOptions.size() + 1);
         boolean flag = true;
         for (Option option : tenantOptions) {
-            String s = option.getLabel() + "-" + CompressNumberStringUtil.zip(Long.parseLong(option.getValue()));
+            String s = option.getLabel() + "-" + Base62Util.zip(Long.parseLong(option.getValue()));
             spaceOptions.add(Option.builder()
                     .label(s)
                     .value(s)

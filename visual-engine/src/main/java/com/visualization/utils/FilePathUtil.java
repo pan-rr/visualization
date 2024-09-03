@@ -40,9 +40,7 @@ public class FilePathUtil {
     }
 
     public static boolean isFolderPath(String path) {
-        boolean flag = StringUtils.isEmpty(path);
-        if (flag) return false;
-        return path.endsWith("/");
+        return !StringUtils.isEmpty(path) && path.endsWith("/");
     }
 
     public static String getPortalFilePath(String suffix) {
