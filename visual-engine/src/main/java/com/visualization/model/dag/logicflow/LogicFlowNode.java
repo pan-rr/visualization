@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -32,14 +33,16 @@ public class LogicFlowNode {
 
     private Map<String, Object> text;
 
+
     public Task convertTask() {
         String taskName = String.valueOf(properties.get("text"));
         Object json = properties.get("json");
-        if (StringUtils.isBlank(taskName) || Objects.isNull(json)) {
+        boolean jsonConfig = properties.containsKey("json");
+        if (StringUtils.isBlank(taskName) || (jsonConfig && Objects.isNull(json)) || CollectionUtils.isEmpty(properties)) {
             throw new DAGException(taskName + "任务详情配置不完整，请检查！");
         }
         Gson gson = new Gson();
-        String str = gson.toJson(json);
+        String str = jsonConfig ? gson.toJson(json) : gson.toJson(properties);
         return Task
                 .builder()
                 .taskId(SnowIdUtil.nextId())

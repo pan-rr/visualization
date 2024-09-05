@@ -87,11 +87,11 @@ public class FileChunkServiceImpl implements FileChunkService {
 
     @Override
     public boolean tryQuickUpload(FileChunkParam param) {
-        String targetOSSKey = param.computeOSSKey();
         FileChunkRecord record = fileChunkDetailRepository.findByMD5(param.getMd5());
         if (Objects.isNull(record)) {
             return false;
         }
+        String targetOSSKey = param.computeOSSKey();
         String sourceOSSKey = record.getOssKey();
         if (StringUtils.equals(sourceOSSKey, targetOSSKey)) {
             return true;
@@ -106,7 +106,6 @@ public class FileChunkServiceImpl implements FileChunkService {
                     .filePrefixHash(ShortLinkUtil.zipToInt(parent))
                     .build();
             filePathMappingRepository.save(mapping);
-            //amazonS3.copyObject(record.getBucketName(), sourceOSSKey, OSSConstant.BUCKET_NAME, targetOSSKey);
             return true;
         }
         return false;

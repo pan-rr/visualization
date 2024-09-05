@@ -33,18 +33,24 @@ eureka:
     preferIpAddress: true
 
 visual:
-  auth:
-    token:
-      name: visual
-      remain-max-count: 5000 #秒
-
-
-
   gateway:
     white-list:
       pattern:
         - /auth/user/login
         - /auth/user/register
+  auth:
+    message:
+      fetchInterval: 60
+    token:
+      name: visual
+      remain-max-count: 10
+
+logging:
+  level:
+    root:
+      error
+
+
 
 
 

@@ -13,7 +13,6 @@ import com.visualization.utils.ShortLinkUtil;
 import com.visualization.view.base.VisualStage;
 import lombok.Builder;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -76,7 +75,7 @@ public class VisualStageBuilder {
         if (s.startsWith(FilePathUtil.SPACE_SHARE)) {
             params.put(FilePathUtil.SPACE_SHARE, true);
         }
-        params.put("space", StringUtils.hasText(space) ? space : FilePathUtil.PUBLIC_SPACE);
+        params.put("space", space);
         params.put("instanceId", dagPointer.getInstanceId());
         params.put("templateId", dagPointer.getTemplateId());
         params.put("filePath", s);

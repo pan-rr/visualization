@@ -22,6 +22,9 @@ export default {
     $_dragNode (item) {
       this.$props.lf.dnd.startDrag({
         type: item.type,
+        properties : {
+          taskType : item.taskType,
+        }
       })
     }
   }
@@ -56,6 +59,14 @@ export default {
 }
 .node-start{
   background: url('./background/start.png') no-repeat;
+  background-size: cover;
+}
+.node-v{
+  background: url('../../../assets/img/v.svg') no-repeat;
+  background-size: cover;
+}
+.node-SQL{
+  background: url('../../../assets/img/SQL.svg') no-repeat;
   background-size: cover;
 }
 .node-rect{

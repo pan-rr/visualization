@@ -1,10 +1,12 @@
 <template>
     <div>
+        <h1>资源列表</h1>
         <el-form :inline="true" :model="form" class="demo-form-inline">
             <el-form-item label="资源归属者ID：">
                 <span>{{ form.tenantId }}</span>
                 <!-- <el-input v-model="form.tenantId" placeholder="资源归属者ID" readonly></el-input> -->
             </el-form-item>
+            <el-divider direction="vertical"></el-divider>
             <el-form-item label="资源名称：">
                 <el-input v-model="form.resourceName" placeholder="资源名称"></el-input>
             </el-form-item>

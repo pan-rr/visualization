@@ -9,13 +9,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Component
 public class PointerQueueManager {
 
-    private LinkedBlockingQueue<DAGPointer> q = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<DAGPointer> Q = new LinkedBlockingQueue<>();
 
-    public LinkedBlockingQueue<DAGPointer> getQueue(){
-        return q;
+    public LinkedBlockingQueue<DAGPointer> getQueue() {
+        return Q;
     }
 
-    public void addAll(List<DAGPointer> list){
-        q.addAll(list);
+    public void addAll(List<DAGPointer> list) {
+        Q.addAll(list);
     }
 }

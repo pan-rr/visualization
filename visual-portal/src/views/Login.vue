@@ -3,7 +3,6 @@
     <div class="inner_box">
       <div v-if="needRegister">
         <div class="title c_fff bold t-center">注册账号</div>
-        <!-- <el-form ref="form" :model="register" :rules="rules">
           <el-form-item prop="oa">
             <el-input v-model="register.oa" placeholder="oa账号" prefix-icon="el-icon-user" />
           </el-form-item>

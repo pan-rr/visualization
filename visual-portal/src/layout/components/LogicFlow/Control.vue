@@ -1,36 +1,37 @@
 <template>
   <div>
 
-    <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
-      <template slot="prepend">存储空间:</template>
-      <el-select v-model="space" slot="append" placeholder="请选择空间">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
-      </el-select>
-    </el-input>
-
-    <el-input v-model="templateName" clearable>
-      <template slot="prepend">
-        <el-icon class="el-icon-collection-tag"></el-icon>
-        流程模版名称:
-      </template>
-    </el-input>
-
-    <el-button-group>
-      <el-button type="plain" size="small" @click="$_zoomIn">放大</el-button>
-      <el-button type="plain" size="small" @click="$_zoomOut">缩小</el-button>
-      <el-button type="plain" size="small" @click="$_zoomReset">大小适应</el-button>
-      <el-button type="plain" size="small" @click="$_translateRest">定位还原</el-button>
-      <el-button type="plain" size="small" @click="$_reset">还原(大小&定位)</el-button>
-      <el-button type="plain" size="small" @click="$_undo" :disabled="undoDisable">上一步(ctrl+z)</el-button>
-      <el-button type="plain" size="small" @click="$_redo" :disabled="redoDisable">下一步(ctrl+y)</el-button>
-      <el-button type="plain" size="small" @click="$_download">下载图片</el-button>
-      <el-button type="plain" size="small" @click="$_catData">查看数据</el-button>
-      <el-button v-if="catTurboData" type="plain" size="small" @click="$_catTurboData">查看turbo数据</el-button>
-      <el-button type="plain" size="small" @click="$_showMiniMap">查看缩略图</el-button>
-      <el-button type="plain" size="small" @click="$_createProcess">发布流程</el-button>
-    </el-button-group>
-
+    <div>
+      <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
+        <template slot="prepend">存储空间:</template>
+        <el-select v-model="space" slot="append" placeholder="请选择空间">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </el-input>
+      <el-input v-model="templateName" clearable>
+        <template slot="prepend">
+          <el-icon class="el-icon-collection-tag"></el-icon>
+          流程模版名称:
+        </template>
+      </el-input>
+    </div>
+    <div>
+      <el-button-group>
+        <el-button type="plain" size="small" @click="$_zoomIn">放大</el-button>
+        <el-button type="plain" size="small" @click="$_zoomOut">缩小</el-button>
+        <el-button type="plain" size="small" @click="$_zoomReset">大小适应</el-button>
+        <el-button type="plain" size="small" @click="$_translateRest">定位还原</el-button>
+        <el-button type="plain" size="small" @click="$_reset">还原(大小&定位)</el-button>
+        <el-button type="plain" size="small" @click="$_undo" :disabled="undoDisable">上一步(ctrl+z)</el-button>
+        <el-button type="plain" size="small" @click="$_redo" :disabled="redoDisable">下一步(ctrl+y)</el-button>
+        <el-button type="plain" size="small" @click="$_download">下载图片</el-button>
+        <el-button type="plain" size="small" @click="$_catData">查看数据</el-button>
+        <el-button v-if="catTurboData" type="plain" size="small" @click="$_catTurboData">查看turbo数据</el-button>
+        <el-button type="plain" size="small" @click="$_showMiniMap">查看缩略图</el-button>
+        <el-button type="plain" size="small" @click="$_createProcess">发布流程</el-button>
+      </el-button-group>
+    </div>
   </div>
 </template>
 <script>
@@ -121,7 +122,6 @@ export default {
     },
     getSpace() {
       this.space = this.options ? this.options[0].value : ''
-
     },
   },
   computed: {

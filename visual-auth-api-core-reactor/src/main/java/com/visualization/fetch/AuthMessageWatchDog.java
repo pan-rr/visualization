@@ -39,8 +39,8 @@ public class AuthMessageWatchDog {
         CompletableFuture.runAsync(() -> {
             while (true) {
                 try {
-                    fetchMessage();
                     TimeUnit.SECONDS.sleep(fetchInterval);
+                    fetchMessage();
                 } catch (Throwable e) {
                     LOG.error("[watch dog]定时任务异常:{}", e.getMessage());
                 }

@@ -10,7 +10,10 @@ import com.visualization.repository.file.FilePathMappingRepository;
 import com.visualization.service.FileManageService;
 import com.visualization.utils.FilePathUtil;
 import com.visualization.utils.ShortLinkUtil;
-import io.minio.*;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class FileManageServiceImpl implements FileManageService {
@@ -88,8 +92,9 @@ public class FileManageServiceImpl implements FileManageService {
         String key = FilePathUtil.getPortalFilePath(path);
         String[] split = key.split("/");
         String fileName = split[split.length - 1];
-        FilePathMapping mapping = filePathMappingRepository.getById(ShortLinkUtil.zipToInt(key));
-        if (mapping != null){
+        Optional<FilePathMapping> optional = filePathMappingRepository.findById(ShortLinkUtil.zipToInt(key));
+        FilePathMapping mapping = optional.orElse(null);
+        if (mapping != null) {
             key = mapping.getSourcePath();
         }
         GetObjectArgs args = GetObjectArgs.builder()

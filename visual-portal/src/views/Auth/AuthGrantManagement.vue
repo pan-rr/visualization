@@ -1,10 +1,12 @@
 <template>
     <div>
+        <h1>已赋权人员列表</h1>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
             <el-form-item label="权限归属者ID：">
                 <span>{{ searchForm.tenantId }}</span>
                 <!-- <el-input v-model="searchForm.tenantId" placeholder="权限归属者ID" readonly></el-input> -->
             </el-form-item>
+            <el-divider direction="vertical"></el-divider>
             <el-form-item label="已赋权人员OA：">
                 <el-input v-model="searchForm.oa" placeholder="已赋权人员OA"></el-input>
             </el-form-item>
