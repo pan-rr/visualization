@@ -7,11 +7,11 @@ export async function createTemplate(graph) {
 }
 
 export async function getTemplateList(pageable) {
-    return await service.post('engine/portal/getTemplateList', pageable)  
+    return await service.post('engine/portal/getTemplateList', pageable)
 }
 
 export async function getInstanceList(pageable) {
-    return await service.post('engine/portal/getInstanceList', pageable)  
+    return await service.post('engine/portal/getInstanceList', pageable)
 }
 
 export async function getLogTimeLine(instanceId) {
@@ -23,7 +23,7 @@ export async function createInstanceById(templateId) {
 }
 
 export async function disableTemplateById(templateId) {
-    await service.get('engine/portal/disableTemplateById', { params: { templateId } })
+    return await service.get('engine/portal/disableTemplateById', { params: { templateId } })
 }
 
 export async function saveTask(task) {
@@ -32,6 +32,17 @@ export async function saveTask(task) {
     return resp
 }
 
+export async function getDataSourceList(param) {
+    return await service.post('engine/portal/getDataSourceList', param)
+}
+
+export async function saveDataSource(param) {
+    return await service.post('engine/portal/saveDataSource', param)
+}
+
+export async function getDataSourceOptions(space) {
+    return await service.get('engine/portal/getDataSourceOptions', { params: { space } })
+}
 
 function sendSuccessMessage(resp) {
     if (resp.code === 0) {

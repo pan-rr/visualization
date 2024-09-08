@@ -1,16 +1,6 @@
 <template>
     <div>
-        <!-- <el-card class="box-card" shadow="hover"> -->
-            <div class="text item">
-                <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
-                    <template slot="prepend">存储空间:</template>
-                    <el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-input>
-            </div>
-        <!-- </el-card> -->
+       <SpaceSelector :spaceRef="spaceRef"></SpaceSelector>
 
         <div>
             <el-card class="box-card" shadow="hover">
@@ -26,7 +16,7 @@
                     <el-button type="info" plain icon="el-icon-folder-add" @click="createDir">新建文件夹</el-button>
 
                     <UploadFile :buttonStyle="true" :folder="this.path" @reloadDir="loadDir"></UploadFile>
-                    
+
                 </div>
                 <div v-if="files.length === 0">
                     <h3><el-icon class="el-icon-search"></el-icon>当前文件夹下暂无文件</h3>
@@ -90,6 +80,7 @@
 
 import { downloadFile, listDir, mkdir } from '../../api/fileManage';
 import UploadFile from '../../layout/components/File/UploadFile.vue';
+import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 
 
@@ -98,27 +89,27 @@ import UploadFile from '../../layout/components/File/UploadFile.vue';
 
 export default {
     name: 'FileManage',
-    components: { UploadFile },
+    components: { UploadFile ,SpaceSelector},
     data() {
         return {
-            space: '',
+           
             path: '',
             pathList: [],
             files: [],
-
+            spaceRef: {
+                data: ''
+            }
         }
     },
     methods: {
         initData() {
-           
             this.intiDir()
         },
         intiDir() {
-            this.changeSpace(this?.options[0].value)
+            this.changeSpace(this.space)
         },
-        
         changeSpace(value) {
-            this.space = value
+            console.log(value)
             this.pathList = []
             this.pathList.push(value)
         },
@@ -167,12 +158,19 @@ export default {
     beforeMount() {
         this.initData()
     },
-    computed:{
-        options(){
-            return this.$store.getters.userInfo.spaceOptions;
+    computed: {
+        space(){
+            return this.spaceRef.data
         }
     },
     watch: {
+        space:{
+            immediate: true,
+            deep: true,
+            handler(newVal, oldVal) {
+                this.intiDir()
+            }
+        },
         pathList: {
             immediate: true,
             deep: true,
@@ -181,7 +179,6 @@ export default {
                 if (this.path && this.path.length > 1) {
                     this.loadDir()
                 }
-
             }
         }
     }

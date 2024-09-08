@@ -1,6 +1,7 @@
 <template>
     <div>
         <el-form-item label="csv可选参数">
+            <Tips message="样例，括号包裹键值对。（headers:no|name|sex）   （fieldSeparator:|）  （caseSensitiveColumnNames:true） （charset:utf-8） （writeColumnHeader: false）"></Tips>
             <el-input placeholder="请输入csv可选参数key" v-model="paramKey">
                 <template slot="prepend">key</template>
             </el-input>
@@ -11,11 +12,11 @@
                 </template>
             </el-input>
             <el-table :data="getList()" stripe border v-if="time">
-                <el-table-column prop="key" label="键">
+                <el-table-column align="center"  prop="key" label="键">
                 </el-table-column>
-                <el-table-column prop="value" label="值">
+                <el-table-column align="center"  prop="value" label="值">
                 </el-table-column>
-                <el-table-column fixed="right" label="操作">
+                <el-table-column align="center"  fixed="right" label="操作">
                     <template slot-scope="scope">
                         <el-button @click="delKey(scope.row.key)">删除此项</el-button>
                     </template>
@@ -27,10 +28,15 @@
 
 <script>
 
+import Tips from './Tips.vue';
+
 
 
 
 export default {
+    components:{
+        Tips
+    },
     props: {
         view: {
             type: Object

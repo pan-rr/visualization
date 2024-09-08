@@ -1,16 +1,15 @@
 import BaseTask from "./BaseTask";
 
 export default class SQLTask extends BaseTask {
-    script;
-    param;
+    sql = {
+        script: '',
+        url: '',
+        username: '',
+        password: '',
+    }
     constructor(taskType) {
         super();
         this.taskType = taskType
-        this.param = {
-            url: '',
-            username: '',
-            password: '',
-        }
     }
 
     static convert(baseTask) {

@@ -2,13 +2,14 @@
   <div>
 
     <div>
-      <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
+      <!-- <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
         <template slot="prepend">存储空间:</template>
-        <el-select v-model="space" slot="append" placeholder="请选择空间">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-      </el-input>
+<el-select v-model="space" slot="append" placeholder="请选择空间">
+  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+  </el-option>
+</el-select>
+</el-input> -->
+      <space-selector :space-ref="spaceRef"></space-selector>
       <el-input v-model="templateName" clearable>
         <template slot="prepend">
           <el-icon class="el-icon-collection-tag"></el-icon>
@@ -37,11 +38,13 @@
 <script>
 import { createTemplate } from '../../../api/dag';
 import { Message } from 'element-ui'
+import SpaceSelector from '../Visual/SpaceSelector.vue';
 
 
 
 export default {
   name: 'Control',
+  components: { SpaceSelector },
   props: {
     lf: Object || String,
     catTurboData: Boolean
@@ -53,8 +56,9 @@ export default {
       graphData: null,
       dataVisible: false,
       templateName: '',
-      // options: [],
-      space: ''
+      spaceRef: {
+        data: ''
+      }
     }
   },
   mounted() {
@@ -62,7 +66,6 @@ export default {
       this.$data.undoDisable = !undoAble
       this.$data.redoDisable = !redoAble
     });
-    this.getSpace();
   },
   methods: {
     $_zoomIn() {
@@ -107,7 +110,7 @@ export default {
       createTemplate({
         name: this.$data.templateName,
         logicFlow: data,
-        space: this.space
+        space: this.spaceRef.data
       }).then(response => {
         if (response?.data?.code === 0) {
           this.$emit('refreash')
@@ -120,17 +123,9 @@ export default {
         }
       });
     },
-    getSpace() {
-      this.space = this.options ? this.options[0].value : ''
-    },
   },
   computed: {
-    options() {
-      return this.$store.getters.userInfo.spaceOptions;
-    },
-    // space() {
-    //   return this.options ? this.options[0].value : ''
-    // }
+    
   }
 }
 </script>

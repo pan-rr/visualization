@@ -1,8 +1,8 @@
 ### Visualization分布式数据分析平台
 
 一个类似Kettle的数据分析平台，目标是数据分析，可承担一点ETL任务。
-
-如果喜欢或者对您有帮助，请点个star吧！部分帅哥美女已经点了star，您还在等什么？：）
+Visualization使用低代码方式编排DAG任务，集群自动执行相应的任务。
+如果喜欢或者对您有帮助，请点个star吧！：）
 
 #### 架构图
 
@@ -11,24 +11,32 @@
 
 #### 特性
 
-+ 流程配置化，提供前端拖拉拽形式配置，数据流程使用json配置，少量代码即可完成取数逻辑的配置；
++ 流程配置化。提供前端拖拉拽形式配置流程，数据操作使用表单配置，少量代码即可完成相应的配置；
 + 基于Spring Cloud的分布式集群计算，外部依赖较少，容器集群部署相对方便；
 + DAG任务调度，节点任务由集群自动执行；
-+ 支持多数据源，目前支持CSV、JDBC(MySQL驱动)，后续会增加其他数据源；
++ 支持多数据源，目前支持CSV、JDBC(MySQL驱动)，后续会增加其他类型的数据源；
 + 文件分片上传下、下载；
 + 支持流程实例任务执行情况查询，以任务时间线形式展示；
 + 支持多租户权限管理，允许父子租户
-+ 支持前端页面路由按权限生成；
++ 支持前端页面路由按权限动态生成；
 
 #### 部分截图
 
+![画布](https://gitee.com/pan-rr/visualization/raw/master/pic/画布.png)
+
+![表单配置1](https://gitee.com/pan-rr/visualization/raw/master/pic/任务节点表单配置.png)
+
+![表单配置2](https://gitee.com/pan-rr/visualization/raw/master/pic/表单配置.png)
+
 ![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
 
-![权限控制](https://gitee.com/pan-rr/visualization/raw/master/pic/权限控制.png)
+![赋权管理](https://gitee.com/pan-rr/visualization/raw/master/pic/赋权管理.png)
 
-![配置说明](https://gitee.com/pan-rr/visualization/raw/master/pic/配置说明.png)
+![赋权人员管理](https://gitee.com/pan-rr/visualization/raw/master/pic/赋权人员管理.png)
 
-![时间线](https://gitee.com/pan-rr/visualization/raw/master/pic/时间线.png)
+![执行日志](https://gitee.com/pan-rr/visualization/raw/master/pic/执行日志.png)
+
+![数据源配置](https://gitee.com/pan-rr/visualization/raw/master/pic/数据源配置.png)
 
 ![流程列表](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
 
@@ -45,7 +53,7 @@
 + 有配置需求的场景，例如定时生成分析报表的需求。
   - 这个目前需外部定时任务组件新建流程实例，目前市面上已经有很多定时任务组件可以搭配使用（后续考虑增加定时组件）；
 + 跨数据源连接操作，例如某张表在PolarDB、CSV，另一张表在MySQL的连接操作；
-+ 取数逻辑频繁修改，例如某个指标。本工具只需修改json配置即可实现修改逻辑； 
++ 取数逻辑频繁修改，例如某个指标的获取方式。本工具只需修改配置即可实现修改逻辑； 
 + 数据大屏的后端，类似于datav、mapv的画布工具，使用该工具可以快速构建大屏后端；
 
 #### 部署前置条件
@@ -74,12 +82,29 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 任务流程
 
-节点任务配置说明在visual_task.md
 
 1. 在流程管理-流程定义新建流程模版。拖拽左侧“任务节点”到画布，点击节点进行配置。配置完成后点击发布流程
 2. 在已定义流程列表点击运行实例
 3. 等待任务完成，在“流程管理-流程实例列表-查看执行日志”里查看任务的执行情况
 
+#### 租户说明
+
++ 注册时，可选择租户用户和普通用户；
++ 普通用户在赋权后才与对应的租户关联；
++ 右上角的“企业/组织/团队”选择当前进入的租户空间，所有用户都默认和public租户关联；
+
+#### 存储空间说明
+
++ 存储空间可选个人、已关联的租户；
++ 所有配置项都存储在选择的存储空间；
+
+#### 流程实例涉及文件说明
+
+流程涉及到的文件有以下两种路径
+
++ 路径前缀是spaceShare，则文件在spaceShare文件夹下；
+
++ 其余情况的路径前缀是“流程模版Id/流程实例Id/文件配置的路径”。这么设置是为了规避多流程实例出现文件覆盖。
 
 #### 流程模版文件上传下载
 
@@ -94,4 +119,7 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 #### 后记
 
 更多功能需日后完善。
+
 尊重劳动成果，未经允许禁止商业闭源修改使用。
+
+二次开发请注明出处，禁止抹掉原作者信息。

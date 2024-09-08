@@ -1,8 +1,10 @@
 package com.visualization.builder;
 
 import com.google.gson.Gson;
+import com.visualization.constant.TaskTypeConstant;
 import com.visualization.constant.ViewConstant;
 import com.visualization.exception.DAGException;
+import com.visualization.manager.DAGDataSourceManager;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.model.dag.db.Task;
 import com.visualization.model.file.FilePathMapping;
@@ -25,11 +27,15 @@ public class VisualStageBuilder {
 
     private FilePathMappingRepository filePathMappingRepository;
 
+    private DAGDataSourceManager dagDataSourceManager;
+
     private VisualStage visualStage;
+
 
     public VisualStage buildStage() {
         createStage();
         rewriteFilePath();
+        rewriteDatasource();
         return visualStage;
     }
 
@@ -41,6 +47,22 @@ public class VisualStageBuilder {
         }
         Gson gson = new Gson();
         this.visualStage = gson.fromJson(task.getJson(), VisualStage.class);
+    }
+
+    private void rewriteDatasource() {
+        List<Map> configs = new ArrayList<>();
+        switch (visualStage.getTaskType()) {
+            case TaskTypeConstant.VISUAL:
+                List<Map<String, Object>> input = visualStage.getInput();
+                input.forEach(i -> configs.add((Map) i.get(ViewConstant.PARAM)));
+                configs.add((Map) visualStage.getOutput().get(ViewConstant.PARAM));
+                break;
+            case TaskTypeConstant.SQL:
+                configs.add(visualStage.getSql());
+                break;
+            default:
+        }
+        dagDataSourceManager.rewriteDataSource(configs);
     }
 
 

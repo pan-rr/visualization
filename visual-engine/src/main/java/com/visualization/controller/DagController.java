@@ -17,11 +17,6 @@ public class DagController {
     @Resource
     private DAGManager dagManager;
 
-//    @PostMapping("/saveTask")
-//    public Response<Object> createProcessTemplate(@RequestBody Task task) {
-//        dagManager.saveTask(task);
-//        return Response.builder().result(Boolean.TRUE).build();
-//    }
 
     /**
      * 此接口只为手动调用，正常流程应该由程序调用

@@ -1,5 +1,6 @@
 package com.visualization.controller;
 
+import com.visualization.manager.DAGDataSourceManager;
 import com.visualization.manager.DAGManager;
 import com.visualization.manager.LogicFlowManager;
 import com.visualization.manager.TimeLineManager;
@@ -12,6 +13,7 @@ import com.visualization.model.dag.db.DAGTemplate;
 import com.visualization.model.portal.PortalDAGInstance;
 import com.visualization.model.dag.logicflow.LogicGraph;
 import com.visualization.model.portal.PortalDAGTemplate;
+import com.visualization.model.portal.PortalDataSource;
 import com.visualization.service.DAGService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +34,9 @@ public class PortalController {
 
     @Resource
     private DAGManager dagManager;
+
+    @Resource
+    private DAGDataSourceManager dagDataSourceManager;
 
     @Resource
     private TimeLineManager timeLineManager;
@@ -85,4 +90,19 @@ public class PortalController {
         return Response.success(timeLineManager.getTimeLineByInstanceId(instanceId));
     }
 
+    @PostMapping("/saveDataSource")
+    public Response<Object> saveDataSource(@RequestBody PortalDataSource portalDataSource) {
+        dagDataSourceManager.saveDAGDataSource(portalDataSource);
+        return Response.success("保存数据源成功！");
+    }
+
+    @PostMapping("/getDataSourceList")
+    public Response<Object> getDataSourceList(@RequestBody PortalDataSource portalDataSource) {
+        return Response.success(dagDataSourceManager.getDataSourceList(portalDataSource));
+    }
+
+    @GetMapping("/getDataSourceOptions")
+    public Response<Object> getDataSourceList(@RequestParam("space") String space) {
+        return Response.success(dagDataSourceManager.getDataSourceOptions(space));
+    }
 }

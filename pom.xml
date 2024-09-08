@@ -25,7 +25,7 @@
         <maven.complier.source>1.8</maven.complier.source>
         <maven.complier.target>1.8</maven.complier.target>
         <maven.complier.compilerVersion>1.8</maven.complier.compilerVersion>
-        <visual.core.version>1.0.6</visual.core.version>
+        <visual.core.version>1.0.7</visual.core.version>
         <visual.common.version>1.0.0</visual.common.version>
         <visual.auth-api-model.version>1.0.4</visual.auth-api-model.version>
         <visual.auth-api-core.version>1.0.4</visual.auth-api-core.version>

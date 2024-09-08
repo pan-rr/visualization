@@ -8,7 +8,7 @@ export const nodeList = [
     text: 'Visual任务节点',
     type: 'rect',
     class: 'node-v',
-    taskType: 'visual'
+    taskType: 'VISUAL'
   },
   {
     text: 'SQL任务节点',

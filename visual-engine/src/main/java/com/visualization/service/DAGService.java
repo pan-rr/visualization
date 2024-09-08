@@ -4,6 +4,8 @@ import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
 import com.visualization.model.param.NormalParam;
 import com.visualization.model.param.PageParameter;
+import com.visualization.model.portal.Option;
+import com.visualization.model.portal.PortalDataSource;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -35,4 +37,12 @@ public interface DAGService {
     void updateTemplateStatus(Long templateId, int status);
 
     void deleteEdges(List<EdgeId> ids);
+
+    void saveDAGDataSource(PortalDataSource portalDataSource);
+
+    List<PortalDataSource> getDataSourceList(PortalDataSource portalDataSource);
+
+    List<DAGDataSource> getListByIds(List<Long> ids);
+
+    List<Option> getDataSourceOptions(String space);
 }

@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -28,7 +28,7 @@ public class Task implements Serializable {
     @Column(columnDefinition = "text")
     private String json;
 
-    @Column
+    @Column(columnDefinition = "datetime")
     private LocalDateTime createTime;
 
 }

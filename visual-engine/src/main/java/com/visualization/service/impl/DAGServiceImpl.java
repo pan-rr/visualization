@@ -6,10 +6,14 @@ import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
 import com.visualization.model.param.NormalParam;
 import com.visualization.model.param.PageParameter;
+import com.visualization.model.portal.Option;
+import com.visualization.model.portal.PortalDataSource;
 import com.visualization.repository.dag.*;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
+import com.visualization.service.RedisService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -47,7 +51,13 @@ public class DAGServiceImpl implements DAGService {
     private DAGInstanceRepository dagInstanceRepository;
 
     @Resource
+    private DAGDataSourceRepository dagDataSourceRepository;
+
+    @Resource
     private MinIOService minIOService;
+
+    @Resource
+    private RedisService redisService;
 
 
     @Override
@@ -188,5 +198,40 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void deleteEdges(List<EdgeId> ids) {
         edgeRepository.deleteAllById(ids);
+    }
+
+
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
+    @Override
+    public void saveDAGDataSource(PortalDataSource portalDataSource) {
+        DAGDataSource dataSource = portalDataSource.convert();
+        Integer hashCount = dagDataSourceRepository.getSpaceHashCount(dataSource.getHash(), dataSource.getSpace());
+        if (hashCount > 0) {
+            throw new DAGException("该存储空间下已有一个高相似度的数据源");
+        }
+        dagDataSourceRepository.save(dataSource);
+    }
+
+    @Override
+    public List<PortalDataSource> getDataSourceList(PortalDataSource portalDataSource) {
+        Example<DAGDataSource> example = portalDataSource.buildExample();
+        List<DAGDataSource> all = dagDataSourceRepository.findAll(example);
+        return DAGDataSource.convert(all);
+    }
+
+    @Override
+    public List<DAGDataSource> getListByIds(List<Long> ids) {
+        return dagDataSourceRepository.findAllById(ids);
+    }
+
+    @Override
+    public List<Option> getDataSourceOptions(String space) {
+        List<DAGDataSourceProject> list = dagDataSourceRepository.getProject(space);
+        return list.stream().map(i ->
+                Option.builder()
+                        .label(i.getName())
+                        .value(i.getData_source_id())
+                        .build()
+        ).collect(Collectors.toList());
     }
 }

@@ -39,7 +39,8 @@ import {
   registerTask,
   registerConnect,
 } from './registerNode'
-// const demoData = require('./data.json')
+
+
 let demoData = {}
 
 export default {
@@ -104,7 +105,6 @@ export default {
       registerEnd(this.lf)
       registerPush(this.lf, this.clickPlus, this.mouseDownPlus)
       registerDownload(this.lf)
-      // registerPolyline(this.lf)
       registerTask(this.lf)
       registerConnect(this.lf)
       this.$_render()

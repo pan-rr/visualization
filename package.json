@@ -2,6 +2,5 @@
   "name": "Visualisation",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/pan-rr/visualization.git",
   "license": "MIT"
 }

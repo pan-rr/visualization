@@ -43,6 +43,9 @@ public class DAGManager {
     @Resource
     private FilePathMappingRepository filePathMappingRepository;
 
+    @Resource
+    private DAGDataSourceManager dagDataSourceManager;
+
 
     public void executeTask(DAGPointer pointer) {
         TaskKey taskKey = pointer.generateTaskKey();
@@ -50,9 +53,10 @@ public class DAGManager {
         VisualStage visualStage = VisualStageBuilder.builder()
                 .dagPointer(pointer)
                 .taskService(taskService)
+                .dagDataSourceManager(dagDataSourceManager)
                 .filePathMappingRepository(filePathMappingRepository)
                 .build().buildStage();
-        ;
+
         visualStage.execute();
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -85,10 +89,6 @@ public class DAGManager {
         return dagService.createInstanceByTemplateId(templateId);
     }
 
-
-    public void saveTask(Task task) {
-        taskService.saveTask(task);
-    }
 
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     public void updateTaskInfo(DAGPointer pointer) {

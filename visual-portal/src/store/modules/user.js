@@ -32,6 +32,7 @@ export default {
       return new Promise((resolve) => {
         userLogin(data).then(async (res) => {
           commit('SET_USER_INFO', res.data.result)
+          await dispatch('space/initHolder', res.data.result.spaceOptions,{root:true})
           await dispatch('permission/userPermissionResource', state.userInfo.choosenTenant,{root:true})
           // await dispatch('permission/handleRoutes', null, { root: true })
           resolve('success')

@@ -1,11 +1,12 @@
 package com.visualization.view.base;
 
-import com.visualization.handler.rewrite.ViewRewriteHandler;
+import com.visualization.constant.TaskTypeConstant;
 import com.visualization.handler.SpringApplicationHandler;
+import com.visualization.handler.rewrite.ViewRewriteHandler;
 import com.visualization.manager.ViewManager;
 import com.visualization.manager.orphan.SQLManager;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -17,8 +18,8 @@ public class VisualStage {
 
     private List<Map<String, Object>> input;
     private Map<String, Object> output;
-
     private Map<String, String> sql;
+    private String taskType;
 
 
     public List<Map<String, Object>> getInput() {
@@ -39,6 +40,14 @@ public class VisualStage {
 
     public List<ViewConf> getInputView() {
         return input.stream().map(ViewConf::new).collect(Collectors.toList());
+    }
+
+    public String getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
     }
 
     public VisualStage() {
@@ -64,14 +73,19 @@ public class VisualStage {
     }
 
     public void execute() {
-        if (!CollectionUtils.isEmpty(input) && !CollectionUtils.isEmpty(output)) {
-            executeNormal();
-        } else if (!CollectionUtils.isEmpty(sql)) {
-            executeSQL();
-        } else {
-            throw new RuntimeException("无法执行非法的配置！");
+        if (StringUtils.isBlank(taskType)) {
+            throw new RuntimeException("任务类型为空！");
         }
-
+        switch (taskType) {
+            case TaskTypeConstant.VISUAL:
+                executeNormal();
+                break;
+            case TaskTypeConstant.SQL:
+                executeSQL();
+                break;
+            default:
+                throw new RuntimeException("无法执行非法的配置！");
+        }
     }
 
     private void executeNormal() {

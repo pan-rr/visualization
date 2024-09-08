@@ -4,5 +4,6 @@ export default {
   routes: (state) => state.permission.routes,
   isCollapse: (state) => state.setting.isCollapse,
   cachedViews: (state) => state.tagsView.cachedViews,
-  visitedViews: (state) => state.tagsView.visitedViews
+  visitedViews: (state) => state.tagsView.visitedViews,
+  spaceHolder: (state) => state.space.spaceHolder
 }

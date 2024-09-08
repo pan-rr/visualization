@@ -1,7 +1,6 @@
 package com.visualization.model.dag.logicflow;
 
 import com.google.gson.Gson;
-import com.visualization.constant.VisualConstant;
 import com.visualization.enums.StatusEnum;
 import com.visualization.exception.DAGException;
 import com.visualization.jpa.SnowIdWorker;
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -25,7 +23,7 @@ public class LogicGraph {
     private String name;
     private String space;
 
-    public LogicFlowPack getPack(){
+    public LogicFlowPack getPack() {
         this.validateDAG();
         List<Task> tasks = this.getTasks();
         DAGTemplate template = this.getTemplate();
@@ -47,12 +45,12 @@ public class LogicGraph {
                 .name(this.getName())
                 .templateId(snowIdWorker.nextId())
                 .json(flowJSON)
-                .space(Objects.nonNull(space) ? space : VisualConstant.DEFAULT_SPACE)
+                .space(space)
                 .status(StatusEnum.NORMAL.getStatus())
                 .build();
     }
 
-    public List<Task> getTasks(){
+    public List<Task> getTasks() {
         return logicFlow.getTasks();
     }
 }
