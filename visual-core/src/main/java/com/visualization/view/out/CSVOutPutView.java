@@ -88,7 +88,7 @@ public class CSVOutPutView extends BaseView implements OutputView {
     public void destroy() {
         super.destroy();
         Object o = properties.get("destroyFileAfterFinish");
-        if (o != null && Boolean.TRUE.equals(Boolean.valueOf(o.toString()))) {
+        if (o == null || Boolean.TRUE.equals(Boolean.valueOf(o.toString()))) {
             try {
                 Files.deleteIfExists(Paths.get(csv.getPath()));
             } catch (IOException e) {

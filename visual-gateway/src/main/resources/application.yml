@@ -44,6 +44,7 @@ visual:
     token:
       name: visual
       remain-max-count: 10
+      activity-timeout: 1800
 
 logging:
   level:

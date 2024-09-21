@@ -13,12 +13,12 @@
         <module>visual-core</module>
         <module>visual-engine</module>
         <module>visual-discovery</module>
-        <module>visual-file</module>
         <module>visual-gateway</module>
         <module>visual-common</module>
         <module>visual-auth</module>
         <module>visual-auth-api-model</module>
         <module>visual-auth-api-core-reactor</module>
+        <module>visual-auth-api-core</module>
     </modules>
 
     <properties>

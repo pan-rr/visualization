@@ -1,7 +1,7 @@
 package com.visualization.view.base;
 
 import com.visualization.constant.TaskTypeConstant;
-import com.visualization.handler.SpringApplicationHandler;
+import com.visualization.handler.SpringContextHandler;
 import com.visualization.handler.rewrite.ViewRewriteHandler;
 import com.visualization.manager.ViewManager;
 import com.visualization.manager.orphan.SQLManager;
@@ -89,7 +89,7 @@ public class VisualStage {
     }
 
     private void executeNormal() {
-        ApplicationContext ctx = SpringApplicationHandler.getCtx();
+        ApplicationContext ctx = SpringContextHandler.getCtx();
         DataSource db = ctx.getBean("db", DataSource.class);
         Collection<ViewRewriteHandler> viewRewriteHandlers = ctx.getBeansOfType(ViewRewriteHandler.class).values();
         this.filter(viewRewriteHandlers);

@@ -16,7 +16,7 @@ public class AuthHolder {
     public AuthHolder() {
     }
 
-    public void renewModifyTime(){
+    public void renewModifyTime() {
         this.modifyTime = System.currentTimeMillis();
     }
 

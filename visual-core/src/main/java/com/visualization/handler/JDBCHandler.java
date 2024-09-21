@@ -25,7 +25,7 @@ public class JDBCHandler {
         String appDataSourceName = properties.getOrDefault("appDataSourceName",null);
         this.dataSourceProperties = new DataSourceProperties();
         if (appDataSourceName != null) {
-            DataSource ds = SpringApplicationHandler.getCtx().getBean(appDataSourceName, DataSource.class);
+            DataSource ds = SpringContextHandler.getCtx().getBean(appDataSourceName, DataSource.class);
             this.dataSource = ds;
             try {
                 Connection connection = ds.getConnection();

@@ -76,7 +76,7 @@ public class CSVInputView extends BaseView implements InputView {
             }
             StringBuilder options = new StringBuilder();
             boolean flag = !param.isEmpty();
-            if (flag){
+            if (flag) {
                 sb.append(", STRINGDECODE");
             }
             param.forEach((k, v) -> options.append(' ').append(k).append('=').append(v));
@@ -103,8 +103,9 @@ public class CSVInputView extends BaseView implements InputView {
             throw new RuntimeException(e);
         }
     }
+
     private void index() {
-        if (properties.containsKey("indexOn")){
+        if (properties.containsKey("indexOn")) {
             String indexOn = String.valueOf(properties.get("indexOn"));
             StringBuilder sb = new StringBuilder("create index idx_")
                     .append(getRealTableName())
@@ -128,19 +129,19 @@ public class CSVInputView extends BaseView implements InputView {
      * 这里根据传参下载文件
      */
     private void prepareCsv() throws IOException {
-        String path = String.valueOf(properties.get("filePath"));
-        Object o = properties.get("fileHandlerId");
+        String path = String.valueOf(properties.get(ViewConstant.FILE_PATH));
+        Object o = properties.get(ViewConstant.FILE_HANDLER_ID);
         String fileHandlerId = o == null ? "" : String.valueOf(o);
-        Map<?,?> param = (Map<?, ?>) properties.get("fileParam");
-        csv = FileManager.getFile(path,fileHandlerId,param);
-        properties.put("filePath", csv.getAbsolutePath());
+        Map<?, ?> param = (Map<?, ?>) properties.get("fileParam");
+        csv = FileManager.getFile(path, fileHandlerId, param);
+        properties.put(ViewConstant.FILE_PATH, csv.getAbsolutePath());
     }
 
     @Override
     public void destroy() {
         super.destroy();
         Object o = properties.get("destroyFileAfterFinish");
-        if (o != null && Boolean.TRUE.equals(Boolean.valueOf(o.toString()))){
+        if (o == null || Boolean.TRUE.equals(Boolean.valueOf(o.toString()))) {
             try {
                 Files.deleteIfExists(Paths.get(csv.getPath()));
             } catch (IOException e) {

@@ -8,18 +8,6 @@
       </el-card>
       <div v-if="taskType === 'SQL'">
         <el-card shadow="never">
-          <!-- <el-form-item label="需执行的SQL">
-            <el-input v-model="visualTask.script"></el-input>
-          </el-form-item>
-          <el-form-item label="数据库URL">
-            <el-input v-model="visualTask.url"></el-input>
-          </el-form-item>
-          <el-form-item label="数据库账号">
-            <el-input v-model="visualTask.username"></el-input>
-          </el-form-item>
-          <el-form-item label="数据库密码">
-            <el-input v-model="visualTask.password"></el-input>
-          </el-form-item> -->
           <SQLForm :fatherRef="visualTask"></SQLForm>
           <el-form-item>
             <el-button plain type="primary" @click="onSubmit">保存</el-button>
@@ -29,37 +17,36 @@
       <div v-else-if="taskType === 'VISUAL'">
 
         <el-card shadow="never">
-          <div>
-            <div>
-              <span>任务配置进度</span>
-              <span style="text-align: right;">
-                <el-button-group>
-                  <el-button plain size="mini"
-                    @click="visualTask.step = visualTask.step > 0 ? visualTask.step - 1 : 0">上一进度</el-button>
-                  <el-button plain size="mini"
-                    @click="visualTask.step = visualTask.step == 2 ? 2 : visualTask.step + 1">下一进度</el-button>
-                </el-button-group>
-              </span>
-            </div>
-            <el-steps simple :active="visualTask.step" finish-status="success">
-              <el-step title="配置输入视图"></el-step>
-              <el-step title="配置输出视图"></el-step>
-              <el-step title="提交表单"></el-step>
-            </el-steps>
+
+          <div slot="header" class="clearfix">
+            <el-tag>任务配置进度</el-tag>
+            <el-button-group style="float: right; ">
+              <el-button plain size="mini"
+                @click="visualTask.step = visualTask.step > 0 ? visualTask.step - 1 : 0">上一进度</el-button>
+              <el-button plain size="mini"
+                @click="visualTask.step = visualTask.step == 2 ? 2 : visualTask.step + 1">下一进度</el-button>
+            </el-button-group>
           </div>
+          <el-steps simple :active="visualTask.step" finish-status="success">
+            <el-step title="配置输入视图"></el-step>
+            <el-step title="配置输出视图"></el-step>
+            <el-step title="提交表单"></el-step>
+          </el-steps>
+
         </el-card>
 
         <div v-if="visualTask.step === 0">
           <el-card shadow="never">
             <div>
-              输入视图配置:
-              <el-divider direction="vertical"></el-divider>
-              <el-select v-model="inputView" placeholder="请选择视图类型" size="mini">
-                <el-option v-for="item in [{ label: 'csv', value: 'csv' }, { label: 'jdbc', value: 'jdbc' }]"
-                  :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-              <el-button @click="addIntputView" plain size="mini">新增输入视图</el-button>
+              <el-tag>输入视图</el-tag>
+              <div style="float: right;">
+                <el-select v-model="inputView" placeholder="请选择视图类型" size="mini">
+                  <el-option v-for="item in [{ label: 'csv', value: 'csv' }, { label: 'jdbc', value: 'jdbc' }]"
+                    :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+                <el-button @click="addIntputView" plain size="mini">新增输入视图</el-button>
+              </div>
             </div>
           </el-card>
           <div v-for="(view, index) in visualTask.input">
@@ -84,19 +71,6 @@
                 <KVTable :view="visualTask.input[index]"></KVTable>
               </div>
               <div v-else-if="visualTask.input[index].viewType === 'jdbc'">
-                <!-- <el-form-item label="需执行的SQL">
-                  <Tips message="查询语句"></Tips>
-                  <el-input v-model="visualTask.input[index].script"></el-input>
-                </el-form-item>
-                <el-form-item label="数据库URL">
-                  <el-input v-model="visualTask.input[index].param.url"></el-input>
-                </el-form-item>
-                <el-form-item label="数据库账号">
-                  <el-input v-model="visualTask.input[index].param.username"></el-input>
-                </el-form-item>
-                <el-form-item label="数据库密码">
-                  <el-input v-model="visualTask.input[index].param.password"></el-input>
-                </el-form-item> -->
                 <JDBCForm :fatherRef="visualTask.input[index]" :view-type="'in'"></JDBCForm>
               </div>
 
@@ -136,15 +110,6 @@
               <TabTable :param="visualTask.output.param" excludeSQL="true"></TabTable>
             </div>
             <div v-else-if="visualTask.output.viewType === 'jdbc'">
-              <!-- <el-form-item label="数据库URL">
-                <el-input v-model="visualTask.output.param.url"></el-input>
-              </el-form-item>
-              <el-form-item label="数据库账号">
-                <el-input v-model="visualTask.output.param.username"></el-input>
-              </el-form-item>
-              <el-form-item label="数据库密码">
-                <el-input v-model="visualTask.output.param.password"></el-input>
-              </el-form-item> -->
               <JDBCForm :fatherRef="visualTask.output" :view-type="'out'"></JDBCForm>
             </div>
           </el-card>

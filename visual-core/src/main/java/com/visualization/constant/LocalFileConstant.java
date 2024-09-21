@@ -16,7 +16,7 @@ public class LocalFileConstant {
     }
 
     public static String getRandomTempFilePath(String suffix) {
-        return BASE_TEMP_PREFIX + UUID.randomUUID() + '/' + suffix;
+        return BASE_TEMP_PREFIX + UUID.randomUUID() + suffix;
     }
 
     public static String getTempFilePath(String suffix) {

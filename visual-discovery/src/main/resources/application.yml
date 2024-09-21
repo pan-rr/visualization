@@ -12,3 +12,8 @@ eureka:
     fetchRegistry: true
   instance:
     prefer-ip-address: true
+
+logging:
+  level:
+    root:
+      error

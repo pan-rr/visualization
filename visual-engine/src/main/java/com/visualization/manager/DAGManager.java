@@ -56,7 +56,6 @@ public class DAGManager {
                 .dagDataSourceManager(dagDataSourceManager)
                 .filePathMappingRepository(filePathMappingRepository)
                 .build().buildStage();
-
         visualStage.execute();
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override

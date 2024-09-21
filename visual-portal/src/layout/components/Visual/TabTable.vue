@@ -52,6 +52,9 @@ export default {
     },
     mounted() {
         this.twoDArr = this.param['headers']
+        if(this.twoDArr.length > 0){
+            this.needHeader = true
+        }
     },
     methods: {
         delHeader(header, col) {
@@ -84,6 +87,7 @@ export default {
                 if (!newV) {
                     this.param['headers'] = []
                     this.twoDArr = []
+                    this.twoDArr.push([])
                 }
             }
         }

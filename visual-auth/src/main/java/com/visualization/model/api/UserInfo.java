@@ -39,9 +39,10 @@ public class UserInfo {
             if (flag && option.getValue().equals(userId)) flag = false;
         }
         if (flag) {
+            String s = name + "-" + Base62Util.zip(Long.parseLong(userId));
             spaceOptions.add(Option.builder()
-                    .label(oa)
-                    .value(oa)
+                    .label(s)
+                    .value(s)
                     .build());
         }
     }

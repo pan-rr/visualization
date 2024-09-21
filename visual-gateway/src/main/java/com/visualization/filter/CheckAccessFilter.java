@@ -2,13 +2,14 @@ package com.visualization.filter;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.visualization.auth.AuthHolder;
+import com.visualization.auth.model.AuthRequest;
 import com.visualization.enums.ResponseEnum;
 import com.visualization.fetch.AuthClient;
 import com.visualization.model.Response;
 import com.visualization.properties.WhiteList;
+import com.visualization.service.HeaderService;
 import com.visualization.util.PathUtil;
 import com.visualization.util.ResponseUtil;
-import com.visualization.auth.model.AuthRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -22,7 +23,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,11 +39,17 @@ public class CheckAccessFilter implements GlobalFilter, Ordered {
     @Resource(name = "tokenCache")
     private Cache<String, AuthHolder> cache;
 
+    @Value("${visual.auth.token.activity-timeout:1800}")
+    private Integer activityTimeout;
+
     @Resource
     private WebClient.Builder builder;
 
     @Resource
     private AuthClient authClient;
+
+    @Resource
+    private HeaderService headerService;
 
     @Override
     public int getOrder() {
@@ -74,8 +80,8 @@ public class CheckAccessFilter implements GlobalFilter, Ordered {
             }
         }
         AuthRequest req = new AuthRequest();
-        Map<String, List<String>> headers = new HashMap<>();
-        headers.put(tokenName, authToken);
+        req.setTimeout(Long.valueOf(activityTimeout));
+        Map<String, List<String>> headers = headerService.buildAuthHeader(authToken);
         return authClient.checkToken(req, headers)
                 .flatMap((res) -> {
                     if (res.isTokenLegal()) {

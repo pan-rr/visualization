@@ -1,9 +1,6 @@
 package com.visualization.model.dag.db;
 
-import com.google.gson.Gson;
 import com.visualization.constant.ViewConstant;
-import com.visualization.exception.DAGException;
-import com.visualization.service.TaskService;
 import com.visualization.utils.FilePathUtil;
 import com.visualization.view.base.VisualStage;
 import lombok.AllArgsConstructor;
@@ -21,7 +18,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -46,17 +42,6 @@ public class DAGPointer implements Serializable {
                 .instanceId(instanceId)
                 .taskId(taskId)
                 .build();
-    }
-
-    public VisualStage buildStage(TaskService taskService) {
-        Task task = taskService.getTaskById(taskId);
-        if (Objects.isNull(task)) {
-            throw new DAGException("任务为空，id:" + taskId);
-        }
-        Gson gson = new Gson();
-        VisualStage visualStage = gson.fromJson(task.getJson(), VisualStage.class);
-        rewriteFilePath(visualStage);
-        return visualStage;
     }
 
     private String handleFilePath(Object suffix) {
