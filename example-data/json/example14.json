@@ -1,0 +1,8 @@
+{
+  "sql": {
+    "script": "create table tbl_test ( a int )",
+    "url": "jdbc:postgresql://localhost:5432/test",
+    "username": "tmp",
+    "password": "tmp"
+  }
+}

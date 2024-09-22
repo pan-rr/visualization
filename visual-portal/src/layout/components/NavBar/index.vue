@@ -8,9 +8,9 @@
       <div style="margin-left: auto;">
 
 
-        <el-input v-model="currentTenant" class="select" :readonly="true" placeholder="请选择空间">
+        <el-input v-model="currentTenant" class="select" :readonly="true" placeholder="请选择租户">
           <template slot="prepend"><el-icon class="el-icon-office-building"></el-icon><span>企业/组织/团队</span></template>
-          <el-select v-model="choosenTenant" slot="append" placeholder="请选择空间" @change="changeTenant">
+          <el-select v-model="choosenTenant" slot="append" placeholder="请选择租户" @change="changeTenant">
             <el-option v-for="item in tenantOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>

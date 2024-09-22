@@ -1,6 +1,7 @@
 package com.visualization.model.db;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.visualization.auth.utils.TenantPermissionUtil;
 import lombok.*;
 
 @Data
@@ -17,7 +18,7 @@ public class SystemResource {
     private String resourceName;
 
     public String computeResourceKey() {
-        return tenantId + "::" + resourceName;
+        return TenantPermissionUtil.computePermission(tenantId, resourceName);
     }
 
 }

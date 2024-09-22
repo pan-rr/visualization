@@ -6,4 +6,7 @@ public class TenantPermissionUtil {
         return tenantId + "::" + permission;
     }
 
+    public static String computePermission(Long tenantId, String permission) {
+        return tenantId + "::" + permission;
+    }
 }

@@ -1,7 +1,8 @@
 import axios from 'axios'
+import store from '@/store'
 import { Message } from 'element-ui'
 
-import {  validateResponse } from './responseValid'
+import { validateResponse } from './responseValid'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
@@ -12,7 +13,9 @@ const service = axios.create({
 
 service.interceptors.request.use(
   (config) => {
-    let token = localStorage.getItem('visual')
+    let token = localStorage.getItem('visual');
+    let tenantId = store.getters.userInfo.choosenTenant;
+    config.headers['visual_tenant'] = tenantId;
     if (token != 'undefined') {
       config.headers['visual'] = token
     }

@@ -1,6 +1,5 @@
 package com.visualization.handler;
 
-import com.mysql.cj.MysqlType;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.*;
 import net.sf.jsqlparser.schema.Column;
@@ -11,51 +10,36 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.util.validation.Validation;
 import net.sf.jsqlparser.util.validation.ValidationError;
 import net.sf.jsqlparser.util.validation.feature.FeaturesAllowed;
-import org.h2.value.DataType;
-import org.h2.value.Value;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSetMetaData;
 import org.springframework.util.CollectionUtils;
 
-import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class SQLHandler {
 
-    private static final Map<String, Function<JDBCType, String>> JDBC_TYPE_CONVERTER = new HashMap<>();
+    private static final Map<String, String> STRING_MAP = new HashMap<>();
 
     static {
-        // jdbc 转 h2 类型
-        JDBC_TYPE_CONVERTER.put(DatabaseDriver.H2.getId(), (jdbcType -> {
-            int i = DataType.convertSQLTypeToValueType(jdbcType);
-            return Value.getTypeName(i);
-        }));
-        // jdbc 转 MySQL 类型
-        JDBC_TYPE_CONVERTER.put(DatabaseDriver.MYSQL.getId(), (jdbcType -> MysqlType.getByJdbcType(jdbcType.getVendorTypeNumber()).getName()));
+        //   h2 字符串类型
+        STRING_MAP.put(DatabaseDriver.H2.getId(), "CHARACTER");
+        // MySQL 字符串类型
+        STRING_MAP.put(DatabaseDriver.MYSQL.getId(), "varchar");
+        STRING_MAP.put(DatabaseDriver.POSTGRESQL.getId(), "varchar");
     }
 
-    private static StringBuilder changeType(String columnName, JDBCType columnType, int len, String dialect) {
+    private static StringBuilder changeType(String columnName, int len, String dialect) {
         StringBuilder sb = new StringBuilder();
         sb.append(columnName).append(' ');
-        Function<JDBCType, String> converter = getConverterByDialect(dialect);
-        sb.append(converter.apply(columnType)).append('(').append(len).append(')');
+        sb.append(STRING_MAP.get(dialect)).append('(').append(len).append(')');
         return sb;
     }
 
-    private static Function<JDBCType, String> getConverterByDialect(String dialect) {
-        Function<JDBCType, String> converter = JDBC_TYPE_CONVERTER.get(dialect);
-        if (converter == null) {
-            // 找不到数据类型转换器就尝试使用MySQL的类型
-            converter = JDBC_TYPE_CONVERTER.get(DatabaseDriver.MYSQL.getId());
-        }
-        return converter;
-    }
 
     public static String changeCreateTableSQL(String sql, String tableName) throws JSQLParserException {
         CreateTable parse = (CreateTable) CCJSqlParserUtil.parse(sql);
@@ -71,7 +55,7 @@ public class SQLHandler {
         int len;
         for (int i = 0, j = 1; i <= end; i++, j++) {
             len = Math.min(500, metaData.getColumnDisplaySize(j));
-            sb.append(changeType(columnNames[i], JDBCType.VARCHAR, len, dialectId));
+            sb.append(changeType(columnNames[i], len, dialectId));
             if (i != end) sb.append(',');
         }
         sb.append(')');
