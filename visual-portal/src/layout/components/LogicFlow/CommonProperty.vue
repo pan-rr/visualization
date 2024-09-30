@@ -84,7 +84,7 @@
               <el-divider direction="vertical"></el-divider>
               <el-select v-model="outputView" placeholder="请选择视图类型" size="mini" @change="changeOutput">
                 <el-option
-                  v-for="item in [{ label: 'csv', value: 'csv' }, { label: 'jdbc', value: 'jdbc' }, { label: 'console', value: 'console' }, { label: 'excel', value: 'excel' }]"
+                  v-for="item in [{ label: 'csv', value: 'csv' }, { label: 'jdbc', value: 'jdbc' }, { label: 'console(本地调试用)', value: 'console' }, { label: 'excel', value: 'excel' }]"
                   :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -152,7 +152,6 @@ export default {
   mounted() {
     const { properties, text } = this.$props.nodeData
     if (properties) {
-      console.log(properties)
       this.taskType = properties.taskType
       let template = TaskBuilder(this.taskType)
       Object.assign(template, this.$data.visualTask, properties)

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-input v-model="spaceRef.data" class="input-with-select" :readonly="true" placeholder="请选择空间">
+        <el-input v-model="spaceRef.data" :readonly="true" placeholder="请选择空间">
             <template slot="prepend">存储空间:</template>
             <el-select v-model="spaceRef.data" slot="append" placeholder="请选择空间" @change="changeSpace">
                 <el-option v-for="item in this.$store.getters.spaceHolder.spaceOptions" :key="item.value"
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { changeChoosenSpace } from '../../../utils/spaceUtil';
+
 
 
 
@@ -28,12 +30,12 @@ export default {
         }
     },
     mounted() {
-        this.spaceRef.data = this.$store.getters.spaceHolder.chosenSpace
+        this.spaceRef.data = this.$store.getters.spaceHolder.chosenSpaceLabel
     },
     methods: {
         changeSpace(value) {
-            this.$store.getters.spaceHolder.chosenSpace = value
-            this.spaceRef.data = value
+            let label = changeChoosenSpace(value)
+            this.spaceRef.data = label
         },
     }
 

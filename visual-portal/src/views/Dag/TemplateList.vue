@@ -2,15 +2,16 @@
   <div>
 
     <div>
-      <div class="text item">
+      <!-- <div class="text item">
         <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
           <template slot="prepend">存储空间:</template>
-          <el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
-            <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-input>
-      </div>
+<el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
+  <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
+  </el-option>
+</el-select>
+</el-input>
+</div> -->
+      <space-selector :space-ref="spaceRef"></space-selector>
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
@@ -49,39 +50,37 @@
 
 <script>
 
-import { computed } from 'vue';
+
 import { createInstanceById, getTemplateList, disableTemplateById } from '../../api/dag';
 import { Message } from 'element-ui'
+import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 export default {
   name: 'VisualTemplateList',
+  components: {
+    SpaceSelector
+  },
   data() {
     return {
-      space: '',
-      // spaceOptions: [],
+      spaceRef: {
+        data: ''
+      },
       tableData: [],
       total: 10,
       pageSize: 10,
       currentPage: 1,
       choosenStatus: [],
-      statusOptions: [{ text: '正常', value: '0' },{ text: '完成', value: '1' }, { text: '待执行', value: '-4' }
+      statusOptions: [{ text: '正常', value: '0' }, { text: '完成', value: '1' }, { text: '待执行', value: '-4' }
         , { text: '终止', value: '-2' }]
     }
   },
   methods: {
     filterChange(filter) {
       if (filter['status']) {
-     
+
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
 
       }
-    },
-    // getSpace() {
-    //   let arr = this.$store.getters.userInfo.space
-    //   this.spaceOptions = arr.map((i, idx) => { return { value: i, label: i } })
-    // },
-    changeSpace(value) {
-      this.space = value
     },
     changePage(val) {
       this.currentPage = val
@@ -127,13 +126,11 @@ export default {
 
   },
   computed: {
-    spaceOptions() {
-      return this.$store.getters.userInfo.spaceOptions;
+    space() {
+      return this.spaceRef.data;
     }
   },
   mounted() {
-    // this.getSpace();
-    if(this.spaceOptions.length > 0)this.changeSpace(this.spaceOptions[0].value)
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },

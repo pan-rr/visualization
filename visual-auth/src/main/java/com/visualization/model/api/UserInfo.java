@@ -34,7 +34,7 @@ public class UserInfo {
             String s = option.getLabel() + "-" + Base62Util.zip(Long.parseLong(option.getValue()));
             spaceOptions.add(Option.builder()
                     .label(s)
-                    .value(s)
+                    .value(option.getValue())
                     .build());
             if (flag && option.getValue().equals(userId)) flag = false;
         }
@@ -42,7 +42,7 @@ public class UserInfo {
             String s = name + "-" + Base62Util.zip(Long.parseLong(userId));
             spaceOptions.add(Option.builder()
                     .label(s)
-                    .value(s)
+                    .value(userId)
                     .build());
         }
     }

@@ -31,7 +31,7 @@ public class PublicTenantOptionConfig {
             systemUser = SystemUser.builder()
                     .oa(publicStr)
                     .username(publicStr)
-                    .password(MD5Utils.md5Encode(publicStr))
+                    .password(MD5Utils.encode(publicStr))
                     .userType(UserTypeEnum.TENANT.getCode())
                     .build();
             userService.createUser(systemUser);

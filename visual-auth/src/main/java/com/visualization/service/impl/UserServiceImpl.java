@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public void createUser(SystemUser user) {
-        user.setPassword(MD5Utils.md5Encode(user.getPassword()));
+        user.setPassword(MD5Utils.encode(user.getPassword()));
         user.setUserId(SnowIdUtil.generateId());
         user.setStatus(UserStatusEnum.NORMAL.getCode());
         LocalDateTime now = LocalDateTime.now();

@@ -1,13 +1,11 @@
 package com.visualization.model.dag.db;
 
-import com.visualization.constant.ViewConstant;
+import com.visualization.enums.StatusEnum;
 import com.visualization.utils.FilePathUtil;
-import com.visualization.view.base.VisualStage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
@@ -16,7 +14,6 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -59,24 +56,19 @@ public class DAGPointer implements Serializable {
         return FilePathUtil.getStoragePath(params);
     }
 
-    private void rewriteFilePath(VisualStage graph) {
-        List<Map<String, Object>> input = graph.getInput();
-        if (!CollectionUtils.isEmpty(input)) {
-            for (Map<String, Object> conf : input) {
-                conf.compute(ViewConstant.FILE_PATH, (k, v) -> handleFilePath(v));
-            }
-        }
-        Map<String, Object> output = graph.getOutput();
-        if (!CollectionUtils.isEmpty(output)) {
-            output.compute(ViewConstant.FILE_PATH, (k, v) -> handleFilePath(v));
-        }
-    }
+
 
     public String computeLockKey(){
         return "visual_pointer_" + taskId;
     }
 
-    public boolean checkBlock(){
-        return retryMaxCount < count;
+    public void fail(){
+        this.count++;
+        this.checkBlock();
+    }
+    public void checkBlock(){
+        if (retryMaxCount < count) {
+            this.status = StatusEnum.BLOCK.getStatus();
+        }
     }
 }

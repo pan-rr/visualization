@@ -41,7 +41,7 @@ public class PortalTenantUser {
                 .oa(oa)
                 .username(username)
                 .status(UserStatusEnum.NORMAL.getCode())
-                .password(MD5Utils.md5Encode(password))
+                .password(MD5Utils.encode(password))
                 .modifyTime(now)
                 .createTime(now)
                 .build();

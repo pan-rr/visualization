@@ -2,13 +2,6 @@
   <div>
 
     <div>
-      <!-- <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
-        <template slot="prepend">存储空间:</template>
-<el-select v-model="space" slot="append" placeholder="请选择空间">
-  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-  </el-option>
-</el-select>
-</el-input> -->
       <space-selector :space-ref="spaceRef"></space-selector>
       <el-input v-model="templateName" clearable>
         <template slot="prepend">

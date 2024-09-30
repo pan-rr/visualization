@@ -1,4 +1,4 @@
-import { da } from "element-plus/es/locales.mjs";
+
 import service from "../utils/request";
 
 

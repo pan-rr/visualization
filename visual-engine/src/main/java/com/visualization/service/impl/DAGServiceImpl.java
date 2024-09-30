@@ -2,32 +2,31 @@ package com.visualization.service.impl;
 
 import com.visualization.enums.StatusEnum;
 import com.visualization.exception.DAGException;
+import com.visualization.model.PageParam;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
-import com.visualization.model.param.NormalParam;
-import com.visualization.model.param.PageParameter;
 import com.visualization.model.portal.Option;
 import com.visualization.model.portal.PortalDataSource;
 import com.visualization.repository.dag.*;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import com.visualization.service.RedisService;
+import com.visualization.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +42,9 @@ public class DAGServiceImpl implements DAGService {
 
     @Resource
     private DAGPointerRepository dagPointerRepository;
+
+    @Resource
+    private AbnormalDAGPointerRepository abnormalDAGPointerRepository;
 
     @Resource
     private TaskLatchRepository taskLatchRepository;
@@ -61,51 +63,15 @@ public class DAGServiceImpl implements DAGService {
 
 
     @Override
-    public Page<DAGTemplate> getTemplateList(PageParameter<NormalParam> parameter) {
-        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
-        request.withSort(Sort.by("instance_id").descending());
-        NormalParam param = parameter.getParam();
-        if (Objects.nonNull(param)) {
-            Specification<DAGTemplate> sp = (root, query, builder) -> {
-                List<Predicate> list = new ArrayList<>();
-                list.add(builder.equal(root.get("space"), param.getSpace()));
-                List<Integer> status = param.getStatus();
-                if (!CollectionUtils.isEmpty(status)) {
-                    CriteriaBuilder.In<Object> statusIn = builder.in(root.get("status"));
-                    for (Integer i : status) {
-                        statusIn.value(i);
-                    }
-                    list.add(statusIn);
-                }
-                return builder.and(list.toArray(new Predicate[0]));
-            };
-            return dagTemplateRepository.findAll(sp, request);
-        }
-        return dagTemplateRepository.findAll(request);
+    public Page<DAGTemplate> getTemplateList(PageParam parameter) {
+        Pair<Specification<DAGTemplate>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGTemplate.class);
+        return dagTemplateRepository.findAll(pair.getFirst(), pair.getSecond());
     }
 
     @Override
-    public Page<DAGInstance> getInstanceList(PageParameter<NormalParam> parameter) {
-        PageRequest request = PageRequest.of(parameter.getPage() - 1, parameter.getSize());
-        request.withSort(Sort.by("instance_id").descending());
-        NormalParam param = parameter.getParam();
-        if (Objects.nonNull(param)) {
-            Specification<DAGInstance> sp = (root, query, builder) -> {
-                List<Predicate> list = new ArrayList<>();
-                list.add(builder.equal(root.get("space"), param.getSpace()));
-                List<Integer> status = param.getStatus();
-                if (!CollectionUtils.isEmpty(status)) {
-                    CriteriaBuilder.In<Object> statusIn = builder.in(root.get("status"));
-                    for (Integer i : status) {
-                        statusIn.value(i);
-                    }
-                    list.add(statusIn);
-                }
-                return builder.and(list.toArray(new Predicate[0]));
-            };
-            return dagInstanceRepository.findAll(sp, request);
-        }
-        return dagInstanceRepository.findAll(request);
+    public Page<DAGInstance> getInstanceList(PageParam parameter) {
+        Pair<Specification<DAGInstance>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGInstance.class);
+        return dagInstanceRepository.findAll(pair.getFirst(), pair.getSecond());
     }
 
     @Override
@@ -181,7 +147,11 @@ public class DAGServiceImpl implements DAGService {
 
     @Override
     public void updatePointer(DAGPointer pointer) {
-        dagPointerRepository.updateCount(pointer.getInstanceId(), pointer.getTaskId());
+        dagPointerRepository.save(pointer);
+        if (!Objects.equals(StatusEnum.NORMAL.getStatus(), pointer.getStatus())) {
+            AbnormalDAGPointer convert = AbnormalDAGPointer.convert(pointer);
+            abnormalDAGPointerRepository.save(convert);
+        }
     }
 
     public List<DAGPointer> getPointers(int limit) {
@@ -207,7 +177,7 @@ public class DAGServiceImpl implements DAGService {
         DAGDataSource dataSource = portalDataSource.convert();
         Integer hashCount = dagDataSourceRepository.getSpaceHashCount(dataSource.getHash(), dataSource.getSpace());
         if (hashCount > 0) {
-            throw new DAGException("该存储空间下已有一个高相似度的数据源");
+            throw new DAGException("该存储空间下已有一个高相似度的数据源!");
         }
         dagDataSourceRepository.save(dataSource);
     }

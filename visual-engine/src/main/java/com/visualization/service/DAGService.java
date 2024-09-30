@@ -1,9 +1,8 @@
 package com.visualization.service;
 
+import com.visualization.model.PageParam;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
-import com.visualization.model.param.NormalParam;
-import com.visualization.model.param.PageParameter;
 import com.visualization.model.portal.Option;
 import com.visualization.model.portal.PortalDataSource;
 import org.springframework.data.domain.Page;
@@ -12,9 +11,9 @@ import java.util.List;
 
 public interface DAGService {
 
-    Page<DAGTemplate> getTemplateList(PageParameter<NormalParam> parameter);
+    Page<DAGTemplate> getTemplateList(PageParam parameter);
 
-    Page<DAGInstance> getInstanceList(PageParameter<NormalParam> parameter);
+    Page<DAGInstance> getInstanceList(PageParam parameter);
 
     void saveTemplateByPack(LogicFlowPack pack);
 

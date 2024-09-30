@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <div class="text item">
+      <!-- <div class="text item">
         <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
           <template slot="prepend">存储空间:</template>
           <el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
@@ -9,7 +9,8 @@
             </el-option>
           </el-select>
         </el-input>
-      </div>
+      </div> -->
+      <space-selector :space-ref="spaceRef"></space-selector>
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
@@ -47,7 +48,7 @@
 
 
       <el-dialog title="实例执行日志时间线" :visible.sync="openTimeLine" center>
-        <div  style="margin: 2%;">
+        <div style="margin: 2%;">
           <span v-if="timeLine.length < 1">暂无时间日志或日志已过期</span>
           <el-timeline :reverse="true" v-else>
             <el-timeline-item v-for="(item, index) in timeLine" :key="index" :timestamp="item.time" placement="top">
@@ -72,12 +73,18 @@
 <script>
 
 import { getInstanceList, getLogTimeLine } from '../../api/dag';
+import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 export default {
   name: 'VisualInstanceList',
+  components:{
+    SpaceSelector
+  },
   data() {
     return {
-      space: '',
+      spaceRef: {
+        data: ''
+      },
       tableData: [],
       total: 10,
       pageSize: 10,
@@ -95,9 +102,6 @@ export default {
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
 
       }
-    },
-    changeSpace(value) {
-      this.space = value
     },
     changePage(val) {
       this.currentPage = val
@@ -132,13 +136,12 @@ export default {
     }
   },
   mounted() {
-    this.changeSpace(this.spaceOptions[0].value)
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },
-  computed:{
-    spaceOptions(){
-      return this.$store.getters.userInfo.spaceOptions;
+  computed: {
+    space() {
+      return this.spaceRef.data;
     }
   },
   watch: {
@@ -163,7 +166,7 @@ export default {
         this.getList()
       }
     },
-    space:{
+    space: {
       immediate: true,
       deep: true,
       handler(newVal, oldVal) {

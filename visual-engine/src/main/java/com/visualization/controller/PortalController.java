@@ -4,14 +4,13 @@ import com.visualization.manager.DAGDataSourceManager;
 import com.visualization.manager.DAGManager;
 import com.visualization.manager.LogicFlowManager;
 import com.visualization.manager.TimeLineManager;
-import com.visualization.model.param.NormalParam;
-import com.visualization.model.param.PageParameter;
+import com.visualization.model.PageParam;
 import com.visualization.model.PageResponse;
 import com.visualization.model.Response;
 import com.visualization.model.dag.db.DAGInstance;
 import com.visualization.model.dag.db.DAGTemplate;
-import com.visualization.model.portal.PortalDAGInstance;
 import com.visualization.model.dag.logicflow.LogicGraph;
+import com.visualization.model.portal.PortalDAGInstance;
 import com.visualization.model.portal.PortalDAGTemplate;
 import com.visualization.model.portal.PortalDataSource;
 import com.visualization.service.DAGService;
@@ -48,19 +47,17 @@ public class PortalController {
     }
 
     @PostMapping("/getTemplateList")
-    public PageResponse getTemplateList(@RequestBody PageParameter<NormalParam> parameter) {
+    public PageResponse getTemplateList(@RequestBody PageParam parameter) {
         Page<DAGTemplate> templateList = dagService.getTemplateList(parameter);
         List<PortalDAGTemplate> collect = templateList.getContent().stream().map(DAGTemplate::convert).collect(Collectors.toList());
         return PageResponse.success(collect, (int) templateList.getTotalElements());
-
     }
 
     @PostMapping("/getInstanceList")
-    public PageResponse getInstanceList(@RequestBody PageParameter<NormalParam> parameter) {
+    public PageResponse getInstanceList(@RequestBody PageParam parameter) {
         Page<DAGInstance> instanceList = dagService.getInstanceList(parameter);
         List<PortalDAGInstance> collect = instanceList.getContent().stream().map(DAGInstance::convert).collect(Collectors.toList());
         return PageResponse.success(collect, (int) instanceList.getTotalElements());
-
     }
 
 

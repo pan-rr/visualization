@@ -92,7 +92,7 @@ public class DAGManager {
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     public void updateTaskInfo(DAGPointer pointer) {
         dagService.updatePointer(pointer);
-        if (pointer.checkBlock()) {
+        if (StatusEnum.BLOCK.getStatus().equals(pointer.getStatus())) {
             dagService.updateInstanceStatus(pointer.getInstanceId(), StatusEnum.BLOCK.getStatus());
         }
     }

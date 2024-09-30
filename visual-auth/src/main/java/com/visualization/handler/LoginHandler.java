@@ -43,7 +43,7 @@ public class LoginHandler {
 
     private void validate() {
         SystemUser dbUser = getNonNullUser(user.getOa());
-        String password = MD5Utils.md5Encode(user.getPassword());
+        String password = MD5Utils.encode(user.getPassword());
         boolean flag = StringUtils.equals(password, dbUser.getPassword());
         if (Boolean.FALSE.equals(flag)) {
             throw new AuthException("账号密码不匹配！");

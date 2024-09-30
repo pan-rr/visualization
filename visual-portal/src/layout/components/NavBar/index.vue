@@ -30,6 +30,7 @@ import Breadcrumb from "./Breadcrumb.vue";
 import AvatarDropDown from "./AvatarDropDown.vue";
 import VisitedViews from "./VisitedViews.vue";
 import tenantUtil from "../../../utils/tenantUtil";
+import { resetSpaceOption } from "../../../utils/spaceUtil";
 export default {
   name: "",
   components: { Collapse, Breadcrumb, AvatarDropDown, VisitedViews },
@@ -52,9 +53,12 @@ export default {
           this.$router.replace('/home')
         }
       });
+      resetSpaceOption();
     },
   },
-
+  created() {
+    resetSpaceOption();
+  }
 };
 </script>
 

@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,7 @@ public class WorkerManager {
 
     private LinkedBlockingQueue<DAGPointer> pointerQ;
 
-    private LinkedBlockingQueue<Object> signalQ = new LinkedBlockingQueue<>();
+    private ArrayBlockingQueue<Object> signalQ = new ArrayBlockingQueue<>(2);
 
     private LinkedBlockingQueue<DAGPointer> failTaskQ = new LinkedBlockingQueue<>();
     private List<Worker> workers;
@@ -60,7 +61,7 @@ public class WorkerManager {
 
     private Worker failTaskWorker;
 
-    private ConcurrentHashMap<Thread, DAGPointer> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Thread, DAGPointer> map = new ConcurrentHashMap<>();
 
     @PostConstruct
     void init() {
@@ -114,6 +115,7 @@ public class WorkerManager {
             while (true) {
                 try {
                     DAGPointer pointer = failTaskQ.take();
+                    pointer.fail();
                     dagManager.updateTaskInfo(pointer);
                 } catch (InterruptedException e) {
                     log.error("failTaskWorker error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));

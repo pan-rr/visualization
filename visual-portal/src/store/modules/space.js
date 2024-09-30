@@ -1,3 +1,4 @@
+import { resetSpaceOption } from "../../utils/spaceUtil";
 
 
 export default {
@@ -5,17 +6,15 @@ export default {
   state: {
     spaceHolder: {
       spaceOptions: [],
+      primitiveOptions: [],
       chosenSpaceLabel: '',
       chosenSpaceValue: ''
     },
   },
   mutations: {
     INIT_HOLDER(state, spaceOptions) {
-      state.spaceHolder.spaceOptions = spaceOptions;
-      if (spaceOptions?.length > 0) {
-        state.spaceHolder.chosenSpaceLabel = spaceOptions[0].label
-        state.spaceHolder.chosenSpaceValue = spaceOptions[0].value
-      }
+      state.spaceHolder.primitiveOptions = spaceOptions;
+      resetSpaceOption();
     },
   },
   actions: {
