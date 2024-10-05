@@ -2,5 +2,5 @@ package com.visualization.service;
 
 public interface PointerDispatchService {
 
-    void dispatchPointer(int limit);
+    void dispatchPointer() throws InterruptedException;
 }

@@ -26,7 +26,7 @@ public class DagController {
      */
     @PostMapping("/executeTaskByPointer")
     public Response<Object> executeTaskByPointer(@RequestBody DAGPointer pointer) {
-        dagManager.executeTask(pointer);
+        dagManager.executeStage(pointer);
         return Response.builder().result(Boolean.TRUE).build();
     }
 }

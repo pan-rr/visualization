@@ -44,4 +44,6 @@ public interface DAGService {
     List<DAGDataSource> getListByIds(List<Long> ids);
 
     List<Option> getDataSourceOptions(String space);
+
+    DAGTemplate getTemplateByPointer(DAGPointer pointer);
 }

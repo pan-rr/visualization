@@ -28,7 +28,6 @@ public abstract class VisualLogService {
                 }
             }
         }, "visual-logWorker");
-        logWorker.start();
     }
 
     public void accept(VisualStageWrapper log) {

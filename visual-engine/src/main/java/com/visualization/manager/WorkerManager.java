@@ -4,19 +4,19 @@ import com.visualization.log.logger.VisualLogService;
 import com.visualization.log.model.VisualStageWrapper;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.service.PointerDispatchService;
+import com.visualization.service.WorkerStatService;
 import com.visualization.thread.Worker;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -24,15 +24,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class WorkerManager {
-    @Value("${visual.dag.worker.count}")
-    private Integer workerCount = 8;
-
-    @Value("${visual.pointer.scanLimit}")
-    private Integer scanLimit = 10;
-
-    @Value("${visual.pointer.queueName}")
-    private String queueName;
-
     @Resource
     private DAGManager dagManager;
 
@@ -48,13 +39,11 @@ public class WorkerManager {
     @Resource
     private VisualLogService visualLogService;
 
-    private int watermark;
+    @Resource
+    private WorkerStatService workerStatService;
 
-    private LinkedBlockingQueue<DAGPointer> pointerQ;
 
-    private ArrayBlockingQueue<Object> signalQ = new ArrayBlockingQueue<>(2);
-
-    private LinkedBlockingQueue<DAGPointer> failTaskQ = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<Tuple2<DAGPointer, Throwable>> failTaskQ = new LinkedBlockingQueue<>();
     private List<Worker> workers;
 
     private Worker keeper;
@@ -65,70 +54,58 @@ public class WorkerManager {
 
     @PostConstruct
     void init() {
-        pointerQ = pointerQueueManager.getQueue();
+        Integer workerCount = workerStatService.getWorkerCount();
         workers = new ArrayList<>(workerCount);
-        watermark = Math.max(workerCount / 2, 5);
         Worker t;
         for (int i = 0; i < workerCount; i++) {
             t = Worker.createDeamonWorker(() -> {
                 while (true) {
                     try {
-                        DAGPointer pointer = pointerQ.take();
+                        workerStatService.decreaseIdle();
+                        DAGPointer pointer = pointerQueueManager.takeFromPointerQ();
                         String key = pointer.computeLockKey();
                         Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, key, 1, TimeUnit.HOURS);
                         // 拿不到锁就放弃任务
                         if (Boolean.FALSE.equals(flag)) continue;
                         map.put(Thread.currentThread(), pointer);
                         visualLogService.accept(VisualStageWrapper.start(pointer));
-                        dagManager.executeTask(pointer);
-                        redisTemplate.delete(key);
+                        dagManager.executeStage(pointer);
                         visualLogService.accept(VisualStageWrapper.success(pointer));
-                    } catch (Exception e) {
-                        DAGPointer pointer = map.get(Thread.currentThread());
-                        visualLogService.accept(VisualStageWrapper.fail(pointer, e));
-                        failTaskQ.offer(pointer);
-                        redisTemplate.delete(pointer.computeLockKey());
-                        log.error("[stage execute] error {}", e);
+                    } catch (Throwable e) {
+                        failTaskQ.offer(Tuples.of(map.get(Thread.currentThread()), e));
+                    } finally {
+                        workerStatService.increaseIdle();
                     }
                 }
             }, "dag-worker-" + i);
-            t.start();
             workers.add(t);
         }
 
         keeper = Worker.createDeamonWorker(() -> {
             while (true) {
                 try {
-                    signalQ.take();
-                    if (pointerQ.size() <= watermark) {
-                        pointerDispatchService.dispatchPointer(scanLimit);
-                        signalQ.clear();
-                    }
-                } catch (Exception e) {
+                    pointerDispatchService.dispatchPointer();
+                } catch (Throwable e) {
                     log.error("keeper error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 }
             }
         }, "dag-keeper");
-        keeper.start();
 
         failTaskWorker = Worker.createDeamonWorker(() -> {
             while (true) {
                 try {
-                    DAGPointer pointer = failTaskQ.take();
+                    Tuple2<DAGPointer, Throwable> tuple = failTaskQ.take();
+                    DAGPointer pointer = tuple.getT1();
+                    visualLogService.accept(VisualStageWrapper.fail(pointer, tuple.getT2()));
                     pointer.fail();
                     dagManager.updateTaskInfo(pointer);
-                } catch (InterruptedException e) {
+                    redisTemplate.delete(pointer.computeLockKey());
+                } catch (Throwable e) {
                     log.error("failTaskWorker error : {} , {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 }
             }
         }, "dag-failTaskWorker");
-        failTaskWorker.start();
 
-    }
-
-    @Scheduled(fixedDelay = 30000L)
-    public void offerSignal() {
-        signalQ.offer(1);
     }
 
 

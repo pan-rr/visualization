@@ -55,8 +55,8 @@ visual:
     jdbc-url: jdbc:mysql://localhost:3306/visual_dag?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
     username: tmp
     password: ENC(4SCEneIfzIVS0l85g8AzOWz33Puqe3/gfJo5T9o4x4+1nrtM1olLYZPm8MTHL8Zd)
-    edge:
-      retryMaxCount: 5
+    stage:
+      defaultRetryCount: 5
     worker:
       count: 10
   storage:

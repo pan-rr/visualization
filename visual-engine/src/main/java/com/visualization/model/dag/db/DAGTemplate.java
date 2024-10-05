@@ -39,10 +39,16 @@ public class DAGTemplate implements Serializable {
 
     private String space;
 
-    public Pair<List<Edge>, List<DAGPointer>> translateLogicFlowDAG(Integer retryMaxCount) {
+    private Integer retryCount;
+
+    private Double priority;
+
+    private Integer totalTaskCount;
+
+    public Pair<List<Edge>, List<DAGPointer>> translateLogicFlowDAG() {
         Gson gson = new Gson();
         LogicFlow logicFlow = gson.fromJson(json, LogicFlow.class);
-        return logicFlow.translateDAG(this, retryMaxCount);
+        return logicFlow.translateDAG(this);
     }
 
     public PortalDAGTemplate convert() {

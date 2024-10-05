@@ -19,4 +19,5 @@ public class PortalDAGInstance implements Serializable {
     private String status;
     private String createTime;
     private String finishTime;
+    private Integer unfinishedTaskCount;
 }

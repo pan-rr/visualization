@@ -74,6 +74,11 @@ export default {
         , { text: '终止', value: '-2' }]
     }
   },
+  computed: {
+    space() {
+      return this.spaceRef.data;
+    }
+  },
   methods: {
     filterChange(filter) {
       if (filter['status']) {
@@ -111,7 +116,7 @@ export default {
       let pageable = {
         page: this.currentPage,
         size: this.pageSize,
-        param: {
+        conditions: {
           space: this.space,
           status: this.choosenStatus
         }

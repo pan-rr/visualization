@@ -12,7 +12,6 @@ import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import com.visualization.service.RedisService;
 import com.visualization.utils.PageUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -31,8 +29,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class DAGServiceImpl implements DAGService {
-    @Value("${visual.dag.edge.retryMaxCount}")
-    private Integer retryMaxCount = 5;
 
     @Resource
     private EdgeRepository edgeRepository;
@@ -43,8 +39,6 @@ public class DAGServiceImpl implements DAGService {
     @Resource
     private DAGPointerRepository dagPointerRepository;
 
-    @Resource
-    private AbnormalDAGPointerRepository abnormalDAGPointerRepository;
 
     @Resource
     private TaskLatchRepository taskLatchRepository;
@@ -87,7 +81,7 @@ public class DAGServiceImpl implements DAGService {
             throw new DAGException("该流程状态不允许启动实例");
         }
         minIOService.getTemplateStr(template);
-        Pair<List<Edge>, List<DAGPointer>> pair = template.translateLogicFlowDAG(retryMaxCount);
+        Pair<List<Edge>, List<DAGPointer>> pair = template.translateLogicFlowDAG();
         List<Edge> edges = pair.getFirst();
         List<DAGPointer> pointers = pair.getSecond();
         edgeRepository.saveAll(edges);
@@ -103,6 +97,7 @@ public class DAGServiceImpl implements DAGService {
                 .version(template.getVersion())
                 .status(StatusEnum.NEW.getStatus())
                 .createTime(LocalDateTime.now())
+                .unfinishedTaskCount(template.getTotalTaskCount())
                 .build();
         dagInstanceRepository.save(instance);
         return instance;
@@ -134,10 +129,13 @@ public class DAGServiceImpl implements DAGService {
 
     @Override
     public void tryFinishInstance(Long instanceId) {
-        Integer instancePointCount = dagPointerRepository.getInstancePointCount(instanceId);
-        if (instancePointCount < 1) {
-            dagInstanceRepository.finishInstance(instanceId, new Date(), StatusEnum.FINISHED.getStatus());
+        DAGInstance instance = dagInstanceRepository.getById(instanceId);
+        instance.decreaseUnfinishedTaskCount();;
+        if (instance.getUnfinishedTaskCount() < 1) {
+            instance.setFinishTime(LocalDateTime.now());
+            instance.setStatus(StatusEnum.FINISHED.getStatus());
         }
+        dagInstanceRepository.save(instance);
     }
 
     @Override
@@ -148,10 +146,6 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void updatePointer(DAGPointer pointer) {
         dagPointerRepository.save(pointer);
-        if (!Objects.equals(StatusEnum.NORMAL.getStatus(), pointer.getStatus())) {
-            AbnormalDAGPointer convert = AbnormalDAGPointer.convert(pointer);
-            abnormalDAGPointerRepository.save(convert);
-        }
     }
 
     public List<DAGPointer> getPointers(int limit) {
@@ -203,5 +197,10 @@ public class DAGServiceImpl implements DAGService {
                         .value(i.getData_source_id())
                         .build()
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public DAGTemplate getTemplateByPointer(DAGPointer pointer) {
+        return dagTemplateRepository.getById(pointer.getTemplateId());
     }
 }

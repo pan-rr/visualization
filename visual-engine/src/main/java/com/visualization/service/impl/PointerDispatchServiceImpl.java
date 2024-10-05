@@ -4,20 +4,21 @@ import com.visualization.manager.DAGManager;
 import com.visualization.manager.PointerQueueManager;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.service.PointerDispatchService;
+import com.visualization.service.WorkerStatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.text.MessageFormat;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.stream.Collectors;
 
 
@@ -31,8 +32,12 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Value("${server.port}")
-    private String port;
+
+    @Value("${visual.pointer.scanLimit:10}")
+    private Integer scanLimit;
+
+    @Value("${visual.pointer.queueName:visual_pointer}")
+    private String queueName;
 
     @Resource
     private PointerQueueManager pointerQueueManager;
@@ -41,48 +46,60 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
     private DAGManager dagManager;
 
     @Resource
-    private DiscoveryClient discoveryClient;
+    private RedisTemplate<String,DAGPointer> redisTemplate;
 
     @Resource
-    private RestTemplate restTemplate;
+    private WorkerStatService workerStatService;
 
-    private String ip;
+    private final ArrayBlockingQueue<Object> signalQ = new ArrayBlockingQueue<>(2);
 
-    private final String engineSite = "http://{0}:{1}/{2}/dag/acceptPointers";
+    @Scheduled(fixedDelay = 30000L)
+    public void offerSignal() {
+        signalQ.offer(BigInteger.ZERO);
+    }
 
-    private String getIp() {
-        if (ip == null) {
-            try {
-                ip = InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-                throw new RuntimeException(e);
-            }
+
+    private void takeSignal() throws InterruptedException {
+        this.signalQ.take();
+    }
+
+    private void clearSignal() {
+        this.signalQ.clear();
+    }
+
+    private boolean allowDispatch() {
+        return workerStatService.hungry(pointerQueueManager.getQSize());
+    }
+
+    private void loadRemoteQueue(){
+        ZSetOperations<String, DAGPointer> zSet = redisTemplate.opsForZSet();
+        Long size = zSet.size(queueName);
+        if (Objects.isNull(size) || size < workerStatService.getWorkerCount()){
+            List<DAGPointer> pointers = dagManager.getPointers(scanLimit * 2);
+            Set<ZSetOperations.TypedTuple<DAGPointer>> collect = pointers.stream().map(i -> ZSetOperations.TypedTuple.of(i, i.getPriority())).collect(Collectors.toSet());
+            zSet.add(queueName,collect);
         }
-        return ip;
+    }
+
+    private void loadLocalQueue(){
+        Integer workerCount = workerStatService.getWorkerCount();
+        ZSetOperations<String, DAGPointer> zSet = redisTemplate.opsForZSet();
+        Set<ZSetOperations.TypedTuple<DAGPointer>> set = zSet.popMax(queueName, workerCount);
+        if (!CollectionUtils.isEmpty(set)){
+            this.pointerQueueManager.offerPointer(set.stream().map(ZSetOperations.TypedTuple::getValue).collect(Collectors.toList()));
+        }else {
+            this.pointerQueueManager.offerPointer(dagManager.getPointers(workerCount));
+        }
     }
 
     @Override
-    public void dispatchPointer(int limit) {
-        List<DAGPointer> pointers = dagManager.getPointers(limit);
-        if (!CollectionUtils.isEmpty(pointers)) {
-            List<ServiceInstance> engines = discoveryClient.getInstances(applicationName);
-            if (CollectionUtils.isEmpty(engines)){
-                return;
-            }
-            int engineSize = engines.size();
-            Map<Integer, List<DAGPointer>> map = pointers
-                    .stream()
-                    .collect(Collectors.groupingBy(p -> (int) (p.getTaskId() % engineSize)));
-            map.forEach((k, v) -> {
-                ServiceInstance targetEngine = engines.get(k);
-                if (getIp().equals(targetEngine.getHost())) {
-                    pointerQueueManager.getQueue().addAll(v);
-                } else {
-                    String url = MessageFormat.format(engineSite, targetEngine.getHost(), String.valueOf(targetEngine.getPort()), contextPath);
-                    restTemplate.postForEntity(url, v, Object.class);
-                }
-            });
-
+    public void dispatchPointer() throws InterruptedException {
+        if (!this.allowDispatch()) {
+            return;
         }
+        this.takeSignal();
+        loadRemoteQueue();
+        loadLocalQueue();
+        this.clearSignal();
     }
 }

@@ -31,6 +31,7 @@ public class DAGInstance implements Serializable {
     private String space;
     private LocalDateTime createTime;
     private LocalDateTime finishTime;
+    private Integer unfinishedTaskCount;
 
     public PortalDAGInstance convert() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
@@ -42,8 +43,13 @@ public class DAGInstance implements Serializable {
                 .status(StatusEnum.getStatusNameByStatus(status))
                 .createTime(Objects.nonNull(createTime) ? formatter.format(createTime) : null)
                 .finishTime(Objects.nonNull(finishTime) ? formatter.format(finishTime) : null)
+                .unfinishedTaskCount(unfinishedTaskCount)
                 .build();
 
+    }
+
+    public void  decreaseUnfinishedTaskCount(){
+        this.unfinishedTaskCount--;
     }
 
 }

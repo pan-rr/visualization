@@ -1,5 +1,6 @@
 package com.visualization.thread;
 
+
 public class Worker extends Thread{
 
     public Worker(Runnable r) {
@@ -10,6 +11,7 @@ public class Worker extends Thread{
         Worker worker = new Worker(r);
         worker.setName(workerName);
         worker.setDaemon(true);
+        worker.start();
         return worker;
     }
 

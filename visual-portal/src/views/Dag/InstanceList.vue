@@ -18,13 +18,15 @@
         </el-table-column>
         <el-table-column align="center" prop="templateName" label="流程模版名称">
         </el-table-column>
-        <el-table-column align="center" prop="instanceId" label="流程实例ID">
+        <el-table-column align="center" prop="instanceId" label="实例ID">
         </el-table-column>
-        <el-table-column align="center" prop="createTime" label="流程实例创建时间">
+        <el-table-column align="center" prop="unfinishedTaskCount" label="实例待完成任务数">
         </el-table-column>
-        <el-table-column align="center" prop="finishTime" label="流程实例完成时间">
+        <el-table-column align="center" prop="createTime" label="实例创建时间">
         </el-table-column>
-        <el-table-column align="center" label="流程实例状态" :filters="statusOptions" column-key="status">
+        <el-table-column align="center" prop="finishTime" label="实例完成时间">
+        </el-table-column>
+        <el-table-column align="center" label="实例状态" :filters="statusOptions" column-key="status">
 
           <template slot-scope="scope">
             <el-tag size="medium">{{ scope.row.status }}</el-tag>
@@ -113,7 +115,7 @@ export default {
       let pageable = {
         page: this.currentPage,
         size: this.pageSize,
-        param: {
+        conditions: {
           space: this.space,
           status: this.choosenStatus
         }

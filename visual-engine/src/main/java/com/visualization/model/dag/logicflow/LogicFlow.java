@@ -60,7 +60,7 @@ public class LogicFlow {
     }
 
 
-    public Pair<List<Edge>, List<DAGPointer>> translateDAG(DAGTemplate template, Integer retryMaxCount) {
+    public Pair<List<Edge>, List<DAGPointer>> translateDAG(DAGTemplate template) {
         SnowIdWorker snowIdWorker = new SnowIdWorker(0, 0);
         long instanceId = snowIdWorker.nextId();
         Set<String> roots = nodes.stream().map(LogicFlowNode::getId).collect(Collectors.toSet());
@@ -72,11 +72,12 @@ public class LogicFlow {
         List<DAGPointer> dagPointers = roots.stream().map(nodeId -> DAGPointer.builder()
                 .instanceId(instanceId)
                 .count(0)
-                .retryMaxCount(retryMaxCount)
                 .taskId(Long.valueOf(nodeId))
                 .templateId(template.getTemplateId())
                 .space(template.getSpace())
                 .status(StatusEnum.NORMAL.getStatus())
+                .retryMaxCount(template.getRetryCount())
+                .priority(template.getPriority())
                 .build()).collect(Collectors.toList());
         List<Edge> dagEdges = edges.stream().map(e -> Edge
                         .builder()

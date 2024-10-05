@@ -22,7 +22,7 @@ public class PointerController {
     @PostMapping("/acceptPointers")
     public Response<Object> acceptPointers(@RequestBody List<DAGPointer> pointers) {
         if (!CollectionUtils.isEmpty(pointers)) {
-            pointerQueueManager.addAll(pointers);
+            pointerQueueManager.offerPointer(pointers);
         }
         return Response.builder().message("success").build();
     }

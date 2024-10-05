@@ -9,7 +9,6 @@ import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import com.visualization.service.TaskService;
 import com.visualization.view.base.VisualStage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +24,6 @@ import java.util.stream.Collectors;
 @Component
 public class DAGManager {
 
-    @Value("${visual.dag.edge.retryMaxCount}")
-    private Integer retryMaxCount;
 
     @Resource
     private DAGService dagService;
@@ -47,8 +44,9 @@ public class DAGManager {
     private DAGDataSourceManager dagDataSourceManager;
 
 
-    public void executeTask(DAGPointer pointer) {
+    public void executeStage(DAGPointer pointer) {
         TaskKey taskKey = pointer.generateTaskKey();
+        DAGTemplate template = dagService.getTemplateByPointer(pointer);
         List<Edge> nextEdges = dagService.findNextEdges(taskKey);
         VisualStage visualStage = VisualStageBuilder.builder()
                 .dagPointer(pointer)
@@ -61,6 +59,7 @@ public class DAGManager {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 dagService.deletePointer(taskKey);
+                dagService.tryFinishInstance(pointer.getInstanceId());
                 if (!CollectionUtils.isEmpty(nextEdges)) {
                     List<DAGPointer> pointers = nextEdges
                             .stream()
@@ -71,12 +70,11 @@ public class DAGManager {
                                     .count(0)
                                     .status(StatusEnum.NORMAL.getStatus())
                                     .space(pointer.getSpace())
-                                    .retryMaxCount(retryMaxCount)
+                                    .retryMaxCount(template.getRetryCount())
+                                    .priority(template.getPriority())
                                     .build()).collect(Collectors.toList());
                     List<Long> readyIds = dagService.saveReadyPointers(pointers);
                     dagService.deleteEdges(EdgeId.computeId(pointer, readyIds));
-                } else {
-                    dagService.tryFinishInstance(taskKey.getInstanceId());
                 }
             }
         });

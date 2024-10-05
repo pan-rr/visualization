@@ -13,15 +13,23 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class LogicGraph {
+
     private LogicFlow logicFlow;
+
     private String name;
+
     private String space;
+
+    private Integer retryCount;
+
+    private Double priority;
 
     public LogicFlowPack getPack() {
         this.validateDAG();
@@ -46,11 +54,26 @@ public class LogicGraph {
                 .templateId(snowIdWorker.nextId())
                 .json(flowJSON)
                 .space(space)
+                .retryCount(this.retryCount)
+                .priority(this.priority)
+                .totalTaskCount(logicFlow.getNodes().size())
                 .status(StatusEnum.NORMAL.getStatus())
                 .build();
     }
 
     public List<Task> getTasks() {
         return logicFlow.getTasks();
+    }
+
+    public void handleRetryCount(Integer defaultCount){
+        if (Objects.isNull(this.retryCount)) {
+            this.retryCount = defaultCount;
+        }
+    }
+
+    public void handlePriority(Double defaultPriority){
+        if (Objects.isNull(this.priority)) {
+            this.priority = defaultPriority;
+        }
     }
 }
