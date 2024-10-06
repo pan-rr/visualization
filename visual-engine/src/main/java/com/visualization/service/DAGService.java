@@ -46,4 +46,6 @@ public interface DAGService {
     List<Option> getDataSourceOptions(String space);
 
     DAGTemplate getTemplateByPointer(DAGPointer pointer);
+
+    void changeTemplatePriority(Long templateId, Double delta);
 }

@@ -48,8 +48,4 @@ public class DAGInstance implements Serializable {
 
     }
 
-    public void  decreaseUnfinishedTaskCount(){
-        this.unfinishedTaskCount--;
-    }
-
 }

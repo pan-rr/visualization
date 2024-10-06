@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -129,13 +130,8 @@ public class DAGServiceImpl implements DAGService {
 
     @Override
     public void tryFinishInstance(Long instanceId) {
-        DAGInstance instance = dagInstanceRepository.getById(instanceId);
-        instance.decreaseUnfinishedTaskCount();;
-        if (instance.getUnfinishedTaskCount() < 1) {
-            instance.setFinishTime(LocalDateTime.now());
-            instance.setStatus(StatusEnum.FINISHED.getStatus());
-        }
-        dagInstanceRepository.save(instance);
+        dagInstanceRepository.decreaseUnfinishedTaskCount(instanceId);
+        dagInstanceRepository.tryFinishInstance(instanceId, new Date(), StatusEnum.FINISHED.getStatus());
     }
 
     @Override
@@ -202,5 +198,10 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public DAGTemplate getTemplateByPointer(DAGPointer pointer) {
         return dagTemplateRepository.getById(pointer.getTemplateId());
+    }
+
+    @Override
+    public void changeTemplatePriority(Long templateId, Double delta) {
+        dagTemplateRepository.changeTemplatePriority(templateId, delta);
     }
 }

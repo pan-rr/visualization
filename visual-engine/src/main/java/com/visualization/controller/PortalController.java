@@ -82,6 +82,13 @@ public class PortalController {
         return Response.success("修改模版状态成功");
     }
 
+    @GetMapping("/changeTemplatePriority")
+    public Response<Object> changeTemplatePriority(@RequestParam("templateId") String templateId, @RequestParam("delta") Double delta) {
+        Long id = Long.valueOf(templateId);
+        dagService.changeTemplatePriority(id, delta);
+        return Response.success("修改模版优先级成功");
+    }
+
     @GetMapping("/getLogTimeLine")
     public Response<Object> getLogTimeLineByInstanceId(@RequestParam("instanceId") String instanceId) {
         return Response.success(timeLineManager.getTimeLineByInstanceId(instanceId));

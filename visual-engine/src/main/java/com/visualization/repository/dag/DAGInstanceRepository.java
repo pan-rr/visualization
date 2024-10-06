@@ -16,6 +16,11 @@ public interface DAGInstanceRepository extends JpaRepository<DAGInstance, Long>,
     void updateInstanceStatus(@Param("instanceId") Long instanceId, @Param("status") Integer status);
 
     @Modifying
-    @Query(value = "update t_dag_instance set status = :status, finish_time = :finishTime where instance_id = :instanceId", nativeQuery = true)
-    void finishInstance(@Param("instanceId") Long instanceId, @Param("finishTime") Date finishTime, @Param("status") Integer status);
+    @Query(value = "update t_dag_instance set unfinished_task_count = unfinished_task_count - 1 where instance_id = :instanceId", nativeQuery = true)
+    void decreaseUnfinishedTaskCount(@Param("instanceId") Long instanceId);
+
+    @Modifying
+    @Query(value = "update t_dag_instance set status = :status, finish_time = :finishTime where instance_id = :instanceId and unfinished_task_count < 1", nativeQuery = true)
+    void tryFinishInstance(@Param("instanceId") Long instanceId, @Param("finishTime") Date finishTime, @Param("status") Integer status);
+
 }

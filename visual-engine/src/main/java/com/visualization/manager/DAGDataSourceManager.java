@@ -35,14 +35,11 @@ public class DAGDataSourceManager {
     }
 
     public void rewriteDataSource(List<Map> configs) {
-
-        List<Map> list = configs.stream()
-                .filter(i -> {
+        List<Map> list = configs.stream().filter(i -> {
                     Object o = i.get(VisualDataSourceConstants.DATA_SOURCE_ID);
                     if (o == null) return false;
                     return StringUtils.isNotBlank(String.valueOf(o));
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
@@ -56,7 +53,7 @@ public class DAGDataSourceManager {
             Object id = i.get(VisualDataSourceConstants.DATA_SOURCE_ID);
             String idStr = String.valueOf(id);
             Map<?, ?> map = convertMap.get(Long.valueOf(idStr));
-            map.forEach(i::put);
+            i.putAll(map);
             i.remove(VisualDataSourceConstants.DATA_SOURCE_ID);
         });
     }
