@@ -29,14 +29,14 @@ import Collapse from "./Collapse.vue";
 import Breadcrumb from "./Breadcrumb.vue";
 import AvatarDropDown from "./AvatarDropDown.vue";
 import VisitedViews from "./VisitedViews.vue";
-import tenantUtil from "../../../utils/tenantUtil";
+import { getCurrentTenantName } from "../../../utils/tenantUtil";
 import { resetSpaceOption } from "../../../utils/spaceUtil";
 export default {
   name: "",
   components: { Collapse, Breadcrumb, AvatarDropDown, VisitedViews },
   data() {
     return {
-      currentTenant: tenantUtil(this.$store).name,
+      currentTenant: getCurrentTenantName(),
       tenantOptions: this.$store.getters.userInfo.tenantOptions,
       choosenTenant: this.$store.getters.userInfo.choosenTenant,
     };
@@ -44,7 +44,7 @@ export default {
   methods: {
     changeTenant(value) {
       this.$store.getters.userInfo.choosenTenant = value;
-      this.currentTenant = tenantUtil(this.$store).name;
+      this.currentTenant = getCurrentTenantName();
       this.$store.dispatch("permission/userPermissionResource", value).then(() => {
         this.$store.commit("user/SET_TENANT", value)
         this.$store.commit("tagsView/CLEAR_CACHE_VIEW");

@@ -6,6 +6,10 @@ export async function createTemplate(graph) {
     return await service.post('engine/portal/createTemplate', graph)
 }
 
+export async function getTemplateJSON(templateId) {
+    return await service.get('engine/portal/getTemplateStr', { params: { templateId } })
+}
+
 export async function getTemplateList(pageable) {
     return await service.post('engine/portal/getTemplateList', pageable)
 }

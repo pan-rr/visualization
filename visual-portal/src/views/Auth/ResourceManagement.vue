@@ -2,9 +2,8 @@
     <div>
         <h1>资源列表</h1>
         <el-form :inline="true" :model="form" class="demo-form-inline">
-            <el-form-item label="资源归属者ID：">
-                <span>{{ form.tenantId }}</span>
-                <!-- <el-input v-model="form.tenantId" placeholder="资源归属者ID" readonly></el-input> -->
+            <el-form-item label="资源归属者：">
+                <span>{{ form.tenantName }}</span>
             </el-form-item>
             <el-divider direction="vertical"></el-divider>
             <el-form-item label="资源名称：">
@@ -34,7 +33,6 @@
 <script>
 import { getResourceList } from '../../api/resource';
 import ResourceCreate from '../../layout/components/Resource/ResourceCreate.vue';
-import tenantUtil from '../../utils/tenantUtil';
 
 export default {
     name: "ResourceManagement",
@@ -45,17 +43,15 @@ export default {
             tenant: {},
             resourceList: [],
             form: {
-                tenantId: '',
+                tenantName: '',
                 resourceName: '',
             }
         }
     },
     methods: {
         init() {
-            this.tenant = tenantUtil(this.$store)
             this.form = this.$options.data().form
-            this.form.tenantId = this.tenant.id;
-
+            this.form.tenantName = getCurrentTenantName;
         },
         getList() {
             getResourceList(this.form).then(res => {

@@ -2,7 +2,6 @@ package com.visualization.auth;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.visualization.fetch.AuthMessageWatchDog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,10 +17,6 @@ public class AuthConfig {
     @Value("${visual.auth.token.init-count:50}")
     private Integer initCount;
 
-    @Bean
-    public AuthMessageWatchDog authMessageWatchDog() {
-        return new AuthMessageWatchDog();
-    }
 
     @Bean(name = "tokenCache")
     public Cache<String, AuthHolder> tokenCache(@Autowired AuthEvictionListener authEvictionListener) {

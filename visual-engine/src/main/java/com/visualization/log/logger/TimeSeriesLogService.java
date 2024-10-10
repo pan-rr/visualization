@@ -6,7 +6,7 @@ import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.visualization.log.model.StageLogPoint;
 import com.visualization.log.model.VisualStageWrapper;
-import com.visualization.utils.SPELUtils;
+import com.visualization.utils.SPELUtil;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -41,7 +41,7 @@ public class TimeSeriesLogService extends VisualLogService {
         map.put("bucketName", "visual_log");
         map.put("measurement", "visual_stage_log");
         map.put("instanceId", instanceId);
-        String q = SPELUtils.parseExpression(QUERY_BY_INSTANCE_ID_EXP, map);
+        String q = SPELUtil.parseExpression(QUERY_BY_INSTANCE_ID_EXP, map);
         QueryApi api = influxDBClient.getQueryApi();
         return api.query(q, StageLogPoint.class);
     }

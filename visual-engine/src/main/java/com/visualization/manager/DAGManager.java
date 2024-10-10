@@ -68,6 +68,7 @@ public class DAGManager {
                                     .instanceId(edge.getInstanceId())
                                     .taskId(edge.getToTaskId())
                                     .count(0)
+                                    .templateId(template.getTemplateId())
                                     .status(StatusEnum.NORMAL.getStatus())
                                     .space(pointer.getSpace())
                                     .retryMaxCount(template.getRetryCount())

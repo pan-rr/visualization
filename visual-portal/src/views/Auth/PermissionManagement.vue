@@ -2,8 +2,8 @@
     <div>
         <h1>权限列表</h1>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-            <el-form-item label="权限归属者ID：">
-                <span>{{ searchForm.tenantId }}</span>
+            <el-form-item label="权限归属者：">
+                <span>{{ searchForm.tenantName }}</span>
                 <!-- <el-input v-model="searchForm.tenantId" placeholder="权限归属者ID" readonly></el-input> -->
             </el-form-item>
             <el-divider direction="vertical"></el-divider>
@@ -95,7 +95,7 @@ import { Message } from 'element-ui';
 import { getPermissionList, createPermission, grantPermission } from '../../api/permission';
 import { getResourceOption } from '../../api/resource';
 import ResourceCreate from '../../layout/components/Resource/ResourceCreate.vue';
-import tenantUtil from '../../utils/tenantUtil';
+import { getCurrentTenant } from '../../utils/tenantUtil';
 
 export default {
     name: "PermissionManagement",
@@ -125,7 +125,7 @@ export default {
     },
     methods: {
         init() {
-            this.tenant = tenantUtil(this.$store)
+            this.tenant = getCurrentTenant();
             this.createForm = this.$options.data().createForm
             this.createForm.tenantId = this.tenant.id;
             this.createForm.tenantName = this.tenant.name;

@@ -3,8 +3,6 @@ package com.visualization.api.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.visualization.api.handler.AuthMessageHandler;
 import com.visualization.auth.enums.AccessType;
-import com.visualization.auth.message.AuthMessage;
-import com.visualization.auth.message.AuthMessageRequest;
 import com.visualization.auth.model.AuthRequest;
 import com.visualization.auth.model.AuthResponse;
 import com.visualization.service.UserService;
@@ -50,10 +48,6 @@ public class APIController {
         return res;
     }
 
-    @PostMapping("/fetchMessage")
-    public List<AuthMessage> fetchMessage(@RequestBody AuthMessageRequest request) {
-        return messageHandler.fetchMessage(request);
-    }
 
     @GetMapping("/renewTimeout")
     public void renewTimeout(@RequestParam("timeout") Long timeout) {

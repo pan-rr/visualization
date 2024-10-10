@@ -2,9 +2,8 @@ package com.visualization.auth;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.visualization.auth.message.AuthMessage;
-import com.visualization.auth.message.AuthMessageEnum;
+import com.visualization.auth.message.AuthMessageTypeEnum;
 import com.visualization.fetch.AuthClient;
-import com.visualization.fetch.AuthMessageConsumer;
 import com.visualization.service.HeaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
-public class AuthHandler implements AuthMessageConsumer {
+public class AuthHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthHandler.class);
 
@@ -51,22 +50,22 @@ public class AuthHandler implements AuthMessageConsumer {
 
     private static final String VOTE_PATTERN = "http://{0}:{1}/inline/getModifyTime";
 
-    @Override
-    public void consume(AuthMessage message) {
-        LOG.info("[auth handler]message:{}", message);
-        AuthMessageEnum e = AuthMessageEnum.NOTHING;
-        for (AuthMessageEnum value : AuthMessageEnum.values()) {
-            if (value.getCode() == message.messageType) {
-                e = value;
+
+    public void handleMessageFeedback(AuthMessage feedback){
+        LOG.info("[auth handler]message:{}", feedback);
+        AuthMessageTypeEnum type = AuthMessageTypeEnum.NOTHING;
+        for (AuthMessageTypeEnum value : AuthMessageTypeEnum.values()) {
+            if (value.getCode() == feedback.messageType) {
+                type = value;
                 break;
             }
         }
-        switch (e) {
+        switch (type) {
             case LOGIN:
-                login(message);
+                login(feedback);
                 break;
             case LOGOUT:
-                logout(message);
+                logout(feedback);
                 break;
             default:
         }
@@ -85,7 +84,6 @@ public class AuthHandler implements AuthMessageConsumer {
 
     private void logout(AuthMessage message) {
         cache.invalidate(message.token);
-        System.err.println("logout");
     }
 
     public Long getModifyTime(AuthHolder authHolder) {
@@ -105,7 +103,7 @@ public class AuthHandler implements AuthMessageConsumer {
                 if (res != null) {
                     val.accumulateAndGet(res, Math::max);
                 }
-            });
+            }).exceptionally(throwable -> null);
         }).toArray(CompletableFuture[]::new)).join();
         long max = val.get();
         Map<String, List<String>> header = headerService.buildAuthHeader(authHolder.getToken());

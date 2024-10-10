@@ -48,4 +48,8 @@ public interface DAGService {
     DAGTemplate getTemplateByPointer(DAGPointer pointer);
 
     void changeTemplatePriority(Long templateId, Double delta);
+
+    DAGTemplate getExecutableTemplate(Long templateId);
+
+    String getTemplateStr(Long templateId);
 }

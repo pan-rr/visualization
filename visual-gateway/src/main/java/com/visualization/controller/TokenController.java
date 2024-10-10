@@ -2,7 +2,11 @@ package com.visualization.controller;
 
 import com.visualization.auth.AuthHandler;
 import com.visualization.auth.AuthHolder;
-import org.springframework.web.bind.annotation.*;
+import com.visualization.auth.message.AuthMessage;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
@@ -18,4 +22,8 @@ public class TokenController {
         return authHandler.getModifyTime(authHolder);
     }
 
+    @PostMapping("/messageFeedback")
+    public void messageFeedback(@RequestBody AuthMessage feedback){
+        authHandler.handleMessageFeedback(feedback);
+    }
 }

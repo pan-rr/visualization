@@ -3,10 +3,10 @@
     <h1>子租户创建</h1>
     <el-form :model="registerForm" label-position="left">
       <el-form-item prop="fatherId" label="父账号名称：">
-        <el-input v-model="registerForm.fatherName" placeholder="父账号名称" prefix-icon="el-icon-user" />
+        <el-input v-model="registerForm.fatherName" placeholder="父账号名称" prefix-icon="el-icon-user" readonly />
       </el-form-item>
       <el-form-item prop="fatherName" label="父账号ID：">
-        <el-input v-model="registerForm.fatherId" placeholder="父账号ID" prefix-icon="el-icon-user" />
+        <el-input v-model="registerForm.fatherId" placeholder="父账号ID" prefix-icon="el-icon-user" readonly />
       </el-form-item>
       <el-form-item prop="oa" label="子账号oa：">
         <el-input v-model="registerForm.oa" placeholder="子账号oa" prefix-icon="el-icon-user" />
@@ -32,8 +32,9 @@
 <script>
 
 import { Message } from 'element-ui';
-import tenantUtil from '../../utils/tenantUtil';
+
 import { registerSubTenant } from '../../api/auth';
+import { getCurrentTenant } from '../../utils/tenantUtil';
 
 export default {
   name: "SubTenantRegister",
@@ -61,7 +62,7 @@ export default {
     },
     initForm() {
       this.registerForm = this.$options.data().registerForm
-      let tenantRes = tenantUtil(this.$store)
+      let tenantRes = getCurrentTenant();
       this.registerForm.fatherId = tenantRes['id'];
       this.registerForm.fatherName = tenantRes['name'];
     }

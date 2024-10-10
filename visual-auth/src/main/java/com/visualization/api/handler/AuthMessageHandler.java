@@ -1,42 +1,67 @@
 package com.visualization.api.handler;
 
 import com.visualization.auth.message.AuthMessage;
-import com.visualization.auth.message.AuthMessageEnum;
-import com.visualization.auth.message.AuthMessageRequest;
+import com.visualization.auth.message.AuthMessageTypeEnum;
+import com.visualization.utils.ShortLinkUtil;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
+import javax.annotation.Resource;
+import java.text.MessageFormat;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class AuthMessageHandler {
 
-    private final ConcurrentSkipListSet<AuthMessage> set = new ConcurrentSkipListSet<>();
+    @Resource(name = "authRestTemplate")
+    private RestTemplate restTemplate;
 
-    private final ConcurrentHashMap<String, Long> vote = new ConcurrentHashMap<>();
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
 
-    private AuthMessage buildQuery(long timestamp) {
-        AuthMessage message = new AuthMessage();
-        message.messageTimestamp = timestamp;
-        return message;
+    @Resource
+    private DiscoveryClient discoveryClient;
+
+    private static final String AUTH_FEEDBACK_PATTERN = "http://{0}:{1}/inline/messageFeedback";
+
+    public String cacheKey(String token){
+        return "visual:auth:stat:" + ShortLinkUtil.zip(token);
     }
 
-    private void delete(Long timestamp) {
-        if (set.isEmpty()) return;
-        if (timestamp < set.first().messageTimestamp)return;
-        AuthMessage query = buildQuery(timestamp);
-        NavigableSet<AuthMessage> remove = set.headSet(query, true);
-        set.removeAll(remove);
+    private boolean publishable(AuthMessage message) {
+        String key = cacheKey(message.token);
+        if (AuthMessageTypeEnum.LOGOUT.equalsGivenCode(message.messageType)){
+            redisTemplate.delete(key);
+            return true;
+        }
+        return redisTemplate.opsForValue().setIfAbsent(key, String.valueOf(System.currentTimeMillis()), Duration.ofMinutes(30));
     }
 
     public void publish(AuthMessage message) {
-        set.add(message);
+        if (!publishable(message)) {
+            return;
+        }
+        List<ServiceInstance> instances = discoveryClient.getInstances("VISUAL-GATEWAY");
+        if (CollectionUtils.isEmpty(instances)) {
+            return;
+        }
+        CompletableFuture.allOf(instances.stream().map(instance -> {
+            String path = MessageFormat.format(AUTH_FEEDBACK_PATTERN, instance.getHost(), String.valueOf(instance.getPort()));
+            return CompletableFuture.runAsync(() -> {
+                restTemplate.postForObject(path, message, Object.class);
+            }).exceptionally(throwable -> null);
+        }).toArray(CompletableFuture[]::new)).join();
     }
 
     public void publishLoginMessage(String token, Long timestamp) {
         AuthMessage message = new AuthMessage();
-        message.messageType = AuthMessageEnum.LOGIN.getCode();
+        message.messageType = AuthMessageTypeEnum.LOGIN.getCode();
         message.token = token;
         message.timeout = timestamp;
         message.messageTimestamp = System.currentTimeMillis();
@@ -45,31 +70,10 @@ public class AuthMessageHandler {
 
     public void publishLogoutMessage(String token) {
         AuthMessage message = new AuthMessage();
-        message.messageType = AuthMessageEnum.LOGOUT.getCode();
+        message.messageType = AuthMessageTypeEnum.LOGOUT.getCode();
         message.token = token;
         message.messageTimestamp = System.currentTimeMillis();
         publish(message);
-    }
-    private List<AuthMessage> consume() {
-        AuthMessage query = buildQuery(System.currentTimeMillis());
-        return new ArrayList<>(set.headSet(query));
-    }
-
-    private void deleteMessage(AuthMessageRequest request) {
-        if (Objects.isNull(request.timestamp)) return;
-        vote.put(request.consumerId, request.timestamp);
-        Collection<Long> values = vote.values();
-        long time = Long.MAX_VALUE;
-        for (Long value : values) {
-            if (value < time) time = value;
-        }
-        delete(time);
-    }
-
-
-    public List<AuthMessage> fetchMessage(AuthMessageRequest request) {
-        deleteMessage(request);
-        return consume();
     }
 
 }

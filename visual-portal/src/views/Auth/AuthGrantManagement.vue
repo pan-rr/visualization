@@ -41,7 +41,7 @@
 import { Message } from 'element-ui';
 import { getGrantViewList, retractPermission } from '../../api/permission';
 import ResourceCreate from '../../layout/components/Resource/ResourceCreate.vue';
-import tenantUtil from '../../utils/tenantUtil';
+import { getCurrentTenant } from '../../utils/tenantUtil';
 
 export default {
     name: "AuthGrantManagement",
@@ -67,7 +67,7 @@ export default {
     },
     methods: {
         init() {
-            this.tenant = tenantUtil(this.$store)
+            this.tenant = getCurrentTenant();
             this.searchForm = this.$options.data().searchForm
             this.searchForm.tenantId = this.tenant.id;
             this.searchForm.tenantName = this.tenant.name;
@@ -88,11 +88,11 @@ export default {
                 this.init();
             }
         },
-        retract(row){
+        retract(row) {
             retractPermission({
-                oa : row.oa,
-                permissionId : row.permissionId
-            }).then(res=>{
+                oa: row.oa,
+                permissionId: row.permissionId
+            }).then(res => {
                 this.getList();
                 Message({
                     message: res.data.result,

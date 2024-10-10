@@ -2,19 +2,18 @@
   <div>
 
     <div>
-      <!-- <div class="text item">
-        <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
-          <template slot="prepend">存储空间:</template>
-<el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
-  <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
-  </el-option>
-</el-select>
-</el-input>
-</div> -->
       <space-selector :space-ref="spaceRef"></space-selector>
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
+        <el-table-column type="expand">
+          <template #default="props">
+            <div>
+              <CanvasReadonly :templateId="props.row.templateId" ></CanvasReadonly>
+              <!-- <LFCanvas :templateId="props.row.templateId" ></LFCanvas> -->
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column align="center" prop="templateId" label="流程模版ID">
         </el-table-column>
         <el-table-column align="center" prop="name" label="流程模版名称">
@@ -54,11 +53,13 @@
 import { createInstanceById, getTemplateList, disableTemplateById } from '../../api/dag';
 import { Message } from 'element-ui'
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
+import CanvasReadonly from './CanvasReadonly.vue';
+
 
 export default {
   name: 'VisualTemplateList',
   components: {
-    SpaceSelector
+    SpaceSelector, CanvasReadonly
   },
   data() {
     return {
@@ -82,9 +83,7 @@ export default {
   methods: {
     filterChange(filter) {
       if (filter['status']) {
-
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
-
       }
     },
     changePage(val) {
@@ -141,28 +140,28 @@ export default {
   },
   watch: {
     currentPage: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()
       }
     },
     pageSize: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()
       }
     },
     choosenStatus: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()
       }
     },
     space: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()

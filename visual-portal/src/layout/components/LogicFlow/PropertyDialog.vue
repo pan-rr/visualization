@@ -1,9 +1,6 @@
 <template>
   <div class="property-dialog">
-      <CommonProperty
-      :nodeData="nodeData"
-      :lf="lf"
-      @onClose="handleClose"/>
+    <CommonProperty :submitable="submitable" :nodeData="nodeData" :lf="lf" @onClose="handleClose" />
   </div>
 </template>
 <script>
@@ -17,20 +14,21 @@ export default {
   },
   props: {
     nodeData: Object,
-    lf: Object
+    lf: Object,
+    submitable: Boolean,
   },
-  data () {
+  data() {
     return {}
   },
   methods: {
-    handleClose () {
+    handleClose() {
       this.$emit('setPropertiesFinish')
     }
   }
 }
 </script>
 <style>
-.property-dialog{
+.property-dialog {
   padding: 20px;
 }
 </style>

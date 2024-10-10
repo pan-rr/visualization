@@ -21,7 +21,7 @@
 <script>
 import { createResource } from '../../../api/resource';
 import { Message } from 'element-ui';
-import tenantUtil from '../../../utils/tenantUtil';
+import { getCurrentTenant } from '../../../utils/tenantUtil';
 
 export default {
   name: "ResourceCreate",
@@ -50,8 +50,8 @@ export default {
       this.$emit('finish')
     },
     initForm() {
-      this.form = this.$options.data().form
-      let tenantRes = tenantUtil(this.$store)
+      this.form = this.$options.data().form;
+      let tenantRes = getCurrentTenant();
       this.form.tenantId = tenantRes['id'];
       this.form.tenantName = tenantRes['name'];
     }

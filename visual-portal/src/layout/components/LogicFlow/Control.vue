@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div>
+    <div v-if="submitable">
       <space-selector :space-ref="spaceRef"></space-selector>
       <el-input v-model="templateName" clearable>
         <template slot="prepend">
@@ -23,7 +23,7 @@
         <el-button type="plain" size="small" @click="$_catData">查看数据</el-button>
         <el-button v-if="catTurboData" type="plain" size="small" @click="$_catTurboData">查看turbo数据</el-button>
         <el-button type="plain" size="small" @click="$_showMiniMap">查看缩略图</el-button>
-        <el-button type="plain" size="small" @click="$_createProcess">发布流程</el-button>
+        <el-button v-if="submitable" type="plain" size="small" @click="$_createProcess">发布流程</el-button>
       </el-button-group>
     </div>
   </div>
@@ -40,7 +40,8 @@ export default {
   components: { SpaceSelector },
   props: {
     lf: Object || String,
-    catTurboData: Boolean
+    catTurboData: Boolean,
+    submitable: Boolean,
   },
   data() {
     return {
@@ -118,7 +119,7 @@ export default {
     },
   },
   computed: {
-    
+
   }
 }
 </script>

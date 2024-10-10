@@ -1,6 +1,7 @@
 package com.visualization.auth.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class AuthRequest implements Serializable {
 
@@ -15,7 +16,7 @@ public class AuthRequest implements Serializable {
 
     private boolean needLatest;
 
-    private String callbackURL;
+    private List<String> callbackURLs;
 
     public String getToken() {
         return token;
@@ -57,11 +58,11 @@ public class AuthRequest implements Serializable {
         this.needLatest = needLatest;
     }
 
-    public String getCallbackURL() {
-        return callbackURL;
+    public List<String> getCallbackURLs() {
+        return callbackURLs;
     }
 
-    public void setCallbackURL(String callbackURL) {
-        this.callbackURL = callbackURL;
+    public void setCallbackURLs(List<String> callbackURLs) {
+        this.callbackURLs = callbackURLs;
     }
 }

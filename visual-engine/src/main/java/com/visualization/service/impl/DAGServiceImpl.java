@@ -77,10 +77,7 @@ public class DAGServiceImpl implements DAGService {
 
     @Override
     public DAGInstance createInstanceByTemplateId(Long templateId) {
-        DAGTemplate template = dagTemplateRepository.getById(templateId);
-        if (!Objects.equals(template.getStatus(), StatusEnum.NORMAL.getStatus())) {
-            throw new DAGException("该流程状态不允许启动实例");
-        }
+        DAGTemplate template = getExecutableTemplate(templateId);
         minIOService.getTemplateStr(template);
         Pair<List<Edge>, List<DAGPointer>> pair = template.translateLogicFlowDAG();
         List<Edge> edges = pair.getFirst();
@@ -203,5 +200,21 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void changeTemplatePriority(Long templateId, Double delta) {
         dagTemplateRepository.changeTemplatePriority(templateId, delta);
+    }
+
+    @Override
+    public DAGTemplate getExecutableTemplate(Long templateId) {
+        DAGTemplate template = Objects.requireNonNull(dagTemplateRepository.getById(templateId), "查无该模版！");
+        if (!Objects.equals(template.getStatus(), StatusEnum.NORMAL.getStatus())) {
+            throw new DAGException("该流程状态不允许执行操作！");
+        }
+        return template;
+    }
+
+    @Override
+    public String getTemplateStr(Long templateId) {
+        DAGTemplate template = getExecutableTemplate(templateId);
+        minIOService.getTemplateStr(template);
+        return template.getJson();
     }
 }

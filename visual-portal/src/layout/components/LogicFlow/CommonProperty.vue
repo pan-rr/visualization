@@ -9,7 +9,7 @@
       <div v-if="taskType === 'SQL'">
         <el-card shadow="never">
           <SQLForm :fatherRef="visualTask"></SQLForm>
-          <el-form-item>
+          <el-form-item v-if="submitable">
             <el-button plain type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
         </el-card>
@@ -39,7 +39,7 @@
           <el-card shadow="never">
             <div>
               <el-tag>输入视图</el-tag>
-              <div style="float: right;">
+              <div style="float: right;" v-if="submitable">
                 <el-select v-model="inputView" placeholder="请选择视图类型" size="mini">
                   <el-option v-for="item in [{ label: 'csv', value: 'csv' }, { label: 'jdbc', value: 'jdbc' }]"
                     :key="item.value" :label="item.label" :value="item.value">
@@ -57,7 +57,7 @@
                 <el-divider direction="vertical"></el-divider>
                 <el-tag size="mini">{{ view.viewType }}视图</el-tag>
                 <el-divider direction="vertical"></el-divider>
-                <el-button @click="deleteInputView(index)" plain size="mini">删除该输入视图</el-button>
+                <el-button v-if="submitable" @click="deleteInputView(index)" plain size="mini">删除该输入视图</el-button>
               </div>
               <el-form-item label="进入engine使用的表名">
                 <Tips message="数据加载进engine后使用的表名"></Tips>
@@ -118,7 +118,7 @@
         <div v-if="visualTask.step === 2">
           <el-result icon="info" title="进度完成" subTitle="请点击确定保存作，请提交前检查配置项，配置项只有运行时才检测配置的正确性">
             <template slot="extra">
-              <el-form-item>
+              <el-form-item v-if="submitable">
                 <el-button plain type="primary" @click="onSubmit">保存</el-button>
               </el-form-item>
             </template>
@@ -144,10 +144,10 @@ import JDBCForm from '../Visual/form/JDBCForm.vue';
 
 export default {
   components: { vueJsonEditor, TabTable, KVTable, Tips, SQLForm, JDBCForm },
-  name: '',
   props: {
     nodeData: Object,
     lf: Object || String,
+    submitable: Boolean,
   },
   mounted() {
     const { properties, text } = this.$props.nodeData

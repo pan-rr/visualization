@@ -1,15 +1,16 @@
 <template>
-  <div class="logic-flow-view">
-    <h3 class="demo-title">Visualization流程绘制</h3>
+  <div class="logic-flow-view" >
+    <h3 v-if="submitable" class="demo-title">Visualization流程绘制</h3>
     <!-- 辅助工具栏 -->
-    <Control class="demo-control" v-if="lf" :lf="lf" @catData="$_catData" @refreash="$_refreash"></Control>
+    <Control class="demo-control" :submitable="submitable" v-if="lf" :lf="lf" @catData="$_catData"
+      @refreash="$_refreash"></Control>
     <!-- 节点面板 -->
-    <NodePanel v-if="lf" :lf="lf" :nodeList="nodeList"></NodePanel>
+    <NodePanel v-if="submitable" :lf="lf" :nodeList="nodeList"></NodePanel>
     <!-- 画布 -->
     <div id="LF-view" ref="container"></div>
     <!-- 属性面板 -->
     <el-drawer title="设置节点属性" :visible.sync="dialogVisible" direction="rtl" size="60%" :before-close="closeDialog">
-      <PropertyDialog v-if="dialogVisible" :nodeData="clickNode" :lf="lf" @setPropertiesFinish="closeDialog">
+      <PropertyDialog :submitable="submitable" v-if="dialogVisible" :nodeData="clickNode" :lf="lf" @setPropertiesFinish="closeDialog">
       </PropertyDialog>
     </el-drawer>
     <!-- 数据查看面板 -->
@@ -39,12 +40,17 @@ import {
   registerTask,
   registerConnect,
 } from './registerNode'
+import { getTemplateJSON } from '../../../api/dag'
 
+let canvasData = {};
 
-let demoData = {}
 
 export default {
-  name: 'LF',
+  name: "LFCanvas",
+  props: {
+    templateId: String,
+    submitable: Boolean,
+  },
   components: { NodePanel, AddPanel, Control, PropertyDialog, DataDialog },
   data() {
     return {
@@ -79,7 +85,13 @@ export default {
     }
   },
   mounted() {
-    this.$_initLf()
+    this.$_initLf();
+    if (this.templateId != undefined) {
+      this.getTemplate();
+    } else {
+      canvasData = {}
+    }
+    this.$_render();
   },
   methods: {
     $_initLf() {
@@ -110,7 +122,7 @@ export default {
       this.$_render()
     },
     $_render() {
-      this.lf.render(demoData)
+      this.lf.render(canvasData)
       this.$_LfEvent()
     },
     $_refreash() {
@@ -137,7 +149,6 @@ export default {
         console.log('edge:add', data)
       })
       this.lf.on('node:mousemove', ({ data }) => {
-        // console.log('node:mousemove')
         this.moveData = data
       })
       this.lf.on('blank:click', () => {
@@ -179,6 +190,14 @@ export default {
       this.$data.graphData = this.$data.lf.getGraphData();
       this.$data.dataVisible = true;
     },
+    getTemplate() {
+      getTemplateJSON(this.templateId).then(res => {
+        canvasData = JSON.parse(res.data.result);
+        this.$_render();
+      })
+    }
+  },
+  computed: {
 
   }
 }

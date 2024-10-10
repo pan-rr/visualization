@@ -6,7 +6,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import java.util.Map;
 
-public class SPELUtils {
+public class SPELUtil {
 
     public static String parseExpression(String expression , Map<String,Object> params){
         ExpressionParser parser = new SpelExpressionParser();

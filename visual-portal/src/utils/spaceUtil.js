@@ -1,5 +1,4 @@
 import store from '@/store'
-import tenantUtil from './tenantUtil'
 
 const resetSpaceOption = () => {
     

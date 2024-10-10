@@ -15,7 +15,7 @@ export default {
       path: 'templateDefine',
       name: 'VisualTemplateDefine',
       meta: { title: '流程定义', needCache: false, needAuthFilter: true },
-      component: () => import('@/layout/components/LogicFlow/LFCanvas.vue')
+      component: () => import('@/views/Dag/Canvas.vue')
     },
     {
       path: 'templateList',

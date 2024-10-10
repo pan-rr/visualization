@@ -53,6 +53,12 @@ public class PortalController {
         return PageResponse.success(collect, (int) templateList.getTotalElements());
     }
 
+    @GetMapping("/getTemplateStr")
+    public Response<Object> getTemplateStr(@RequestParam("templateId") String templateId) {
+        Long id = Long.valueOf(templateId);
+        return Response.success(dagService.getTemplateStr(id));
+    }
+
     @PostMapping("/getInstanceList")
     public PageResponse getInstanceList(@RequestBody PageParam parameter) {
         Page<DAGInstance> instanceList = dagService.getInstanceList(parameter);

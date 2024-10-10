@@ -44,6 +44,7 @@ public class UserController {
     @PostMapping("/login")
     public Response login(@RequestBody SystemUser systemUser) {
         UserInfo info = userService.login(systemUser);
+        authMessageHandler.publishLoginMessage(info.getToken(), 1800L);
         return Response.success(info);
     }
 
