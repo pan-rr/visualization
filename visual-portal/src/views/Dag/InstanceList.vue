@@ -4,12 +4,12 @@
       <!-- <div class="text item">
         <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
           <template slot="prepend">存储空间:</template>
-          <el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
-            <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-input>
-      </div> -->
+<el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
+  <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
+  </el-option>
+</el-select>
+</el-input>
+</div> -->
       <space-selector :space-ref="spaceRef"></space-selector>
     </div>
     <div>
@@ -20,18 +20,16 @@
         </el-table-column>
         <el-table-column align="center" prop="instanceId" label="实例ID">
         </el-table-column>
-        <el-table-column align="center" prop="unfinishedTaskCount" label="实例待完成任务数">
-        </el-table-column>
-        <el-table-column align="center" prop="createTime" label="实例创建时间">
-        </el-table-column>
-        <el-table-column align="center" prop="finishTime" label="实例完成时间">
-        </el-table-column>
         <el-table-column align="center" label="实例状态" :filters="statusOptions" column-key="status">
-
           <template slot-scope="scope">
-            <el-tag size="medium">{{ scope.row.status }}</el-tag>
+            <el-tag size="mini">{{ scope.row.status }}</el-tag>
           </template>
-
+        </el-table-column>
+        <el-table-column align="center" prop="unfinishedTaskCount" label="待完成任务数">
+        </el-table-column>
+        <el-table-column align="center" prop="createTime" label="创建时间">
+        </el-table-column>
+        <el-table-column align="center" prop="finishTime" label="完成时间">
         </el-table-column>
         <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
@@ -74,12 +72,12 @@
 
 <script>
 
-import { getInstanceList, getLogTimeLine } from '../../api/dag';
+import { getInstanceList, getLogTimeLine, getStatusOptions } from '../../api/dag';
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 export default {
   name: 'VisualInstanceList',
-  components:{
+  components: {
     SpaceSelector
   },
   data() {
@@ -94,11 +92,15 @@ export default {
       timeLine: [],
       openTimeLine: false,
       choosenStatus: [],
-      statusOptions: [{ text: '完成', value: '1' }, { text: '待执行', value: '-4' }
-        , { text: '终止', value: '-2' }]
+      statusOptions: [],
     }
   },
   methods: {
+    getStatusOptions() {
+      getStatusOptions(2).then(res => {
+        this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
+      })
+    },
     filterChange(filter) {
       if (filter['status']) {
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
@@ -138,6 +140,7 @@ export default {
     }
   },
   mounted() {
+    this.getStatusOptions();
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },

@@ -1,5 +1,6 @@
 package com.visualization.controller;
 
+import com.visualization.enums.StatusEnum;
 import com.visualization.manager.DAGDataSourceManager;
 import com.visualization.manager.DAGManager;
 import com.visualization.manager.LogicFlowManager;
@@ -89,9 +90,16 @@ public class PortalController {
     }
 
     @GetMapping("/changeTemplatePriority")
-    public Response<Object> changeTemplatePriority(@RequestParam("templateId") String templateId, @RequestParam("delta") Double delta) {
+    public Response<Object> changeTemplatePriority(@RequestParam("templateId") String templateId, @RequestParam("priority") Double priority) {
         Long id = Long.valueOf(templateId);
-        dagService.changeTemplatePriority(id, delta);
+        dagService.changeTemplatePriority(id, priority);
+        return Response.success("修改模版优先级成功");
+    }
+
+    @GetMapping("/changeTemplateRetryCount")
+    public Response<Object> changeTemplateRetryCount(@RequestParam("templateId") String templateId, @RequestParam("retryCount") Integer retryCount) {
+        Long id = Long.valueOf(templateId);
+        dagService.changeTemplateRetryCount(id, retryCount);
         return Response.success("修改模版优先级成功");
     }
 
@@ -111,8 +119,19 @@ public class PortalController {
         return Response.success(dagDataSourceManager.getDataSourceList(portalDataSource));
     }
 
+    @GetMapping("/deleteDataSource")
+    public Response<Object> deleteDataSource(@RequestParam("id") String id) {
+        dagDataSourceManager.deleteDataSource(id);
+        return Response.success("删除数据源成功！");
+    }
+
     @GetMapping("/getDataSourceOptions")
     public Response<Object> getDataSourceList(@RequestParam("space") String space) {
         return Response.success(dagDataSourceManager.getDataSourceOptions(space));
+    }
+
+    @GetMapping("/getStatusOptions")
+    public Response<Object> getStatusOptions(@RequestParam(value = "type", required = false) Integer type) {
+        return Response.success(StatusEnum.getOptions(type));
     }
 }

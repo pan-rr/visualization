@@ -53,7 +53,7 @@ public class PortalDataSource {
                 .space(space)
                 .config(json)
                 .name(name)
-                .hash(ShortLinkUtil.zipToInt(json))
+                .configHash(ShortLinkUtil.zipToInt(json))
                 .build();
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DAGDataSourceRepository extends JpaRepository<DAGDataSource, Long> {
 
-    @Query(value = "select count(1) from t_dag_datasource where hash = :hash and space = :space", nativeQuery = true)
+    @Query(value = "select count(1) from t_dag_datasource where config_hash = :hash and space = :space", nativeQuery = true)
     Integer getSpaceHashCount(@Param("hash") Integer hash, @Param("space") String space);
 
 

@@ -57,7 +57,7 @@ public class DAGPointer implements Serializable, Comparable<DAGPointer> {
 
     public void checkBlock() {
         if (retryMaxCount < count) {
-            this.status = StatusEnum.BLOCK.getStatus();
+            this.status = StatusEnum.BLOCK_FAIL_REACH_THRESHOLD.getStatus();
         }
     }
 }

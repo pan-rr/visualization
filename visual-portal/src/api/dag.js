@@ -10,12 +10,24 @@ export async function getTemplateJSON(templateId) {
     return await service.get('engine/portal/getTemplateStr', { params: { templateId } })
 }
 
+export async function changeTemplatePriority(templateId, priority) {
+    return await service.get('engine/portal/changeTemplatePriority', { params: { templateId, priority } })
+}
+
+export async function changeTemplateStatus(templateId, status) {
+    return await service.get('engine/portal/changeTemplateStatus', { params: { templateId, status } })
+}
+
 export async function getTemplateList(pageable) {
     return await service.post('engine/portal/getTemplateList', pageable)
 }
 
 export async function getInstanceList(pageable) {
     return await service.post('engine/portal/getInstanceList', pageable)
+}
+
+export async function getStatusOptions(type) {
+    return await service.get('engine/portal/getStatusOptions', { params: { type } })
 }
 
 export async function getLogTimeLine(instanceId) {
@@ -42,6 +54,10 @@ export async function getDataSourceList(param) {
 
 export async function saveDataSource(param) {
     return await service.post('engine/portal/saveDataSource', param)
+}
+
+export async function deleteDataSource(id) {
+    return await service.get('engine/portal/deleteDataSource', { params: { id } })
 }
 
 export async function getDataSourceOptions(space) {

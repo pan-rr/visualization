@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Builder
 @Entity
 @Table(name = "t_dag_datasource", indexes = {
-        @Index(name = "idx_hash", columnList = "hash")
+        @Index(name = "idx_config_hash", columnList = "configHash")
 })
 public class DAGDataSource {
     @Id
@@ -30,7 +30,7 @@ public class DAGDataSource {
     private String space;
     private String name;
     private String config;
-    private Integer hash;
+    private Integer configHash;
 
 
     public PortalDataSource convert() {

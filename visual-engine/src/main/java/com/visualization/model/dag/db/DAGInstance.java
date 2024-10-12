@@ -34,7 +34,7 @@ public class DAGInstance implements Serializable {
     private Integer unfinishedTaskCount;
 
     public PortalDAGInstance convert() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
         return PortalDAGInstance.builder()
                 .templateId(String.valueOf(templateId))
                 .templateName(templateName)

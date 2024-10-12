@@ -39,6 +39,8 @@ public interface DAGService {
 
     void saveDAGDataSource(PortalDataSource portalDataSource);
 
+     void deleteDataSource(String id);
+
     List<PortalDataSource> getDataSourceList(PortalDataSource portalDataSource);
 
     List<DAGDataSource> getListByIds(List<Long> ids);
@@ -47,7 +49,9 @@ public interface DAGService {
 
     DAGTemplate getTemplateByPointer(DAGPointer pointer);
 
-    void changeTemplatePriority(Long templateId, Double delta);
+    void changeTemplatePriority(Long templateId, Double priority);
+
+    void changeTemplateRetryCount(Long templateId, Integer retryCount);
 
     DAGTemplate getExecutableTemplate(Long templateId);
 

@@ -45,7 +45,8 @@ public class DAGTemplate implements Serializable {
 
     private Integer totalTaskCount;
 
-    public Tuple3<List<Edge>, List<DAGPointer>,Long> translateLogicFlowDAG() {
+
+    public Tuple3<List<Edge>, List<DAGPointer>, Long> translateLogicFlowDAG() {
         Gson gson = new Gson();
         LogicFlow logicFlow = gson.fromJson(json, LogicFlow.class);
         return logicFlow.translateDAG(this);
@@ -54,11 +55,12 @@ public class DAGTemplate implements Serializable {
     public PortalDAGTemplate convert() {
         return PortalDAGTemplate.builder()
                 .templateId(String.valueOf(templateId))
-                .graph(json)
                 .name(name)
                 .space(space)
                 .status(StatusEnum.getStatusNameByStatus(status))
                 .version(version)
+                .priority(priority)
+                .retryCount(retryCount)
                 .build();
     }
 }

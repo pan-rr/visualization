@@ -13,16 +13,17 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PageUtil {
 
-    public static <T> Pair<Specification<T>, PageRequest> convertNormalRequest(PageParam param, Class<T> clazz) {
+    public static <T> Pair<Specification<T>, PageRequest> convertNormalRequest(PageParam param, Class<T> clazz, Sort defaultSort) {
         PageRequest request = PageRequest.of(param.getPage() - 1, param.getSize());
         List<SortParam> sort = param.getSort();
-        if (CollectionUtils.isEmpty(sort)) {
-            request.withSort(Sort.by(Sort.Order.desc("instance_id")));
-        } else {
+        if (CollectionUtils.isEmpty(sort) && Objects.nonNull(defaultSort)){
+            request.withSort(defaultSort);
+        } else{
             List<Sort.Order> collect = sort.stream().map(i -> i.getDirection() > 0 ? Sort.Order.asc(i.getField()) : Sort.Order.desc(i.getField())).collect(Collectors.toList());
             request.withSort(Sort.by(collect));
         }

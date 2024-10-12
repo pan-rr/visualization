@@ -15,12 +15,8 @@
             </el-button-group>
         </el-form>
         <el-table :data="resourceList" border stripe>
-            <!-- <el-table-column align="center" prop="tenantId" label="资源归属者ID">
-            </el-table-column> -->
-            <el-table-column align="center" prop="tenantName" label="资源归属者ID">
+            <el-table-column align="center" prop="tenantName" label="资源归属者">
             </el-table-column>
-            <!-- <el-table-column align="center" prop="resourceId" label="资源ID">
-            </el-table-column> -->
             <el-table-column align="center" prop="resourceName" label="资源名称">
             </el-table-column>
         </el-table>
@@ -33,6 +29,7 @@
 <script>
 import { getResourceList } from '../../api/resource';
 import ResourceCreate from '../../layout/components/Resource/ResourceCreate.vue';
+import { getCurrentTenant } from '../../utils/tenantUtil';
 
 export default {
     name: "ResourceManagement",
@@ -44,6 +41,7 @@ export default {
             resourceList: [],
             form: {
                 tenantName: '',
+                tenantId: '',
                 resourceName: '',
             }
         }
@@ -51,7 +49,9 @@ export default {
     methods: {
         init() {
             this.form = this.$options.data().form
-            this.form.tenantName = getCurrentTenantName;
+            this.tenant = getCurrentTenant();
+            this.form.tenantName = this.tenant?.name;
+            this.form.tenantId = this.tenant?.id;
         },
         getList() {
             getResourceList(this.form).then(res => {

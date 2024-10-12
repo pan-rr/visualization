@@ -15,6 +15,7 @@ import com.visualization.utils.PageUtil;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -60,13 +61,15 @@ public class DAGServiceImpl implements DAGService {
 
     @Override
     public Page<DAGTemplate> getTemplateList(PageParam parameter) {
-        Pair<Specification<DAGTemplate>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGTemplate.class);
+        Sort defaultSort = Sort.by(Sort.Order.desc("templateId"));
+        Pair<Specification<DAGTemplate>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGTemplate.class, defaultSort);
         return dagTemplateRepository.findAll(pair.getFirst(), pair.getSecond());
     }
 
     @Override
     public Page<DAGInstance> getInstanceList(PageParam parameter) {
-        Pair<Specification<DAGInstance>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGInstance.class);
+        Sort defaultSort = Sort.by(Sort.Order.desc("instanceId"));
+        Pair<Specification<DAGInstance>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGInstance.class, defaultSort);
         return dagInstanceRepository.findAll(pair.getFirst(), pair.getSecond());
     }
 
@@ -163,11 +166,16 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void saveDAGDataSource(PortalDataSource portalDataSource) {
         DAGDataSource dataSource = portalDataSource.convert();
-        Integer hashCount = dagDataSourceRepository.getSpaceHashCount(dataSource.getHash(), dataSource.getSpace());
+        Integer hashCount = dagDataSourceRepository.getSpaceHashCount(dataSource.getConfigHash(), dataSource.getSpace());
         if (hashCount > 0) {
             throw new DAGException("该存储空间下已有一个高相似度的数据源!");
         }
         dagDataSourceRepository.save(dataSource);
+    }
+
+    @Override
+    public void deleteDataSource(String id) {
+        dagDataSourceRepository.deleteById(Long.valueOf(id));
     }
 
     @Override
@@ -198,10 +206,13 @@ public class DAGServiceImpl implements DAGService {
         return dagTemplateRepository.getById(pointer.getTemplateId());
     }
 
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     @Override
-    public void changeTemplatePriority(Long templateId, Double delta) {
-        dagTemplateRepository.changeTemplatePriority(templateId, delta);
+    public void changeTemplatePriority(Long templateId, Double priority) {
+        dagTemplateRepository.changeTemplatePriority(templateId, priority);
     }
+
+    ˆ
 
     @Override
     public DAGTemplate getExecutableTemplate(Long templateId) {

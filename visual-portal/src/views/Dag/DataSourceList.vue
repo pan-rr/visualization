@@ -11,6 +11,13 @@
         </el-table-column>
         <el-table-column align="center" prop="config.password" label="数据源密码 ">
         </el-table-column>
+        <el-table-column align="center" fixed="right" label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" @click.native.prevent="deleteDataSource(scope.row.id)" size="mini">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -19,7 +26,7 @@
 <script>
 
 
-import { getDataSourceList } from '../../api/dag';
+import { deleteDataSource, getDataSourceList } from '../../api/dag';
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 export default {
@@ -35,7 +42,11 @@ export default {
     }
   },
   methods: {
-
+    deleteDataSource(id){
+      deleteDataSource(id).then(res=>{
+        this.getList();
+      })
+    },
     getList() {
       let param = {
         space: this.spaceRef.data

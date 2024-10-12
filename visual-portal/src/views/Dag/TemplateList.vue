@@ -9,7 +9,7 @@
         <el-table-column type="expand">
           <template #default="props">
             <div>
-              <CanvasReadonly :templateId="props.row.templateId" ></CanvasReadonly>
+              <CanvasReadonly :templateId="props.row.templateId"></CanvasReadonly>
               <!-- <LFCanvas :templateId="props.row.templateId" ></LFCanvas> -->
             </div>
           </template>
@@ -20,19 +20,30 @@
         </el-table-column>
         <el-table-column align="center" prop="version" label="发布时间">
         </el-table-column>
+        <el-table-column align="center" label="执行优先级">
+          <template slot-scope="scope">
+            <el-input-number @change="changePriority(scope.row.templateId, scope.row.priority)"
+              v-model="scope.row.priority" controls-position="right" size="mini" :min="1" :max="10"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="重试次数">
+          <template slot-scope="scope">
+            <el-input-number @change="changePriority(scope.row.templateId, scope.row.retryCount)"
+              v-model="scope.row.retryCount" controls-position="right" size="mini" :min="3"></el-input-number>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="流程模版状态" :filters="statusOptions" column-key="status">
           <template slot-scope="scope">
-            <el-tag size="medium">{{ scope.row.status }}</el-tag>
+            <el-select v-model="scope.row.status" size="mini" @change="changeStatus(scope)">
+              <el-option v-for="item in statusOptions" :key="item.value" :label="item.text" :value="item.value">
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
               运行实例
-            </el-button>
-            <el-button @click.native.prevent="disableTemplate(scope.row.status, scope.row.templateId)" type="text"
-              size="mini" :disabled="scope.row.status === '禁用'">
-              停用
             </el-button>
           </template>
         </el-table-column>
@@ -50,7 +61,7 @@
 <script>
 
 
-import { createInstanceById, getTemplateList, disableTemplateById } from '../../api/dag';
+import { createInstanceById, getTemplateList, getStatusOptions, changeTemplatePriority, changeTemplateStatus } from '../../api/dag';
 import { Message } from 'element-ui'
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 import CanvasReadonly from './CanvasReadonly.vue';
@@ -71,8 +82,7 @@ export default {
       pageSize: 10,
       currentPage: 1,
       choosenStatus: [],
-      statusOptions: [{ text: '正常', value: '0' }, { text: '完成', value: '1' }, { text: '待执行', value: '-4' }
-        , { text: '终止', value: '-2' }]
+      statusOptions: []
     }
   },
   computed: {
@@ -81,6 +91,12 @@ export default {
     }
   },
   methods: {
+    changeStatus(scope) {
+      changeTemplateStatus(scope.row.templateId, scope.row.status)
+    },
+    changePriority(templateId, priority) {
+      changeTemplatePriority(templateId, priority);
+    },
     filterChange(filter) {
       if (filter['status']) {
         this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
@@ -106,11 +122,6 @@ export default {
     deleteRow(index, rows) {
       rows.splice(index, 1);
     },
-    disableTemplate(status, templateId) {
-      disableTemplateById(templateId).then(res => {
-        this.getList()
-      })
-    },
     getList() {
       let pageable = {
         page: this.currentPage,
@@ -127,14 +138,14 @@ export default {
       })
 
     },
-
-  },
-  computed: {
-    space() {
-      return this.spaceRef.data;
-    }
+    getStatusOptions() {
+      getStatusOptions(1).then(res => {
+        this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
+      })
+    },
   },
   mounted() {
+    this.getStatusOptions();
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
     this.getList();
   },

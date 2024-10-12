@@ -21,6 +21,9 @@ public class DAGDataSourceManager {
     @Resource
     private DAGService dagService;
 
+    public void deleteDataSource(String id){
+        dagService.deleteDataSource(id);
+    }
 
     public void saveDAGDataSource(PortalDataSource portalDataSource) {
         dagService.saveDAGDataSource(portalDataSource);

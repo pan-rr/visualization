@@ -53,7 +53,7 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
 
     private final ArrayBlockingQueue<Object> signalQ = new ArrayBlockingQueue<>(2);
 
-    @Scheduled(fixedDelay = 30000L)
+    @Scheduled(fixedDelay = 60000L)
     public void offerSignal() {
         signalQ.offer(BigInteger.ZERO);
     }

@@ -17,7 +17,7 @@ public interface DAGPointerRepository extends JpaRepository<DAGPointer, PointerI
     void deleteByInstanceIdAndTaskId(@Param("instanceId") Long instanceId, @Param("taskId") Long taskId);
 
 
-    @Query(value = "select count(1) from t_dag_pointer where instance_id = :instanceId",nativeQuery = true)
+    @Query(value = "select count(1) from t_dag_pointer where instance_id = :instanceId", nativeQuery = true)
     Integer getInstancePointCount(@Param("instanceId") Long instanceId);
 
 
@@ -27,6 +27,6 @@ public interface DAGPointerRepository extends JpaRepository<DAGPointer, PointerI
     void updateCount(@Param("instanceId") Long instanceId, @Param("taskId") Long taskId);
 
 
-    @Query(value = "select * from t_dag_pointer where status = 0 and count < retry_max_count limit :size",nativeQuery = true)
+    @Query(value = "select * from t_dag_pointer where status = 0 and count < retry_max_count order by priority desc limit :size", nativeQuery = true)
     List<DAGPointer> getPointers(@Param("size") int limit);
 }
