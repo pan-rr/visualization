@@ -44,6 +44,9 @@ eureka:
 
 
 visual:
+  pointer:
+    queueName: visual:pointer:q
+    scanLimit: 10
   db:
     jdbc-url: jdbc:h2:mem:visual;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=TRUE;LOCK_MODE=0
     driver-class-name: org.h2.Driver

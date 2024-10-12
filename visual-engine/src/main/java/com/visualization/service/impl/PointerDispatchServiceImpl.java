@@ -3,8 +3,8 @@ package com.visualization.service.impl;
 import com.visualization.manager.DAGManager;
 import com.visualization.manager.PointerQueueManager;
 import com.visualization.model.dag.db.DAGPointer;
+import com.visualization.service.EngineStatService;
 import com.visualization.service.PointerDispatchService;
-import com.visualization.service.WorkerStatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,7 +36,7 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
     @Value("${visual.pointer.scanLimit:10}")
     private Integer scanLimit;
 
-    @Value("${visual.pointer.queueName:visual_pointer}")
+    @Value("${visual.pointer.queueName}")
     private String queueName;
 
     @Resource
@@ -49,7 +49,7 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
     private RedisTemplate<String,DAGPointer> redisTemplate;
 
     @Resource
-    private WorkerStatService workerStatService;
+    private EngineStatService engineStatService;
 
     private final ArrayBlockingQueue<Object> signalQ = new ArrayBlockingQueue<>(2);
 
@@ -68,13 +68,13 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
     }
 
     private boolean allowDispatch() {
-        return workerStatService.hungry(pointerQueueManager.getQSize());
+        return engineStatService.lessThanJobCount(pointerQueueManager.getQSize());
     }
 
     private void loadRemoteQueue(){
         ZSetOperations<String, DAGPointer> zSet = redisTemplate.opsForZSet();
         Long size = zSet.size(queueName);
-        if (Objects.isNull(size) || size < workerStatService.getWorkerCount()){
+        if (Objects.isNull(size) || size < engineStatService.getTotalWorkerCount()){
             List<DAGPointer> pointers = dagManager.getPointers(scanLimit * 2);
             Set<ZSetOperations.TypedTuple<DAGPointer>> collect = pointers.stream().map(i -> ZSetOperations.TypedTuple.of(i, i.getPriority())).collect(Collectors.toSet());
             zSet.add(queueName,collect);
@@ -82,7 +82,7 @@ public class PointerDispatchServiceImpl implements PointerDispatchService {
     }
 
     private void loadLocalQueue(){
-        Integer workerCount = workerStatService.getWorkerCount();
+        Integer workerCount = engineStatService.getTotalWorkerCount();
         ZSetOperations<String, DAGPointer> zSet = redisTemplate.opsForZSet();
         Set<ZSetOperations.TypedTuple<DAGPointer>> set = zSet.popMax(queueName, workerCount);
         if (!CollectionUtils.isEmpty(set)){

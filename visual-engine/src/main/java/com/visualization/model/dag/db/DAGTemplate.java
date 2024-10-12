@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.util.Pair;
+import reactor.util.function.Tuple3;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -45,7 +45,7 @@ public class DAGTemplate implements Serializable {
 
     private Integer totalTaskCount;
 
-    public Pair<List<Edge>, List<DAGPointer>> translateLogicFlowDAG() {
+    public Tuple3<List<Edge>, List<DAGPointer>,Long> translateLogicFlowDAG() {
         Gson gson = new Gson();
         LogicFlow logicFlow = gson.fromJson(json, LogicFlow.class);
         return logicFlow.translateDAG(this);

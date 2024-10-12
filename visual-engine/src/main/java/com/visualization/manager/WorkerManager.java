@@ -4,7 +4,7 @@ import com.visualization.log.logger.VisualLogService;
 import com.visualization.log.model.VisualStageWrapper;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.service.PointerDispatchService;
-import com.visualization.service.WorkerStatService;
+import com.visualization.service.EngineStatService;
 import com.visualization.thread.Worker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,7 +40,7 @@ public class WorkerManager {
     private VisualLogService visualLogService;
 
     @Resource
-    private WorkerStatService workerStatService;
+    private EngineStatService engineStatService;
 
 
     private LinkedBlockingQueue<Tuple2<DAGPointer, Throwable>> failTaskQ = new LinkedBlockingQueue<>();
@@ -54,14 +54,14 @@ public class WorkerManager {
 
     @PostConstruct
     void init() {
-        Integer workerCount = workerStatService.getWorkerCount();
+        Integer workerCount = engineStatService.getTotalWorkerCount();
         workers = new ArrayList<>(workerCount);
         Worker t;
         for (int i = 0; i < workerCount; i++) {
             t = Worker.createDeamonWorker(() -> {
                 while (true) {
                     try {
-                        workerStatService.decreaseIdle();
+                        engineStatService.decreaseIdle();
                         DAGPointer pointer = pointerQueueManager.takeFromPointerQ();
                         String key = pointer.computeLockKey();
                         Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, key, 1, TimeUnit.HOURS);
@@ -74,7 +74,7 @@ public class WorkerManager {
                     } catch (Throwable e) {
                         failTaskQ.offer(Tuples.of(map.get(Thread.currentThread()), e));
                     } finally {
-                        workerStatService.increaseIdle();
+                        engineStatService.increaseIdle();
                     }
                 }
             }, "dag-worker-" + i);

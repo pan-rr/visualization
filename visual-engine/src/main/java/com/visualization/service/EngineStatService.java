@@ -7,23 +7,23 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class WorkerStatService {
+public class EngineStatService {
 
     @Value("${visual.dag.worker.count:8}")
-    private Integer workerCount;
+    private Integer totalWorkerCount;
 
     private AtomicInteger idleWorkerCount;
 
 
     @PostConstruct
     public void init(){
-        this.idleWorkerCount = new AtomicInteger(workerCount);
+        this.idleWorkerCount = new AtomicInteger(totalWorkerCount);
     }
-    public Integer getWorkerCount(){
-        return this.workerCount;
+    public Integer getTotalWorkerCount(){
+        return this.totalWorkerCount;
     }
 
-    public Boolean hungry(int jobCount){
+    public Boolean lessThanJobCount(int jobCount){
         int max = Math.max(idleWorkerCount.get(), 1);
         return max >= jobCount;
     }

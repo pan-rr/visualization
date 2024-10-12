@@ -12,7 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.util.Pair;
+import reactor.util.function.Tuple3;
+import reactor.util.function.Tuples;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,7 +61,7 @@ public class LogicFlow {
     }
 
 
-    public Pair<List<Edge>, List<DAGPointer>> translateDAG(DAGTemplate template) {
+    public Tuple3<List<Edge>, List<DAGPointer>,Long> translateDAG(DAGTemplate template) {
         SnowIdWorker snowIdWorker = new SnowIdWorker(0, 0);
         long instanceId = snowIdWorker.nextId();
         Set<String> roots = nodes.stream().map(LogicFlowNode::getId).collect(Collectors.toSet());
@@ -86,6 +87,6 @@ public class LogicFlow {
                         .toTaskId(Long.valueOf(e.getTargetNodeId()))
                         .build())
                 .collect(Collectors.toList());
-        return Pair.of(dagEdges, dagPointers);
+        return Tuples.of(dagEdges, dagPointers,instanceId);
     }
 }

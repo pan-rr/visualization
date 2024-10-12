@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.util.function.Tuple3;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -79,14 +80,14 @@ public class DAGServiceImpl implements DAGService {
     public DAGInstance createInstanceByTemplateId(Long templateId) {
         DAGTemplate template = getExecutableTemplate(templateId);
         minIOService.getTemplateStr(template);
-        Pair<List<Edge>, List<DAGPointer>> pair = template.translateLogicFlowDAG();
-        List<Edge> edges = pair.getFirst();
-        List<DAGPointer> pointers = pair.getSecond();
+        Tuple3<List<Edge>, List<DAGPointer>, Long> tuple = template.translateLogicFlowDAG();
+        List<Edge> edges = tuple.getT1();
+        List<DAGPointer> pointers = tuple.getT2();
         edgeRepository.saveAll(edges);
         dagPointerRepository.saveAll(pointers);
         List<TaskLatch> latches = TaskLatch.getLatch(edges);
         taskLatchRepository.saveAll(latches);
-        Long instanceId = pointers.get(0).getInstanceId();
+        Long instanceId = tuple.getT3();
         DAGInstance instance = DAGInstance.builder()
                 .instanceId(instanceId)
                 .templateId(templateId)
