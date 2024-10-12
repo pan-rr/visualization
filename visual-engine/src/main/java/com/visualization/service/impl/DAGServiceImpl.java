@@ -212,7 +212,11 @@ public class DAGServiceImpl implements DAGService {
         dagTemplateRepository.changeTemplatePriority(templateId, priority);
     }
 
-    ˆ
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
+    @Override
+    public void changeTemplateRetryCount(Long templateId, Integer retryCount) {
+        dagTemplateRepository.changeTemplateRetryCount(templateId,retryCount);
+    }
 
     @Override
     public DAGTemplate getExecutableTemplate(Long templateId) {

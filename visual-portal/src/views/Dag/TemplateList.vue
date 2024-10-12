@@ -28,7 +28,7 @@
         </el-table-column>
         <el-table-column align="center" label="重试次数">
           <template slot-scope="scope">
-            <el-input-number @change="changePriority(scope.row.templateId, scope.row.retryCount)"
+            <el-input-number @change="changeRetryCount(scope.row.templateId, scope.row.retryCount)"
               v-model="scope.row.retryCount" controls-position="right" size="mini" :min="3"></el-input-number>
           </template>
         </el-table-column>
@@ -61,7 +61,7 @@
 <script>
 
 
-import { createInstanceById, getTemplateList, getStatusOptions, changeTemplatePriority, changeTemplateStatus } from '../../api/dag';
+import { createInstanceById, getTemplateList, getStatusOptions, changeTemplatePriority, changeTemplateStatus, changeTemplateRetryCount } from '../../api/dag';
 import { Message } from 'element-ui'
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 import CanvasReadonly from './CanvasReadonly.vue';
@@ -96,6 +96,9 @@ export default {
     },
     changePriority(templateId, priority) {
       changeTemplatePriority(templateId, priority);
+    },
+    changeRetryCount(templateId, retryCount) {
+      changeTemplateRetryCount(templateId, retryCount);
     },
     filterChange(filter) {
       if (filter['status']) {

@@ -18,4 +18,8 @@ public interface DAGTemplateRepository extends JpaRepository<DAGTemplate, Long>,
     @Query(value = "update t_dag_template set priority = :priority where template_id = :templateId", nativeQuery = true)
     void changeTemplatePriority(@Param("templateId") Long templateId, @Param("priority") Double priority);
 
+    @Modifying
+    @Query(value = "update t_dag_template set retry_count = :retryCount where template_id = :templateId", nativeQuery = true)
+    void changeTemplateRetryCount(@Param("templateId") Long templateId, @Param("retryCount") Integer retryCount);
+
 }

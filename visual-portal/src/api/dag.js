@@ -14,6 +14,10 @@ export async function changeTemplatePriority(templateId, priority) {
     return await service.get('engine/portal/changeTemplatePriority', { params: { templateId, priority } })
 }
 
+export async function changeTemplateRetryCount(templateId, retryCount) {
+    return await service.get('engine/portal/changeTemplateRetryCount', { params: { templateId, retryCount } })
+}
+
 export async function changeTemplateStatus(templateId, status) {
     return await service.get('engine/portal/changeTemplateStatus', { params: { templateId, status } })
 }
