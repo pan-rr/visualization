@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -59,5 +60,18 @@ public class DAGPointer implements Serializable, Comparable<DAGPointer> {
         if (retryMaxCount < count) {
             this.status = StatusEnum.BLOCK_FAIL_REACH_THRESHOLD.getStatus();
         }
+    }
+
+    public boolean matchTemplateConfig(DAGTemplate template){
+        boolean res = true;
+         if (!Objects.equals(template.getRetryCount(), this.retryMaxCount)){
+             res = false;
+             this.retryMaxCount = template.getRetryCount();
+         }
+         if(!Objects.equals(template.getPriority(), this.priority)){
+             res = false;
+             this.priority = template.getPriority();
+         }
+         return res;
     }
 }

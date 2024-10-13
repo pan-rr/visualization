@@ -4,7 +4,7 @@ import Layout from '@/layout/index.vue'
 import store from '@/store'
 
 // import list from './modules/list'
-// import personCenter from './modules/personCenter'
+import personCenter from './modules/personCenter'
 import visual from './modules/visual'
 import auth from './modules/auth'
 import datasource from './modules/datasource'
@@ -45,7 +45,7 @@ export const permissionRoutes = [
   visual,
   datasource,
   auth,
-  // personCenter,
+  personCenter,
   {
     path: '*',
     name: 'Error',

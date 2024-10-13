@@ -6,7 +6,7 @@
     </div>
     <div class="flex">
       <div class="label font-size-18">头像：</div>
-      <img :src="userInfo.avatar" alt="" />
+      <img src="@/assets/img/avatar.svg" alt="" />
     </div>
   </div>
 </template>

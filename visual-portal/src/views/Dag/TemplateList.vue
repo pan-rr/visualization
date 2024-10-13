@@ -6,11 +6,10 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
-        <el-table-column type="expand">
+        <el-table-column  type="expand">
           <template #default="props">
             <div>
               <CanvasReadonly :templateId="props.row.templateId"></CanvasReadonly>
-              <!-- <LFCanvas :templateId="props.row.templateId" ></LFCanvas> -->
             </div>
           </template>
         </el-table-column>

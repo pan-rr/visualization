@@ -12,6 +12,10 @@ export async function userRegister(data) {
     return await service.post('auth/user/register', data)
 }
 
+export async function changePassword(data) {
+    return await service.post('auth/user/changePassword', data)
+}
+
 export async function registerSubTenant(data) {
     return await service.post('auth/user/registerSubTenant', data)
 }

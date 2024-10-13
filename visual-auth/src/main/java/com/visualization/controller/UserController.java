@@ -3,6 +3,7 @@ package com.visualization.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.visualization.api.handler.AuthMessageHandler;
 import com.visualization.model.Response;
+import com.visualization.model.api.ChangePassword;
 import com.visualization.model.api.PortalTenantUser;
 import com.visualization.model.api.UserInfo;
 import com.visualization.model.db.SystemUser;
@@ -31,6 +32,12 @@ public class UserController {
         if (error != null) return error;
         userService.createUser(systemUser);
         return Response.success("注册成功！");
+    }
+
+    @PostMapping("/changePassword")
+    public Response changePassword(@RequestBody ChangePassword request){
+        userService.changePassword(request);
+        return Response.success("修改密码成功！");
     }
 
     @PostMapping("/registerSubTenant")

@@ -26,6 +26,8 @@ Visualization使用低代码方式编排DAG任务，集群自动执行相应的�
 
 ![表单配置1](https://gitee.com/pan-rr/visualization/raw/master/pic/任务节点表单配置.png)
 
+![流程模版查看](https://gitee.com/pan-rr/visualization/raw/master/pic/流程模版查看.png)
+
 ![表单配置2](https://gitee.com/pan-rr/visualization/raw/master/pic/表单配置.png)
 
 ![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
@@ -82,7 +84,6 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 任务流程
 
-
 1. 在流程管理-流程定义新建流程模版。拖拽左侧“任务节点”到画布，点击节点进行配置。配置完成后点击发布流程
 2. 在已定义流程列表点击运行实例
 3. 等待任务完成，在“流程管理-流程实例列表-查看执行日志”里查看任务的执行情况
@@ -123,3 +124,5 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 尊重劳动成果，未经允许禁止商业闭源修改使用。
 
 二次开发必须注明出处`https://gitee.com/pan-rr/visualization` ，禁止抹掉原作者信息。
+
+有什么问题可提issue或者邮件vision_netmail@163.com联系

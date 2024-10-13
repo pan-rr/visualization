@@ -21,6 +21,8 @@ public interface DAGService {
 
     void deletePointer(TaskKey taskKey);
 
+    void makeSurePointerConfigMatchTemplate(DAGPointer pointer, DAGTemplate template);
+
     List<Long> saveReadyPointers(List<DAGPointer> pointers);
 
     void tryFinishInstance(Long instanceId);
@@ -39,7 +41,7 @@ public interface DAGService {
 
     void saveDAGDataSource(PortalDataSource portalDataSource);
 
-     void deleteDataSource(String id);
+    void deleteDataSource(String id);
 
     List<PortalDataSource> getDataSourceList(PortalDataSource portalDataSource);
 

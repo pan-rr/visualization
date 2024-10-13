@@ -10,6 +10,7 @@ import com.visualization.mapper.ResourceMapper;
 import com.visualization.mapper.TenantMapper;
 import com.visualization.mapper.UserMapper;
 import com.visualization.model.api.AuthResource;
+import com.visualization.model.api.ChangePassword;
 import com.visualization.model.api.PortalTenantUser;
 import com.visualization.model.api.UserInfo;
 import com.visualization.model.db.SystemResource;
@@ -58,6 +59,16 @@ public class UserServiceImpl implements UserService {
             tenantMapper.insert(tenant);
         }
         userMapper.insert(user);
+    }
+
+    @Override
+    public void changePassword(ChangePassword request) {
+        String old = MD5Utils.encode(request.getOldPassword());
+        String newPassword = MD5Utils.encode(request.getNewPassword());
+        int affect = userMapper.updatePassword(request.getUserId(), old, newPassword);
+        if (affect < 1) {
+            throw new AuthException("修改密码失败！");
+        }
     }
 
     @Transactional(rollbackFor = Throwable.class)

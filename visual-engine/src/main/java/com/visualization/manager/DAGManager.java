@@ -47,6 +47,7 @@ public class DAGManager {
     public void executeStage(DAGPointer pointer) {
         TaskKey taskKey = pointer.generateTaskKey();
         DAGTemplate template = dagService.getTemplateByPointer(pointer);
+        dagService.makeSurePointerConfigMatchTemplate(pointer,template);
         List<Edge> nextEdges = dagService.findNextEdges(taskKey);
         VisualStage visualStage = VisualStageBuilder.builder()
                 .dagPointer(pointer)

@@ -35,7 +35,7 @@ service.interceptors.response.use(
     }
     const res = response.data
 
-    // if (res?.header?.code === 0)return response
+    
     let check = validateResponse(res)
     if (check == false) {
       Message({
@@ -44,25 +44,6 @@ service.interceptors.response.use(
         duration: 5 * 1000,
       })
 
-
-
-
-      // if (res?.code === -999) {
-      //   if (route.path != '/login') {
-      //     router.replace('/login')
-      //   }
-      // }
-      // if (res.code === 5000) {
-      //   MessageBox.confirm('您已经退出登录状态，您可以点击取消留在当前页面或者重新登录', {
-      //     confirmButtonText: '重新登录',
-      //     cancelButtonText: '取消',
-      //     type: 'warning',
-      //   }).then(() => {
-      //     store.dispatch('user/resetToken').then(() => {
-      //       location.reload()
-      //     })
-      //   })
-      // }
 
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
@@ -79,22 +60,6 @@ service.interceptors.response.use(
     return Promise.reject(error)
   },
 )
-// /**
-//  * 封装接口请求方法
-//  * @param url 域名后需补齐的接口地址
-//  * @param method 接口请求方式
-//  * @param data data下的其他数据体
-//  */
-// const request = (url, method, data) => {
-//   return service({
-//     url,
-//     method,
-//     data: {
-//       body: data,
-//     },
-//   })
-// }
 
-// export default request
 
 export default service

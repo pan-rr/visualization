@@ -1,5 +1,6 @@
 package com.visualization.service.impl;
 
+import com.visualization.enums.DAGPriorityEnum;
 import com.visualization.enums.StatusEnum;
 import com.visualization.exception.DAGException;
 import com.visualization.model.PageParam;
@@ -41,7 +42,6 @@ public class DAGServiceImpl implements DAGService {
 
     @Resource
     private DAGPointerRepository dagPointerRepository;
-
 
     @Resource
     private TaskLatchRepository taskLatchRepository;
@@ -113,6 +113,14 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void deletePointer(TaskKey taskKey) {
         dagPointerRepository.deleteByInstanceIdAndTaskId(taskKey.getInstanceId(), taskKey.getTaskId());
+    }
+
+    @Override
+    public void makeSurePointerConfigMatchTemplate(DAGPointer pointer, DAGTemplate template) {
+        boolean flag = pointer.matchTemplateConfig(template);
+        if (!flag){
+            dagPointerRepository.save(pointer);
+        }
     }
 
     @Override
@@ -209,6 +217,7 @@ public class DAGServiceImpl implements DAGService {
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     @Override
     public void changeTemplatePriority(Long templateId, Double priority) {
+        DAGPriorityEnum.validatePriority(priority);
         dagTemplateRepository.changeTemplatePriority(templateId, priority);
     }
 
