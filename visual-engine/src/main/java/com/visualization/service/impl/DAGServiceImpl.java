@@ -1,7 +1,7 @@
 package com.visualization.service.impl;
 
-import com.visualization.enums.DAGPriorityEnum;
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.DAGPriority;
+import com.visualization.enums.Status;
 import com.visualization.exception.DAGException;
 import com.visualization.model.PageParam;
 import com.visualization.model.dag.db.*;
@@ -44,7 +44,7 @@ public class DAGServiceImpl implements DAGService {
     private DAGPointerRepository dagPointerRepository;
 
     @Resource
-    private TaskLatchRepository taskLatchRepository;
+    private PointerLatchRepository pointerLatchRepository;
 
     @Resource
     private DAGInstanceRepository dagInstanceRepository;
@@ -88,16 +88,16 @@ public class DAGServiceImpl implements DAGService {
         List<DAGPointer> pointers = tuple.getT2();
         edgeRepository.saveAll(edges);
         dagPointerRepository.saveAll(pointers);
-        List<TaskLatch> latches = TaskLatch.getLatch(edges);
-        taskLatchRepository.saveAll(latches);
         Long instanceId = tuple.getT3();
+        List<PointerLatch> latches = PointerLatch.getLatch(edges, instanceId);
+        pointerLatchRepository.saveAll(latches);
         DAGInstance instance = DAGInstance.builder()
                 .instanceId(instanceId)
                 .templateId(templateId)
                 .templateName(template.getName())
                 .space(template.getSpace())
                 .version(template.getVersion())
-                .status(StatusEnum.NEW.getStatus())
+                .status(Status.NEW.getStatus())
                 .createTime(LocalDateTime.now())
                 .unfinishedTaskCount(template.getTotalTaskCount())
                 .build();
@@ -106,33 +106,38 @@ public class DAGServiceImpl implements DAGService {
     }
 
     @Override
-    public List<Edge> findNextEdges(TaskKey taskKey) {
-        return edgeRepository.findByInstanceIdAndFromTaskId(taskKey.getInstanceId(), taskKey.getTaskId());
+    public DAGInstance getInstance(Long instanceId) {
+        return dagInstanceRepository.getById(instanceId);
     }
 
     @Override
-    public void deletePointer(TaskKey taskKey) {
-        dagPointerRepository.deleteByInstanceIdAndTaskId(taskKey.getInstanceId(), taskKey.getTaskId());
+    public List<Edge> findNextEdges(DAGPointer pointer) {
+        return edgeRepository.findByInstanceIdAndFromTaskId(pointer.getInstanceId(), pointer.getTaskId());
+    }
+
+    @Override
+    public void deletePointer(DAGPointer pointer) {
+        dagPointerRepository.deleteByInstanceIdAndTaskId(pointer.getInstanceId(), pointer.getTaskId());
     }
 
     @Override
     public void makeSurePointerConfigMatchTemplate(DAGPointer pointer, DAGTemplate template) {
         boolean flag = pointer.matchTemplateConfig(template);
-        if (!flag){
+        if (!flag) {
             dagPointerRepository.save(pointer);
         }
     }
 
     @Override
-    public List<Long> saveReadyPointers(List<DAGPointer> pointers) {
+    public List<Long> saveReadyPointers(List<DAGPointer> pointers, Long instanceId) {
         List<Long> list = pointers.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
-        taskLatchRepository.decreaseCount(list);
-        Set<Long> unreadyTask = taskLatchRepository.getUnreadyTask(list);
-        List<DAGPointer> readyTask = pointers.stream().filter(p -> !unreadyTask.contains(p.getTaskId()))
+        pointerLatchRepository.decreaseCount(list, instanceId);
+        Set<Long> readyTask = pointerLatchRepository.getReadyTask(instanceId);
+        List<DAGPointer> readyPointers = pointers.stream().filter(p -> readyTask.contains(p.getTaskId()))
                 .collect(Collectors.toList());
-        List<Long> readyIds = readyTask.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
-        dagPointerRepository.saveAll(readyTask);
-        taskLatchRepository.deleteLatchByIds(readyIds);
+        List<Long> readyIds = readyPointers.stream().map(DAGPointer::getTaskId).collect(Collectors.toList());
+        dagPointerRepository.saveAll(readyPointers);
+        pointerLatchRepository.removeReadyLatch(readyIds, instanceId);
         return readyIds;
     }
 
@@ -140,12 +145,18 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void tryFinishInstance(Long instanceId) {
         dagInstanceRepository.decreaseUnfinishedTaskCount(instanceId);
-        dagInstanceRepository.tryFinishInstance(instanceId, new Date(), StatusEnum.FINISHED.getStatus());
+        dagInstanceRepository.tryFinishInstance(instanceId, new Date(), Status.FINISHED.getStatus());
     }
 
     @Override
     public void updateInstanceStatus(Long instanceId, Integer status) {
-        dagInstanceRepository.updateInstanceStatus(instanceId, status);
+        Integer affect = dagInstanceRepository.updateInstanceStatus(instanceId, status);
+        if (affect == null || affect == 0)return;
+        if (Status.USER_TERMINATE.getStatus().equals(status)) {
+            dagPointerRepository.deleteByInstanceId(instanceId);
+            edgeRepository.deleteByInstanceId(instanceId);
+            pointerLatchRepository.deleteLatchByInstanceId(instanceId);
+        }
     }
 
     @Override
@@ -153,8 +164,9 @@ public class DAGServiceImpl implements DAGService {
         dagPointerRepository.save(pointer);
     }
 
-    public List<DAGPointer> getPointers(int limit) {
-        return dagPointerRepository.getPointers(limit);
+    public List<DAGPointer> getExecutablePointers(int limit) {
+        int[] executablePointerStatus = Status.getExecutablePointerStatus();
+        return dagPointerRepository.getExecutablePointers(limit, executablePointerStatus);
     }
 
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
@@ -217,20 +229,20 @@ public class DAGServiceImpl implements DAGService {
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     @Override
     public void changeTemplatePriority(Long templateId, Double priority) {
-        DAGPriorityEnum.validatePriority(priority);
+        DAGPriority.validatePriority(priority);
         dagTemplateRepository.changeTemplatePriority(templateId, priority);
     }
 
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     @Override
     public void changeTemplateRetryCount(Long templateId, Integer retryCount) {
-        dagTemplateRepository.changeTemplateRetryCount(templateId,retryCount);
+        dagTemplateRepository.changeTemplateRetryCount(templateId, retryCount);
     }
 
     @Override
     public DAGTemplate getExecutableTemplate(Long templateId) {
         DAGTemplate template = Objects.requireNonNull(dagTemplateRepository.getById(templateId), "查无该模版！");
-        if (!Objects.equals(template.getStatus(), StatusEnum.NORMAL.getStatus())) {
+        if (!Objects.equals(template.getStatus(), Status.NORMAL.getStatus())) {
             throw new DAGException("该流程状态不允许执行操作！");
         }
         return template;

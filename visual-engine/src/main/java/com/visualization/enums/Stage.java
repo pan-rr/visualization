@@ -3,7 +3,7 @@ package com.visualization.enums;
 import lombok.Getter;
 
 @Getter
-public enum StageEnum {
+public enum Stage {
 
 
     STAGE_UNKNOWN("未知状态"),
@@ -13,7 +13,7 @@ public enum StageEnum {
 
     private final String message;
 
-    StageEnum(String message) {
+    Stage(String message) {
         this.message = message;
     }
 

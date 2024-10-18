@@ -30,8 +30,7 @@ public class TimeSeriesLogService extends VisualLogService {
         List<StageLogPoint> points = StageLogPoint.covert(list);
         if (!CollectionUtils.isEmpty(points)) {
             WriteApiBlocking writeApiBlocking = influxDBClient.getWriteApiBlocking();
-            // 秒级
-            writeApiBlocking.writeMeasurements(WritePrecision.S, points);
+            writeApiBlocking.writeMeasurements(WritePrecision.MS, points);
         }
     }
 

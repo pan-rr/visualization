@@ -1,7 +1,7 @@
 package com.visualization.manager;
 
-import com.visualization.builder.VisualStageBuilder;
-import com.visualization.enums.StatusEnum;
+import com.visualization.stage.VisualStageBuilder;
+import com.visualization.enums.Status;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
 import com.visualization.repository.file.FilePathMappingRepository;
@@ -17,6 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,12 +44,29 @@ public class DAGManager {
     @Resource
     private DAGDataSourceManager dagDataSourceManager;
 
+    private List<DAGPointer> computeNextPointers(DAGPointer pointer) {
+        List<Edge> edges = dagService.findNextEdges(pointer);
+        if (!CollectionUtils.isEmpty(edges)) {
+            return edges.stream()
+                    .filter(edge -> !Objects.equals(edge.getToTaskId(), edge.getFromTaskId()))
+                    .map(edge -> DAGPointer.builder()
+                            .instanceId(edge.getInstanceId())
+                            .taskId(edge.getToTaskId())
+                            .count(0)
+                            .templateId(pointer.getTemplateId())
+                            .status(Status.NORMAL.getStatus())
+                            .space(pointer.getSpace())
+                            .retryMaxCount(pointer.getRetryMaxCount())
+                            .priority(pointer.getPriority())
+                            .build()).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
 
     public void executeStage(DAGPointer pointer) {
-        TaskKey taskKey = pointer.generateTaskKey();
-        DAGTemplate template = dagService.getTemplateByPointer(pointer);
-        dagService.makeSurePointerConfigMatchTemplate(pointer,template);
-        List<Edge> nextEdges = dagService.findNextEdges(taskKey);
+
+        List<DAGPointer> nextPointers = computeNextPointers(pointer);
+
         VisualStage visualStage = VisualStageBuilder.builder()
                 .dagPointer(pointer)
                 .taskService(taskService)
@@ -56,26 +74,20 @@ public class DAGManager {
                 .filePathMappingRepository(filePathMappingRepository)
                 .build().buildStage();
         visualStage.execute();
+
+        // 中止实例不执行后续操作
+        Long instanceId = pointer.getInstanceId();
+        DAGInstance instance = dagService.getInstance(instanceId);
+        if (Objects.isNull(instance) || Status.USER_TERMINATE.getStatus().equals(instance.getStatus())) {
+            return;
+        }
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                dagService.deletePointer(taskKey);
-                dagService.tryFinishInstance(pointer.getInstanceId());
-                if (!CollectionUtils.isEmpty(nextEdges)) {
-                    List<DAGPointer> pointers = nextEdges
-                            .stream()
-                            .filter(edge -> !Objects.equals(edge.getToTaskId(), edge.getFromTaskId()))
-                            .map(edge -> DAGPointer.builder()
-                                    .instanceId(edge.getInstanceId())
-                                    .taskId(edge.getToTaskId())
-                                    .count(0)
-                                    .templateId(template.getTemplateId())
-                                    .status(StatusEnum.NORMAL.getStatus())
-                                    .space(pointer.getSpace())
-                                    .retryMaxCount(template.getRetryCount())
-                                    .priority(template.getPriority())
-                                    .build()).collect(Collectors.toList());
-                    List<Long> readyIds = dagService.saveReadyPointers(pointers);
+                dagService.deletePointer(pointer);
+                dagService.tryFinishInstance(instanceId);
+                if (!CollectionUtils.isEmpty(nextPointers)) {
+                    List<Long> readyIds = dagService.saveReadyPointers(nextPointers,instanceId);
                     dagService.deleteEdges(EdgeId.computeId(pointer, readyIds));
                 }
             }
@@ -88,17 +100,22 @@ public class DAGManager {
         return dagService.createInstanceByTemplateId(templateId);
     }
 
+    @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
+    public void terminateInstance(Long instanceId) {
+        dagService.updateInstanceStatus(instanceId,Status.USER_TERMINATE.getStatus());
+    }
+
 
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
-    public void updateTaskInfo(DAGPointer pointer) {
+    public void handleFailStage(DAGPointer pointer) {
         dagService.updatePointer(pointer);
-        if (!StatusEnum.statusCanFinish(pointer.getStatus())) {
+        if (!Status.statusCanFinish(pointer.getStatus())) {
             dagService.updateInstanceStatus(pointer.getInstanceId(), pointer.getStatus());
         }
     }
 
-    public List<DAGPointer> getPointers(int limit) {
-        return dagService.getPointers(limit);
+    public List<DAGPointer> getExecutablePointers(int limit) {
+        return dagService.getExecutablePointers(limit);
     }
 
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
@@ -109,11 +126,11 @@ public class DAGManager {
     }
 
     public void disableTemplateById(Long templateId) {
-        dagService.updateTemplateStatus(templateId, StatusEnum.FORBIDDEN.getStatus());
+        dagService.updateTemplateStatus(templateId, Status.FORBIDDEN.getStatus());
     }
 
     public void changeTemplateStatus(Long templateId, int status) {
-        StatusEnum.validateStatus(status);
+        Status.validateStatus(status);
         dagService.updateTemplateStatus(templateId, status);
     }
 

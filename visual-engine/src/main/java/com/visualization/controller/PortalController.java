@@ -1,6 +1,6 @@
 package com.visualization.controller;
 
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.Status;
 import com.visualization.manager.DAGDataSourceManager;
 import com.visualization.manager.DAGManager;
 import com.visualization.manager.LogicFlowManager;
@@ -75,6 +75,13 @@ public class PortalController {
         return Response.success(instance.getInstanceId().toString());
     }
 
+    @GetMapping("/terminateInstance")
+    public Response<Object> terminateInstance(@RequestParam("instanceId") String instanceId) {
+        Long id = Long.valueOf(instanceId);
+        dagManager.terminateInstance(id);
+        return Response.success("中止实例成功！");
+    }
+
     @GetMapping("/disableTemplateById")
     public Response<Object> disableTemplateById(@RequestParam("templateId") String templateId) {
         Long id = Long.valueOf(templateId);
@@ -132,6 +139,6 @@ public class PortalController {
 
     @GetMapping("/getStatusOptions")
     public Response<Object> getStatusOptions(@RequestParam(value = "type", required = false) Integer type) {
-        return Response.success(StatusEnum.getOptions(type));
+        return Response.success(Status.getOptions(type));
     }
 }

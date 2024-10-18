@@ -1,6 +1,6 @@
 package com.visualization.model.dag.db;
 
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,39 +39,32 @@ public class DAGPointer implements Serializable, Comparable<DAGPointer> {
         return Double.compare(o.priority, this.priority);
     }
 
-    public TaskKey generateTaskKey() {
-        return TaskKey.builder()
-                .instanceId(instanceId)
-                .taskId(taskId)
-                .build();
-    }
 
-
-    public String computeLockKey() {
-        return "visual_pointer_" + taskId;
+    public String computeStageName() {
+        return "visual:stage:" + instanceId + ":" + taskId;
     }
 
     public void fail() {
         this.count++;
-        this.checkBlock();
+        this.checkReachThreshold();
     }
 
-    public void checkBlock() {
+    public void checkReachThreshold() {
         if (retryMaxCount < count) {
-            this.status = StatusEnum.BLOCK_FAIL_REACH_THRESHOLD.getStatus();
+            this.status = Status.BLOCK_FAIL_REACH_THRESHOLD.getStatus();
         }
     }
 
-    public boolean matchTemplateConfig(DAGTemplate template){
+    public boolean matchTemplateConfig(DAGTemplate template) {
         boolean res = true;
-         if (!Objects.equals(template.getRetryCount(), this.retryMaxCount)){
-             res = false;
-             this.retryMaxCount = template.getRetryCount();
-         }
-         if(!Objects.equals(template.getPriority(), this.priority)){
-             res = false;
-             this.priority = template.getPriority();
-         }
-         return res;
+        if (!Objects.equals(template.getRetryCount(), this.retryMaxCount)) {
+            res = false;
+            this.retryMaxCount = template.getRetryCount();
+        }
+        if (!Objects.equals(template.getPriority(), this.priority)) {
+            res = false;
+            this.priority = template.getPriority();
+        }
+        return res;
     }
 }

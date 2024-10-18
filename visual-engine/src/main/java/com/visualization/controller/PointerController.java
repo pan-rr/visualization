@@ -1,9 +1,8 @@
 package com.visualization.controller;
 
-import com.visualization.manager.PointerQueueManager;
+import com.visualization.stage.VisualJobHandler;
 import com.visualization.model.Response;
 import com.visualization.model.dag.db.DAGPointer;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +16,11 @@ import java.util.List;
 public class PointerController {
 
     @Resource
-    private PointerQueueManager pointerQueueManager;
+    private VisualJobHandler visualJobHandler;
 
     @PostMapping("/acceptPointers")
     public Response<Object> acceptPointers(@RequestBody List<DAGPointer> pointers) {
-        if (!CollectionUtils.isEmpty(pointers)) {
-            pointerQueueManager.offerPointer(pointers);
-        }
+        visualJobHandler.offerPointer(pointers);
         return Response.builder().message("success").build();
     }
 }

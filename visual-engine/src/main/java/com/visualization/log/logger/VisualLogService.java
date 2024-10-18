@@ -1,13 +1,15 @@
 package com.visualization.log.logger;
 
+import com.visualization.enums.WorkerGroup;
 import com.visualization.exception.StageLogException;
 import com.visualization.log.model.StageLogPoint;
 import com.visualization.log.model.VisualStageWrapper;
-import com.visualization.thread.Worker;
+import com.visualization.stage.VisualEngineService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -15,19 +17,25 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Slf4j
 public abstract class VisualLogService {
 
+    @Resource
+    private VisualEngineService visualEngineService;
+
     private final LinkedBlockingQueue<VisualStageWrapper> Q = new LinkedBlockingQueue<>();
 
     @PostConstruct
     public void init() {
-        Worker logWorker = Worker.createDeamonWorker(() -> {
-            while (true) {
-                try {
-                    handleLog(take());
-                } catch (Throwable e) {
-                    log.error("visual-log 异常:", e);
-                }
-            }
-        }, "visual-logWorker");
+        visualEngineService.recruitWorker(
+                () -> {
+                    while (true) {
+                        try {
+                            handleLog(take());
+                        } catch (Throwable e) {
+                            log.error("visual-log 异常:", e);
+                        }
+                    }
+                },
+                WorkerGroup.DAG_LOG
+        );
     }
 
     public void accept(VisualStageWrapper log) {

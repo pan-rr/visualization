@@ -1,6 +1,6 @@
 package com.visualization.model.dag.db;
 
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.Status;
 import com.visualization.model.portal.PortalDAGInstance;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +40,7 @@ public class DAGInstance implements Serializable {
                 .templateName(templateName)
                 .instanceId(String.valueOf(instanceId))
                 .space(space)
-                .status(StatusEnum.getStatusNameByStatus(status))
+                .status(Status.getStatusNameByStatus(status))
                 .createTime(Objects.nonNull(createTime) ? formatter.format(createTime) : null)
                 .finishTime(Objects.nonNull(finishTime) ? formatter.format(finishTime) : null)
                 .unfinishedTaskCount(unfinishedTaskCount)

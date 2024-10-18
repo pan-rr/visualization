@@ -2,7 +2,7 @@ package com.visualization.model.dag.db;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.gson.Gson;
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.Status;
 import com.visualization.model.dag.logicflow.LogicFlow;
 import com.visualization.model.portal.PortalDAGTemplate;
 import lombok.AllArgsConstructor;
@@ -57,7 +57,7 @@ public class DAGTemplate implements Serializable {
                 .templateId(String.valueOf(templateId))
                 .name(name)
                 .space(space)
-                .status(StatusEnum.getStatusNameByStatus(status))
+                .status(Status.getStatusNameByStatus(status))
                 .version(version)
                 .priority(priority)
                 .retryCount(retryCount)

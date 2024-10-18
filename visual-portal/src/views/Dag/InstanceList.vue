@@ -36,6 +36,9 @@
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
               查看执行日志
             </el-button>
+            <el-button v-if="scope.row.status == '正常'" type="text" @click.native.prevent="terminateInstance(scope.row)" size="mini">
+              终止实例
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,7 +75,7 @@
 
 <script>
 
-import { getInstanceList, getLogTimeLine, getStatusOptions } from '../../api/dag';
+import { getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 export default {
@@ -127,6 +130,11 @@ export default {
         _this.tableData = res.data.result
         _this.total = res.data.total
       })
+    },
+    terminateInstance(row) {
+      terminateInstance(row.instanceId).then(res => {
+        this.getList();
+      });
     },
     resetTimeLine() {
       this.openTimeLine = false;

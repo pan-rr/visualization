@@ -1,6 +1,6 @@
 package com.visualization.model.dag.logicflow;
 
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.Status;
 import com.visualization.exception.DAGException;
 import com.visualization.jpa.SnowIdWorker;
 import com.visualization.model.dag.DAGValidator;
@@ -76,7 +76,7 @@ public class LogicFlow {
                 .taskId(Long.valueOf(nodeId))
                 .templateId(template.getTemplateId())
                 .space(template.getSpace())
-                .status(StatusEnum.NORMAL.getStatus())
+                .status(Status.NORMAL.getStatus())
                 .retryMaxCount(template.getRetryCount())
                 .priority(template.getPriority())
                 .build()).collect(Collectors.toList());

@@ -1,4 +1,4 @@
-package com.visualization.builder;
+package com.visualization.stage;
 
 import com.google.gson.Gson;
 import com.visualization.constant.TaskTypeConstant;
@@ -14,7 +14,6 @@ import com.visualization.utils.FilePathUtil;
 import com.visualization.utils.ShortLinkUtil;
 import com.visualization.view.base.VisualStage;
 import lombok.Builder;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -67,14 +66,12 @@ public class VisualStageBuilder {
 
 
     private void rewriteFilePath() {
-        List<Map<String, Object>> input = visualStage.getInput();
-        if (!CollectionUtils.isEmpty(input)) {
+        if (TaskTypeConstant.VISUAL.equals(visualStage.getTaskType())){
+            List<Map<String, Object>> input = visualStage.getInput();
             for (Map<String, Object> conf : input) {
                 conf.compute(ViewConstant.FILE_PATH, (k, v) -> getRealPath(v));
             }
-        }
-        Map<String, Object> output = visualStage.getOutput();
-        if (!CollectionUtils.isEmpty(output)) {
+            Map<String, Object> output = visualStage.getOutput();
             output.compute(ViewConstant.FILE_PATH, (k, v) -> getRealPath(v));
         }
     }

@@ -3,7 +3,7 @@ package com.visualization.enums;
 import lombok.Getter;
 
 @Getter
-public enum ResponseEnum {
+public enum ResponseType {
 
     SUCCESS(0,"成功"),
 
@@ -14,7 +14,7 @@ public enum ResponseEnum {
     private final Integer code;
 
 
-    ResponseEnum(Integer code, String message) {
+    ResponseType(Integer code, String message) {
         this.code = code;
         this.message = message;
     }

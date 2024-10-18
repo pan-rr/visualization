@@ -42,6 +42,10 @@ export async function createInstanceById(templateId) {
     return await service.get('engine/portal/createInstance', { params: { templateId } })
 }
 
+export async function terminateInstance(instanceId) {
+    return await service.get('engine/portal/terminateInstance', { params: { instanceId } })
+}
+
 export async function disableTemplateById(templateId) {
     return await service.get('engine/portal/disableTemplateById', { params: { templateId } })
 }

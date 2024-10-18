@@ -1,6 +1,6 @@
 package com.visualization.model;
 
-import com.visualization.enums.ResponseEnum;
+import com.visualization.enums.ResponseType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +19,8 @@ public class Response<T> {
 
     public Response(T result) {
         this.result = result;
-        message = ResponseEnum.SUCCESS.getMessage();
-        code = ResponseEnum.SUCCESS.getCode();
+        message = ResponseType.SUCCESS.getMessage();
+        code = ResponseType.SUCCESS.getCode();
     }
 
     public static <T> Response success(T result) {
@@ -28,9 +28,9 @@ public class Response<T> {
     }
 
     public static <T> Response error(T result) {
-        return Response.builder()
+        return com.visualization.model.Response.builder()
                 .result(result)
-                .code(ResponseEnum.ERROR.getCode())
+                .code(ResponseType.ERROR.getCode())
                 .message(result.toString())
                 .build();
     }

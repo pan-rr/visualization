@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.*;
@@ -17,8 +18,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "t_task_latch")
-public class TaskLatch implements Serializable {
+@IdClass(value = PointerId.class)
+@Table(name = "t_pointer_latch")
+public class PointerLatch implements Serializable {
+
+    @Id
+    private Long instanceId;
 
     @Id
     private Long taskId;
@@ -27,10 +32,10 @@ public class TaskLatch implements Serializable {
     private Integer count;
 
 
-    public static List<TaskLatch> getLatch(List<Edge> edges) {
+    public static List<PointerLatch> getLatch(List<Edge> edges, Long instanceId) {
         Map<Long, Integer> waitMap = new HashMap<>();
         edges.forEach(e -> {
-            if (!Objects.equals(e.getFromTaskId(), e.getToTaskId())){
+            if (!Objects.equals(e.getFromTaskId(), e.getToTaskId())) {
                 waitMap.compute(e.getToTaskId(), (k, v) -> {
                     if (v == null) v = 1;
                     else v++;
@@ -40,7 +45,8 @@ public class TaskLatch implements Serializable {
         });
         waitMap.remove(null);
         Set<Long> waitKey = waitMap.keySet();
-        return waitKey.stream().map(id -> TaskLatch.builder()
+        return waitKey.stream().map(id -> PointerLatch.builder()
+                .instanceId(instanceId)
                 .taskId(id)
                 .count(waitMap.get(id))
                 .build()).collect(Collectors.toList());

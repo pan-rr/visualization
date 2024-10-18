@@ -2,13 +2,13 @@ package com.visualization.enums;
 
 import com.visualization.exception.DAGException;
 
-public enum DAGPriorityEnum {
+public enum DAGPriority {
     MAX(10),
     MIN(1);
 
     private final double priority;
 
-    DAGPriorityEnum(double priority) {
+    DAGPriority(double priority) {
         this.priority = priority;
     }
 

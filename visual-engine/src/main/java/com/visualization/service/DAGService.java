@@ -17,13 +17,13 @@ public interface DAGService {
 
     void saveTemplateByPack(LogicFlowPack pack);
 
-    List<Edge> findNextEdges(TaskKey taskKey);
+    List<Edge> findNextEdges(DAGPointer pointer);
 
-    void deletePointer(TaskKey taskKey);
+    void deletePointer(DAGPointer pointer);
 
     void makeSurePointerConfigMatchTemplate(DAGPointer pointer, DAGTemplate template);
 
-    List<Long> saveReadyPointers(List<DAGPointer> pointers);
+    List<Long> saveReadyPointers(List<DAGPointer> pointers, Long instanceId);
 
     void tryFinishInstance(Long instanceId);
 
@@ -31,9 +31,11 @@ public interface DAGService {
 
     void updatePointer(DAGPointer pointer);
 
-    List<DAGPointer> getPointers(int limit);
+    List<DAGPointer> getExecutablePointers(int limit);
 
     DAGInstance createInstanceByTemplateId(Long templateId);
+
+    DAGInstance getInstance(Long instanceId);
 
     void updateTemplateStatus(Long templateId, int status);
 

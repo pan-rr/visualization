@@ -9,10 +9,10 @@ import javax.annotation.Resource;
 @Component
 public class LogicFlowManager {
 
-    @Value("${visual.dag.stage.defaultRetryCount:5}")
+    @Value("${visual.dag.stage.default-retry-count:5}")
     private Integer defaultRetryCount;
 
-    @Value("${visual.dag.stage.defaultPriority:1.0}")
+    @Value("${visual.dag.stage.default-priority:1.0}")
     private Double defaultPriority;
 
     @Resource

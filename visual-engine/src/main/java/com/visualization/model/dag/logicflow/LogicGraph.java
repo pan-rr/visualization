@@ -1,7 +1,7 @@
 package com.visualization.model.dag.logicflow;
 
 import com.google.gson.Gson;
-import com.visualization.enums.StatusEnum;
+import com.visualization.enums.Status;
 import com.visualization.exception.DAGException;
 import com.visualization.jpa.SnowIdWorker;
 import com.visualization.model.dag.db.DAGTemplate;
@@ -57,7 +57,7 @@ public class LogicGraph {
                 .retryCount(this.retryCount)
                 .priority(this.priority)
                 .totalTaskCount(logicFlow.getNodes().size())
-                .status(StatusEnum.NORMAL.getStatus())
+                .status(Status.NORMAL.getStatus())
                 .build();
     }
 
