@@ -3,25 +3,6 @@
     <div class="inner_box">
       <div v-if="needRegister">
         <div class="title c_fff bold t-center">注册账号</div>
-          <el-form-item prop="oa">
-            <el-input v-model="register.oa" placeholder="oa账号" prefix-icon="el-icon-user" />
-          </el-form-item>
-          <el-form-item prop="username">
-            <el-input v-model="register.username" placeholder="用户名" prefix-icon="el-icon-user" />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input type="password" prefix-icon="el-icon-lock" v-model="register.password" placeholder="密码"
-              show-password />
-          </el-form-item>
-          <el-form-item label="账号属性" prop="userType">
-            <el-radio-group v-model="register.userType">
-              <el-radio label="0">个人账号</el-radio>
-              <el-radio label="1">企业/组织/团队账号</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-link type="primary" @click="disableRegister">返回登录</el-link>
-          <el-button class="w_100" type="primary" :loading="loginLoading" @click="login('form')">登录</el-button>
-        </el-form> -->
         <el-form   :model="registerForm">
           <el-form-item prop="oa">
             <el-input v-model="registerForm.oa" placeholder="oa账号" prefix-icon="el-icon-user" />
@@ -82,7 +63,7 @@ export default {
         oa: "",
         password: "",
         username: '',
-        userType: '',
+        userType: 0,
       },
       rules: {
         oa: [{ required: true, message: "请输入用户名", trigger: blur }],
@@ -101,7 +82,8 @@ export default {
     },
     reisterUser(){
       this.loginLoading = true;
-      this.disableRegister()
+      this.disableRegister();
+      console.log(this.registerForm)
       userRegister(this.registerForm).then(res=>{
         this.registerForm = this.$options.data().registerForm 
         Message({
@@ -109,7 +91,7 @@ export default {
             type: 'success',
             duration: 5 * 1000,
         })
-      }).finally(res=>{
+      }).finally(()=>{
         this.loginLoading = false;
       })
     },

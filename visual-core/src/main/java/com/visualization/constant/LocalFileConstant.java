@@ -14,8 +14,10 @@ public class LocalFileConstant {
 
     static {
         File file = new File(BASE_TEMP_PREFIX);
-        for (File temp : Objects.requireNonNull(file.listFiles())) {
-            recurseDeleteFiles(temp);
+        if (file.exists()){
+            for (File temp : Objects.requireNonNull(file.listFiles())) {
+                recurseDeleteFiles(temp);
+            }
         }
     }
 

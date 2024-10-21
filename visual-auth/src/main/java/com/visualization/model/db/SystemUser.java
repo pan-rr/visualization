@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,7 +27,7 @@ public class SystemUser {
     @NotBlank(message = "密码不能为空")
     private String password;
 
-    @NotBlank(message = "类型不能为空")
+    @NotNull(message = "类型不能为空")
     private Integer userType;
 
     private Integer status;

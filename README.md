@@ -75,7 +75,7 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 部署步骤
 
-1. 启动MySQL、Redis、Minio、InfluxDB
+1. 启动MySQL、Redis、MinIO、InfluxDB
 2. 启动visual-discovery (SpringBoot的启动方式)
 3. 启动visual-gateway (SpringBoot的启动方式)
 4. 启动visual-auth (SpringBoot的启动方式)

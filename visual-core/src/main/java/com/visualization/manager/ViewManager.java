@@ -61,7 +61,9 @@ public class ViewManager {
         try {
             CompletableFuture.allOf(inList.stream().map((in) -> CompletableFuture.runAsync(in::generate)).toArray(CompletableFuture[]::new)).join();
             out.generate();
-        } finally {
+        }catch (Throwable e){
+            System.err.println(e);
+        }finally {
             release(() -> inList.forEach(View::destroy));
             release(out::destroy);
             SessionManager.returnId(id);

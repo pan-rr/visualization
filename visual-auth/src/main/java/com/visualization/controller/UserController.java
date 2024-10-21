@@ -30,8 +30,8 @@ public class UserController {
     public Response register(@Valid @RequestBody SystemUser systemUser, BindingResult bindingResult) {
         Response error = BindingResultUtil.checkError(bindingResult);
         if (error != null) return error;
-        userService.createUser(systemUser);
-        return Response.success("注册成功！");
+        boolean flag = userService.createUser(systemUser);
+        return flag ? Response.success("注册成功！") : Response.error("创建失败，oa重复！");
     }
 
     @PostMapping("/changePassword")

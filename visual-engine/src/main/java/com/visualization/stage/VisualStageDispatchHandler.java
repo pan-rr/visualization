@@ -92,6 +92,7 @@ public class VisualStageDispatchHandler {
         Long size = zSet.size(queueName);
         if (Objects.isNull(size) || size <= batchSize) {
             List<DAGPointer> pointers = dagManager.getExecutablePointers(batchSize);
+            if (CollectionUtils.isEmpty(pointers))return;
             Set<ZSetOperations.TypedTuple<DAGPointer>> collect = pointers.stream().map(i -> ZSetOperations.TypedTuple.of(i, i.getPriority())).collect(Collectors.toSet());
             zSet.add(queueName, collect);
         }

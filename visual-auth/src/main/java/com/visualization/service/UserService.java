@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserService  {
 
-    void createUser(SystemUser user);
+    boolean createUser(SystemUser user);
 
     void changePassword(ChangePassword request);
 

@@ -44,7 +44,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
-    public void createUser(SystemUser user) {
+    public boolean createUser(SystemUser user) {
+        SystemUser db = userMapper.selectOneByOA(user.getOa());
+        if (Objects.nonNull(db))return false;
         user.setPassword(MD5Utils.encode(user.getPassword()));
         user.setUserId(SnowIdUtil.generateId());
         user.setStatus(UserStatusEnum.NORMAL.getCode());
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
             tenantMapper.insert(tenant);
         }
         userMapper.insert(user);
+        return true;
     }
 
     @Override
