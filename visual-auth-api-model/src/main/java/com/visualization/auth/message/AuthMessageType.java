@@ -1,6 +1,6 @@
 package com.visualization.auth.message;
 
-public enum AuthMessageTypeEnum {
+public enum AuthMessageType {
 
     NOTHING(0),
 
@@ -15,7 +15,7 @@ public enum AuthMessageTypeEnum {
 
     private final int code;
 
-    AuthMessageTypeEnum(int code){
+    AuthMessageType(int code){
         this.code = code;
     }
 

@@ -2,7 +2,7 @@ import Layout from '@/layout/index.vue'
 export default {
   path: '/auth',
   name: 'Auth',
-  meta: { title: '权限管理', icon: 'el-icon-s-data', needCache: false, needAuthFilter: true },
+  meta: { title: '权限管理', icon: 'el-icon-s-custom', needCache: false, needAuthFilter: true },
   component: Layout,
   children: [
     {

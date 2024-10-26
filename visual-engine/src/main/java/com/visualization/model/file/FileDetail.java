@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class FileDetail {
         return list.stream()
                 .map(i -> i.getKey().replace(folder, ""))
                 .map(i -> {
-                    if ("".equals(i)) return null;
+                    if (StringUtils.isEmpty(i)) return null;
                     String[] split = i.split("/");
                     if (split.length == 1 && !i.endsWith("/")) {
                         return FileDetail.builder().name(i).isFolder(false).build();

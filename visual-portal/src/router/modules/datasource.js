@@ -2,7 +2,7 @@ import Layout from '@/layout/index.vue'
 export default {
   path: '/datasource',
   name: 'Datasource',
-  meta: { title: '数据源管理', icon: 'el-icon-s-data', needCache: false, needAuthFilter: true },
+  meta: { title: '数据源管理', icon: 'el-icon-coin', needCache: false, needAuthFilter: true },
   component: Layout,
   children: [
     {

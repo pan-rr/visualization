@@ -1,7 +1,7 @@
 package com.visualization.api.handler;
 
 import com.visualization.auth.message.AuthMessage;
-import com.visualization.auth.message.AuthMessageTypeEnum;
+import com.visualization.auth.message.AuthMessageType;
 import com.visualization.utils.ShortLinkUtil;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -36,7 +36,7 @@ public class AuthMessageHandler {
 
     private boolean publishable(AuthMessage message) {
         String key = cacheKey(message.token);
-        if (AuthMessageTypeEnum.LOGOUT.equalsGivenCode(message.messageType)){
+        if (AuthMessageType.LOGOUT.equalsGivenCode(message.messageType)){
             redisTemplate.delete(key);
             return true;
         }
@@ -61,7 +61,7 @@ public class AuthMessageHandler {
 
     public void publishLoginMessage(String token, Long timestamp) {
         AuthMessage message = new AuthMessage();
-        message.messageType = AuthMessageTypeEnum.LOGIN.getCode();
+        message.messageType = AuthMessageType.LOGIN.getCode();
         message.token = token;
         message.timeout = timestamp;
         message.messageTimestamp = System.currentTimeMillis();
@@ -70,7 +70,7 @@ public class AuthMessageHandler {
 
     public void publishLogoutMessage(String token) {
         AuthMessage message = new AuthMessage();
-        message.messageType = AuthMessageTypeEnum.LOGOUT.getCode();
+        message.messageType = AuthMessageType.LOGOUT.getCode();
         message.token = token;
         message.messageTimestamp = System.currentTimeMillis();
         publish(message);

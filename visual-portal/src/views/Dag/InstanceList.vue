@@ -1,15 +1,6 @@
 <template>
   <div>
     <div>
-      <!-- <div class="text item">
-        <el-input v-model="space" class="input-with-select" :readonly="true" placeholder="请选择空间">
-          <template slot="prepend">存储空间:</template>
-<el-select v-model="space" slot="append" placeholder="请选择空间" @change="changeSpace">
-  <el-option v-for="item in spaceOptions" :key="item.value" :label="item.label" :value="item.value">
-  </el-option>
-</el-select>
-</el-input>
-</div> -->
       <space-selector :space-ref="spaceRef"></space-selector>
     </div>
     <div>
@@ -36,7 +27,8 @@
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
               查看执行日志
             </el-button>
-            <el-button v-if="scope.row.status == '正常'" type="text" @click.native.prevent="terminateInstance(scope.row)" size="mini">
+            <el-button v-if="scope.row.status == '正常'" type="text" @click.native.prevent="terminateInstance(scope.row)"
+              size="mini">
               终止实例
             </el-button>
           </template>
@@ -78,6 +70,7 @@
 import { getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
+
 export default {
   name: 'VisualInstanceList',
   components: {
@@ -96,6 +89,7 @@ export default {
       openTimeLine: false,
       choosenStatus: [],
       statusOptions: [],
+      lastParam:'',
     }
   },
   methods: {
@@ -125,6 +119,12 @@ export default {
           status: this.choosenStatus
         }
       }
+      let str = JSON.stringify(pageable);
+      if(this.lastParam === str){
+        return;
+      }else{
+        this.lastParam = str;
+      }
       getInstanceList(pageable).then(res => {
         let _this = this
         _this.tableData = res.data.result
@@ -132,7 +132,7 @@ export default {
       })
     },
     terminateInstance(row) {
-      terminateInstance(row.instanceId).then(res => {
+      terminateInstance(row.instanceId).then(() => {
         this.getList();
       });
     },
@@ -173,14 +173,14 @@ export default {
       }
     },
     choosenStatus: {
-      immediate: true,
+      immediate: false,
       deep: true,
       handler(newVal, oldVal) {
-        this.getList()
+          this.getList()
       }
     },
     space: {
-      immediate: true,
+      immediate: false,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()

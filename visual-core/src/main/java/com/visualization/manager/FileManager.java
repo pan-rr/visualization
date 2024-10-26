@@ -36,24 +36,5 @@ public class FileManager {
         fileHandler.upload(file, targetPath, param);
     }
 
-//    @Deprecated
-//    public static File getFileByPath(String path) throws IOException {
-//        File file;
-//        if (path.startsWith("/")) {
-//            file = new FileSystemResource(path).getFile();
-//        } else if (path.startsWith("classpath:")) {
-//            file = new ClassPathResource(path.replace("classpath:", "")).getFile();
-//        } else {
-//            try {
-//                URL url = new URL(path);
-//                url.getProtocol();
-//                file = new FileUrlResource(url).getFile();
-//            } catch (Exception e) {
-//                file = new ClassPathResource(path).getFile();
-//            }
-//        }
-//        return file;
-//    }
-
 
 }

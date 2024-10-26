@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Builder
-public class UserOptionHandler {
+public class TenantOptionHandler {
 
     private TenantMapper tenantMapper;
 

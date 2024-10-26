@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean createUser(SystemUser user) {
         SystemUser db = userMapper.selectOneByOA(user.getOa());
-        if (Objects.nonNull(db))return false;
+        if (Objects.nonNull(db)) return false;
         user.setPassword(MD5Utils.encode(user.getPassword()));
         user.setUserId(SnowIdUtil.generateId());
         user.setStatus(UserStatusEnum.NORMAL.getCode());
@@ -77,12 +77,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public void createSubTenant(PortalTenantUser tenantUser) {
-        SystemUser systemUser = tenantUser.buildUser();
-        SystemTenant systemTenant = tenantUser.buildTenant();
         SystemTenant father = tenantMapper.selectById(tenantUser.getFatherId());
         if (Objects.isNull(father)) {
             throw new AuthException("不存在该父账号，请检查！");
         }
+        SystemUser systemUser = tenantUser.buildUser();
+        SystemTenant systemTenant = tenantUser.buildTenant();
         systemTenant.setRootId(father.getRootId() == null ? father.getTenantId() : father.getRootId());
         userMapper.insert(systemUser);
         tenantMapper.insert(systemTenant);

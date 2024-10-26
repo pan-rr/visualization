@@ -81,7 +81,8 @@ export default {
       pageSize: 10,
       currentPage: 1,
       choosenStatus: [],
-      statusOptions: []
+      statusOptions: [],
+      lastParam:'',
     }
   },
   computed: {
@@ -121,9 +122,6 @@ export default {
         })
       })
     },
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-    },
     getList() {
       let pageable = {
         page: this.currentPage,
@@ -132,6 +130,12 @@ export default {
           space: this.space,
           status: this.choosenStatus
         }
+      }
+      let str = JSON.stringify(pageable);
+      if(this.lastParam === str){
+        return;
+      }else{
+        this.lastParam = str;
       }
       getTemplateList(pageable).then(res => {
         let _this = this
@@ -153,28 +157,28 @@ export default {
   },
   watch: {
     currentPage: {
-      // immediate: true,
+      immediate: false,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()
       }
     },
     pageSize: {
-      // immediate: true,
+      immediate: false,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()
       }
     },
     choosenStatus: {
-      // immediate: true,
+      immediate: false,
       deep: true,
       handler(newVal, oldVal) {
-        this.getList()
+          this.getList()
       }
     },
     space: {
-      // immediate: true,
+      immediate: false,
       deep: true,
       handler(newVal, oldVal) {
         this.getList()

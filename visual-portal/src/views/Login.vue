@@ -83,7 +83,6 @@ export default {
     reisterUser(){
       this.loginLoading = true;
       this.disableRegister();
-      console.log(this.registerForm)
       userRegister(this.registerForm).then(res=>{
         this.registerForm = this.$options.data().registerForm 
         Message({

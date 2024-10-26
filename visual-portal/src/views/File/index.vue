@@ -109,7 +109,6 @@ export default {
             this.changeSpace(this.space)
         },
         changeSpace(value) {
-            console.log(value)
             this.pathList = []
             this.pathList.push(value)
         },

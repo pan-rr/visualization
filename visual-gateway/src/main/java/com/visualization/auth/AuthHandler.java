@@ -2,7 +2,7 @@ package com.visualization.auth;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.visualization.auth.message.AuthMessage;
-import com.visualization.auth.message.AuthMessageTypeEnum;
+import com.visualization.auth.message.AuthMessageType;
 import com.visualization.fetch.AuthClient;
 import com.visualization.service.HeaderService;
 import org.slf4j.Logger;
@@ -53,8 +53,8 @@ public class AuthHandler {
 
     public void handleMessageFeedback(AuthMessage feedback){
         LOG.info("[auth handler]message:{}", feedback);
-        AuthMessageTypeEnum type = AuthMessageTypeEnum.NOTHING;
-        for (AuthMessageTypeEnum value : AuthMessageTypeEnum.values()) {
+        AuthMessageType type = AuthMessageType.NOTHING;
+        for (AuthMessageType value : AuthMessageType.values()) {
             if (value.getCode() == feedback.messageType) {
                 type = value;
                 break;

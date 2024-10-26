@@ -66,13 +66,6 @@ public class HttpFileHandler implements FileHandler {
         }
     }
 
-//    public static void main(String[] args) {
-//        HttpFileHandler httpFileHandler = new HttpFileHandler();
-////        File file = httpFileHandler.download("http://localhost:8377/file/download/hobby.csv", null);
-////        System.err.println(file.getAbsolutePath());
-//        File file = new File("/Users/fenda/visual/hobby.csv");
-//        httpFileHandler.upload(file,"http://localhost:8377/file/upload",null);
-//    }
 
 
 }

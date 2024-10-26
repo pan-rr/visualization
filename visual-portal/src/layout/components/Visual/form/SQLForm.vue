@@ -66,7 +66,6 @@ export default {
         getDataSources() {
             getDataSourceOptions(this.$store.getters.spaceHolder.chosenSpaceLabel).then(res => {
                 this.dataSourceOptions = res.data.result;
-                console.log(this.dataSourceOptions)
             })
         }
     },

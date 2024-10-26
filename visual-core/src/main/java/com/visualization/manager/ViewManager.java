@@ -17,19 +17,19 @@ import java.util.stream.Collectors;
 
 public class ViewManager {
 
-    private List<InputView> inList;
+    private final List<InputView> inList;
 
-    private OutputView out;
+    private final OutputView out;
 
     /**
      * 设置提供联邦查询的数据源
      */
-    private DataSource federationDataSource;
+    private final DataSource federationDataSource;
 
 
     private Map<String, Object> tableName;
 
-    private int id;
+    private final int id;
 
     public ViewManager(List<ViewConf> inView, ViewConf outView, DataSource federationDataSource) {
         if (CollectionUtils.isEmpty(inView)) throw new RuntimeException("输入表的配置为空");
@@ -61,8 +61,6 @@ public class ViewManager {
         try {
             CompletableFuture.allOf(inList.stream().map((in) -> CompletableFuture.runAsync(in::generate)).toArray(CompletableFuture[]::new)).join();
             out.generate();
-        }catch (Throwable e){
-            System.err.println(e);
         }finally {
             release(() -> inList.forEach(View::destroy));
             release(out::destroy);

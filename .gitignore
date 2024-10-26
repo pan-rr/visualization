@@ -41,7 +41,6 @@ build/
 /.idea/
 /target/
 /target/classes/csv/hobby.csv
-/target/
 /visual-web/target/**
 /visual-web/target/classes/com/visualisation/Application.class
 /visual-engine/.idea/

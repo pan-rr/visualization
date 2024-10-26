@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     deleteDataSource(id){
-      deleteDataSource(id).then(res=>{
+      deleteDataSource(id).then(()=>{
         this.getList();
       })
     },

@@ -76,12 +76,12 @@ public class SnowIdUtil {
         /**
          * 工作机器ID(0~31)
          */
-        private long workerId;
+        private final long workerId;
 
         /**
          * 数据中心ID(0~31)
          */
-        private long datacenterId;
+        private final long datacenterId;
 
         /**
          * 毫秒内序列(0~4095)

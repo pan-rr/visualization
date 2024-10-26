@@ -62,7 +62,7 @@ public class LoginHandler {
     }
 
     private void option() {
-        UserOptionHandler handler = UserOptionHandler.builder().user(user).tenantMapper(tenantMapper).build();
+        TenantOptionHandler handler = TenantOptionHandler.builder().user(user).tenantMapper(tenantMapper).build();
         userInfo.setTenantOptions(handler.computeOption());
         userInfo.computeOptions();
     }
