@@ -74,7 +74,6 @@ public class VisualStageDispatchHandler {
 
     @Scheduled(fixedDelay = 60000L)
     public void offerSignal() {
-        actionQ.offer(Action.LOAD_REMOTE_JOB);
         actionQ.offer(Action.LOAD_LOCAL_JOB);
     }
 
@@ -95,6 +94,7 @@ public class VisualStageDispatchHandler {
             if (CollectionUtils.isEmpty(pointers))return;
             Set<ZSetOperations.TypedTuple<DAGPointer>> collect = pointers.stream().map(i -> ZSetOperations.TypedTuple.of(i, i.getPriority())).collect(Collectors.toSet());
             zSet.add(queueName, collect);
+            actionQ.offer(Action.LOAD_LOCAL_JOB);
         }
     }
 
@@ -108,7 +108,7 @@ public class VisualStageDispatchHandler {
         if (!CollectionUtils.isEmpty(set)) {
             this.visualJobHandler.offerPointer(set.stream().map(ZSetOperations.TypedTuple::getValue).collect(Collectors.toList()));
         } else {
-            this.visualJobHandler.offerPointer(dagManager.getExecutablePointers(workerCount));
+            actionQ.offer(Action.LOAD_REMOTE_JOB);
         }
     }
 

@@ -6,6 +6,8 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FilePathUtil {
@@ -21,11 +23,19 @@ public class FilePathUtil {
 
     private static final String VISUAL_NORMAL_PATTERN = "visual/#{[folder]}#{[fileName]}";
 
+    public static String getNormalPath(String folder, String fileName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("folder", folder);
+        map.put("fileName", fileName);
+        return getNormalPath(map);
+    }
+
     public static String getNormalPath(Map<String, Object> params) {
         ExpressionParser parser = new SpelExpressionParser();
         TemplateParserContext parserContext = new TemplateParserContext();
         return parser.parseExpression(VISUAL_NORMAL_PATTERN, parserContext).getValue(params, String.class);
     }
+
     public static String getTemplatePath(Map<String, Object> params) {
         ExpressionParser parser = new SpelExpressionParser();
         TemplateParserContext parserContext = new TemplateParserContext();
@@ -46,6 +56,11 @@ public class FilePathUtil {
     public static String getPortalFilePath(String suffix) {
         suffix = "visual/" + suffix;
         return suffix.replaceAll("//", "/");
+    }
+
+    public static String getFileName(String filePath) {
+        File file = new File(filePath);
+        return file.getName();
     }
 
 }

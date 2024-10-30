@@ -18,14 +18,14 @@
                     <UploadFile :buttonStyle="true" :folder="this.path" @reloadDir="loadDir"></UploadFile>
 
                 </div>
-                <div v-if="files.length === 0">
+                <!-- <div v-if="files.length === 0">
                     <h3><el-icon class="el-icon-search"></el-icon>当前文件夹下暂无文件</h3>
                     <el-skeleton />
                 </div>
-                <div v-else>
+                <div v-else> -->
 
                     <el-table :data="files" style="width: 100%">
-                        <el-table-column label="名称">
+                        <el-table-column label="文件名称">
                             <template slot-scope="scope">
                                 <el-link v-if="scope.row.isFolder" @click="enterDir(scope.row.name)">
                                     <i class="el-icon-folder"></i>
@@ -47,25 +47,7 @@
                         </el-table-column>
                     </el-table>
 
-
-
-                    <!-- <el-container v-for="item in files" :key="item.name" type="flex" justify style="">
-                        <el-main>
-                            <el-link @click="enterDir(item.name)" v-if="item.isFolder">
-                                <i class="el-icon-folder"></i>
-                                {{ item.name }}
-                            </el-link>
-                            <el-link v-else type="primary">
-                                <i class="el-icon-tickets"></i>
-                                {{ item.name }}
-                            </el-link>
-                        </el-main>
-                        <el-button v-if="!item.isFolder" plain size="small" style="margin: 1%;"
-                            @click="downloadFile(path, item.name)">
-                            <el-icon class="el-icon-download"></el-icon>下载
-                        </el-button>
-                    </el-container> -->
-                </div>
+                <!-- </div> -->
             </el-card>
         </div>
 

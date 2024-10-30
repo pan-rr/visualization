@@ -65,10 +65,10 @@ visual:
     minio:
       enable: true
       endpoint: http://127.0.0.1:9000
-      accessKey: 9kiTPd4ZrfeHZ0J97yKj
-      secretKey: Nf9f9l8brTMZkpWjDZnrZBNi3WOl592vCS8vI3Vv
+      accessKey: q6laziWwJmH5q5gPJPRo
+      secretKey: y2QfOvuLveGabe1fYuexjQwVphoElJil8A2gBNam
   #log配置去掉后，默认使用slf4j，只是无法查询执行日志
   log:
     loggerClass: com.visualization.log.logger.TimeSeriesLogService
     influx:
-      connectionString: http://localhost:8086?org=visual&bucket=visual_log&token=2G-GTxQpK5n5tF0KfpIXZtjJOa3tDeURTTMghUTNTrSR23x4ikjONBdPSHsssmSqItW3sUYAU4ZZA3YJOWfA9w==
+      connectionString: http://localhost:8086?org=visual&bucket=visual_log&token=jYy5R6E8yrIIA1fzQ6JZbADkfuJ9M4MJb9nMwc2JWMDHg72kDtCA9OMPCxVydx1w0KWTtPRu2xaS1K6M8VNKbA==

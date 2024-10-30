@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
                 .userMapper(userMapper)
                 .tenantMapper(tenantMapper)
                 .build();
-        return loginHandler.login();
+        return loginHandler.handleLogin();
     }
 
     @Override

@@ -19,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Data
@@ -75,16 +76,9 @@ public class FileChunkParam {
 
     public String computeOSSKey() {
         if (StringUtils.isEmpty(ossKey)) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("folder", folder);
-            map.put("fileName", fileName);
-            ossKey = FilePathUtil.getNormalPath(map);
+            ossKey = FilePathUtil.getNormalPath(folder, fileName);
         }
         return ossKey;
-    }
-
-    public String computeSpace() {
-        return folder.split("/")[0];
     }
 
     public String computeUploadLockKey() {
@@ -93,6 +87,7 @@ public class FileChunkParam {
 
 
     public FileChunkRecord buildDetailByParam(AmazonS3 amazonS3) {
+        changePath();
         initUploadRequest(amazonS3);
         int chunkNum = (int) Math.ceil(totalSize * 1.0 / chunkSize);
         return FileChunkRecord.builder()
@@ -107,5 +102,10 @@ public class FileChunkParam {
                 .id(SnowIdUtil.nextId())
                 .finished(false)
                 .build();
+    }
+
+    private void changePath(){
+        folder = "filePool/";
+        fileName = UUID.randomUUID().toString();
     }
 }

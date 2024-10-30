@@ -25,7 +25,7 @@ public class LoginHandler {
 
     private UserInfo userInfo;
 
-    public UserInfo login() {
+    public UserInfo handleLogin() {
         validate();
         createUserInfo();
         option();

@@ -1,5 +1,6 @@
 package com.visualization.model.file;
 
+import com.visualization.utils.FilePathUtil;
 import com.visualization.utils.ShortLinkUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,30 @@ public class FilePathMapping {
 
     public static List<FileDetail> covert(List<FilePathMapping> list) {
         return list.stream().map(FilePathMapping::covert).collect(Collectors.toList());
+    }
+
+    public static FilePathMapping buildMapping(FileChunkParam param, FileChunkRecord record) {
+        String targetOSSKey = param.computeOSSKey();
+        File file = new File(targetOSSKey);
+        String parent = file.getParent();
+        return FilePathMapping.builder()
+                .fileName(param.getFileName())
+                .sourcePath(record.getOssKey())
+                .filePathHash(ShortLinkUtil.zipToInt(targetOSSKey))
+                .filePrefixHash(ShortLinkUtil.zipToInt(parent))
+                .build();
+    }
+
+    public static FilePathMapping buildMapping(FileLaunchRecord launchRecord, FileChunkRecord record) {
+        String targetOSSKey = FilePathUtil.getNormalPath(launchRecord.getFolder(), launchRecord.getFileName());
+        File file = new File(targetOSSKey);
+        String parent = file.getParent();
+        return FilePathMapping.builder()
+                .fileName(launchRecord.getFileName())
+                .sourcePath(record.getOssKey())
+                .filePathHash(ShortLinkUtil.zipToInt(targetOSSKey))
+                .filePrefixHash(ShortLinkUtil.zipToInt(parent))
+                .build();
     }
 
 }
