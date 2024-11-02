@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 @Configuration
 public class AuthConfig {
 
@@ -25,6 +27,15 @@ public class AuthConfig {
                 .maximumSize(remainMaxCount)
                 .expireAfter(new AuthExpiry())
                 .evictionListener(authEvictionListener)
+                .build();
+    }
+
+    @Bean(name = "permissionCache")
+    public Cache<String, Boolean> permissionCache() {
+        return Caffeine.newBuilder()
+                .initialCapacity(10)
+                .maximumSize(100)
+                .expireAfterWrite(1, TimeUnit.MINUTES)
                 .build();
     }
 

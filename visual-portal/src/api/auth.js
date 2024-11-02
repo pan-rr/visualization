@@ -17,7 +17,7 @@ export async function changePassword(data) {
 }
 
 export async function registerSubTenant(data) {
-    return await service.post('auth/user/registerSubTenant', data)
+    return await service.post('auth/tenant/registerSubTenant', data)
 }
 
 export async function getUserTenantPermission(tenantId) {

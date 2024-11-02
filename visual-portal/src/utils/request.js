@@ -3,6 +3,7 @@ import store from '@/store'
 import { Message } from 'element-ui'
 
 import { validateResponse } from './responseValid'
+import { tagPermission } from './permission'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
@@ -19,6 +20,7 @@ service.interceptors.request.use(
     if (token != 'undefined') {
       config.headers['visual'] = token
     }
+    tagPermission(config)
     return config
   },
   (error) => {
@@ -35,7 +37,7 @@ service.interceptors.response.use(
     }
     const res = response.data
 
-    
+
     let check = validateResponse(res)
     if (check == false) {
       Message({

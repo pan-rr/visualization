@@ -5,12 +5,6 @@ export default {
   meta: { title: '流程管理', icon: 'el-icon-s-data', needCache: true, needAuthFilter: true },
   component: Layout,
   children: [
-    // {
-    //   path: 'templateDefine',
-    //   name: 'VisualTemplateDefine',
-    //   meta: { title: '流程定义', needCache: false, needAuthFilter: true },
-    //   component: () => import('@/layout/components/LogicFlow/LF.vue')
-    // },
     {
       path: 'templateDefine',
       name: 'VisualTemplateDefine',
@@ -20,7 +14,7 @@ export default {
     {
       path: 'templateList',
       name: 'VisualTemplateList',
-      meta: { title: '已定义流程列表', needCache: false, needAuthFilter: true },
+      meta: { title: '流程模版列表', needCache: false, needAuthFilter: true },
       component: () => import('@/views/Dag/TemplateList.vue')
     },
     {

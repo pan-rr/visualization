@@ -7,8 +7,12 @@
       <el-form-item label="资源归属者ID：">
         <el-input v-model="form.tenantId" readonly></el-input>
       </el-form-item>
-      <el-form-item label="资源名称：">
+      <!-- <el-form-item label="资源名称：">
         <el-input v-model="form.resourceName"></el-input>
+      </el-form-item> -->
+      <el-form-item label="资源名称：">
+        <el-autocomplete class="inline-input" v-model="form.resourceName"
+          :fetch-suggestions="queryResource"></el-autocomplete>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
@@ -22,6 +26,7 @@
 import { createResource } from '../../../api/resource';
 import { Message } from 'element-ui';
 import { getCurrentTenant } from '../../../utils/tenantUtil';
+import { searchResource } from '../../../config/authConfig';
 
 export default {
   name: "ResourceCreate",
@@ -47,14 +52,17 @@ export default {
       })
     },
     finish() {
-      this.$emit('finish')
+      this.$emit('finish', true)
     },
     initForm() {
       this.form = this.$options.data().form;
       let tenantRes = getCurrentTenant();
       this.form.tenantId = tenantRes['id'];
       this.form.tenantName = tenantRes['name'];
-    }
+    },
+    queryResource(query, cb) {
+      cb(searchResource(query))
+    },
   },
   mounted() {
     this.initForm()

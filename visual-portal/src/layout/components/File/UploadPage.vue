@@ -174,8 +174,6 @@ const handleHttpRequest = async (options) => {
                 return;
             }
             let mergeRes = await merge(md5)
-            console.log(mergeRes)
-            console.log("-->j")
             const { code, result, message } = mergeRes.data
             if (code === 0) {
                 return path;

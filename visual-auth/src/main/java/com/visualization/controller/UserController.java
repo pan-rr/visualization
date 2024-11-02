@@ -1,10 +1,8 @@
 package com.visualization.controller;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.visualization.api.handler.AuthMessageHandler;
 import com.visualization.model.Response;
 import com.visualization.model.api.ChangePassword;
-import com.visualization.model.api.PortalTenantUser;
 import com.visualization.model.api.UserInfo;
 import com.visualization.model.db.SystemUser;
 import com.visualization.service.UserService;
@@ -40,14 +38,6 @@ public class UserController {
         return Response.success("修改密码成功！");
     }
 
-    @PostMapping("/registerSubTenant")
-    public Response registerSubTenant(@Valid @RequestBody PortalTenantUser portalTenantUser, BindingResult bindingResult) {
-        Response error = BindingResultUtil.checkError(bindingResult);
-        if (error != null) return error;
-        userService.createSubTenant(portalTenantUser);
-        return Response.success("注册成功！");
-    }
-
     @PostMapping("/login")
     public Response login(@RequestBody SystemUser systemUser) {
         UserInfo info = userService.login(systemUser);
@@ -57,8 +47,7 @@ public class UserController {
 
     @GetMapping("/logout")
     public Response logout() {
-        authMessageHandler.publishLogoutMessage(StpUtil.getTokenValue());
-        StpUtil.logout();
+        userService.logout();
         return Response.success("登出成功！");
     }
 

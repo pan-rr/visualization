@@ -6,7 +6,7 @@ import com.visualization.auth.model.AuthRequest;
 import com.visualization.enums.ResponseEnum;
 import com.visualization.fetch.AuthClient;
 import com.visualization.model.Response;
-import com.visualization.properties.WhiteList;
+import com.visualization.auth.ResourceConfig;
 import com.visualization.service.HeaderService;
 import com.visualization.util.PathUtil;
 import com.visualization.util.ResponseUtil;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.server.RequestPath;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -31,9 +30,9 @@ import java.util.Objects;
 public class CheckAccessFilter implements GlobalFilter, Ordered {
 
     @Resource
-    private WhiteList whiteList;
+    private ResourceConfig resourceConfig;
 
-    @Value("${visual.auth.token.name}")
+    @Value("${visual.auth.token.auth-name}")
     private String tokenName;
 
     @Resource(name = "tokenCache")
@@ -59,12 +58,8 @@ public class CheckAccessFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        RequestPath path = request.getPath();
-        String value = path.value();
-        for (String pattern : whiteList.pattern) {
-            if (PathUtil.match(pattern, value)) {
-                return chain.filter(exchange);
-            }
+        if (PathUtil.anyMatch(resourceConfig.accessWhiteList,request.getPath())){
+            return chain.filter(exchange);
         }
         List<String> authToken = request.getHeaders().get(tokenName);
         if (CollectionUtils.isEmpty(authToken)) {

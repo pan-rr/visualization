@@ -25,7 +25,7 @@
               v-model="scope.row.priority" controls-position="right" size="mini" :min="1" :max="10"></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="重试次数">
+        <el-table-column align="center" label="失败重试次数">
           <template slot-scope="scope">
             <el-input-number @change="changeRetryCount(scope.row.templateId, scope.row.retryCount)"
               v-model="scope.row.retryCount" controls-position="right" size="mini" :min="3"></el-input-number>

@@ -25,12 +25,19 @@ public class LoginHandler {
 
     private UserInfo userInfo;
 
+    private AuthPermissionHandler authPermissionHandler;
+
     public UserInfo handleLogin() {
         validate();
         createUserInfo();
         option();
         token();
+        permission();
         return userInfo;
+    }
+
+    private void permission(){
+        authPermissionHandler.loadPermission(user.getUserId());
     }
 
     private void createUserInfo() {
@@ -63,7 +70,7 @@ public class LoginHandler {
 
     private void option() {
         TenantOptionHandler handler = TenantOptionHandler.builder().user(user).tenantMapper(tenantMapper).build();
-        userInfo.setTenantOptions(handler.computeOption());
+        userInfo.setTenantOptions(handler.computeTenantOption());
         userInfo.computeOptions();
     }
 

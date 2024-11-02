@@ -2,10 +2,13 @@ package com.visualization.model.db;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.visualization.utils.OwnerUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 @Data
 @Builder
@@ -24,6 +27,10 @@ public class SystemTenant {
     private Long rootId;
 
     public String computeOwnerRole() {
-        return tenantId + "::owner";
+        return OwnerUtil.computeOwnerRole(tenantId);
+    }
+
+    public boolean hasFather() {
+        return Objects.nonNull(fatherId);
     }
 }

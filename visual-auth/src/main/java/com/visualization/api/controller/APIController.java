@@ -5,6 +5,7 @@ import com.visualization.api.handler.AuthMessageHandler;
 import com.visualization.auth.enums.AccessType;
 import com.visualization.auth.model.AuthRequest;
 import com.visualization.auth.model.AuthResponse;
+import com.visualization.handler.AuthPermissionHandler;
 import com.visualization.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,9 @@ public class APIController {
 
     @Resource
     private AuthMessageHandler messageHandler;
+
+    @Resource
+    private AuthPermissionHandler authPermissionHandler;
 
 
     @PostMapping("/checkToken")
@@ -37,7 +41,7 @@ public class APIController {
     @PostMapping("/checkPermission")
     public AuthResponse checkPermission(@RequestBody AuthRequest authRequest) {
         AuthResponse res = new AuthResponse();
-        res.setPermissionLegal(StpUtil.hasPermission(authRequest.getPermission()));
+        res.setPermissionLegal(authPermissionHandler.permissionValidate(authRequest.getToken(), authRequest.getPermission()));
         return res;
     }
 
@@ -56,8 +60,7 @@ public class APIController {
 
     @GetMapping("/logout")
     public void logout() {
-        messageHandler.publishLogoutMessage(StpUtil.getTokenValue());
-        StpUtil.logout();
+        userService.logout();
     }
 
     @PostMapping("/validatePermission")

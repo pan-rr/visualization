@@ -38,6 +38,17 @@ public class AuthClient {
     }
 
 
+    public Mono<AuthResponse> checkPermission(AuthRequest request, Map<String, List<String>> headers) {
+        WebClient.RequestHeadersSpec<?> spec = builder.build()
+                .post()
+                .uri("http://VISUAL-AUTH/auth/api/checkPermission")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(request);
+        this.setHeaders(spec, headers);
+        return spec.retrieve().bodyToMono(AuthResponse.class);
+    }
+
     public Mono<Void> renewTimeout(Map<String, List<String>> headers, Long timeout) {
         WebClient.RequestHeadersSpec<?> spec = builder.build()
                 .get()

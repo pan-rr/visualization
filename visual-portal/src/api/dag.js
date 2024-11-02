@@ -46,15 +46,7 @@ export async function terminateInstance(instanceId) {
     return await service.get('engine/portal/terminateInstance', { params: { instanceId } })
 }
 
-export async function disableTemplateById(templateId) {
-    return await service.get('engine/portal/disableTemplateById', { params: { templateId } })
-}
 
-export async function saveTask(task) {
-    let resp = (await service.post('engine/portal/saveTask', task)).data
-    sendSuccessMessage(resp)
-    return resp
-}
 
 export async function getDataSourceList(param) {
     return await service.post('engine/portal/getDataSourceList', param)

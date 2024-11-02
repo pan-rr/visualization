@@ -6,8 +6,6 @@ import com.visualization.model.api.PortalTenantUser;
 import com.visualization.model.api.UserInfo;
 import com.visualization.model.db.SystemUser;
 
-import java.util.List;
-
 public interface UserService  {
 
     boolean createUser(SystemUser user);
@@ -20,9 +18,7 @@ public interface UserService  {
 
     UserInfo login(SystemUser user);
 
-    List<String> getPermission(Long userId);
-
-    List<String> getRole(Long userId);
-
     AuthResource getUserTenantPermission(String tenantId);
+
+    void logout();
 }

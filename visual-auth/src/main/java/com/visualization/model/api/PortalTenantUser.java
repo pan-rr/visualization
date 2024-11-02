@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -33,25 +35,20 @@ public class PortalTenantUser {
 
     private Integer userType;
 
-    public SystemUser buildUser() {
+    public Tuple2<SystemUser, SystemTenant> registerSubTenant() {
         LocalDateTime now = LocalDateTime.now();
-        return SystemUser.builder()
-                .userId(SnowIdUtil.generateId())
-                .userType(UserTypeEnum.TENANT.getCode())
-                .oa(oa)
-                .username(username)
-                .status(UserStatusEnum.NORMAL.getCode())
-                .password(MD5Utils.encode(password))
-                .modifyTime(now)
-                .createTime(now)
-                .build();
-    }
-
-    public SystemTenant buildTenant() {
-        return SystemTenant.builder()
-                .tenantId(SnowIdUtil.generateId())
+        long id = SnowIdUtil.generateId();
+        SystemUser user = SystemUser.builder()
+                .userId(id).userType(UserTypeEnum.TENANT.getCode()).oa(oa)
+                .username(username).status(UserStatusEnum.NORMAL.getCode())
+                .password(MD5Utils.encode(password)).modifyTime(now)
+                .createTime(now).build();
+        user.creatable();
+        SystemTenant tenant = SystemTenant.builder()
+                .tenantId(id)
                 .fatherId(Long.valueOf(fatherId))
                 .tenantName(username)
                 .build();
+        return Tuples.of(user, tenant);
     }
 }

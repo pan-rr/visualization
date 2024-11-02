@@ -1,7 +1,7 @@
 package com.visualization.handler;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.visualization.constant.TenantConstant;
+import com.visualization.utils.PublicTenantUtil;
 import com.visualization.mapper.TenantMapper;
 import com.visualization.model.api.AuthResource;
 import com.visualization.model.api.Option;
@@ -24,7 +24,7 @@ public class AuthResourceHandler {
 
     public AuthResource handle() {
         String userId = StpUtil.getLoginId().toString();
-        Option publicOption = TenantConstant.PUBLIC_TENANT_OPTION.get();
+        Option publicOption = PublicTenantUtil.PUBLIC_TENANT_OPTION.get();
         if (publicOption.getValue().equals(tenantId) || StringUtils.equals(tenantId, userId) || checkTenantIsUserSubTenant()) {
             return AuthResource.builder().authKey(tenantId).permitAll(true).build();
         }

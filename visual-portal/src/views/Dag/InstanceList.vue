@@ -25,7 +25,7 @@
         <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
-              查看执行日志
+              查看实例执行日志
             </el-button>
             <el-button v-if="scope.row.status == '正常'" type="text" @click.native.prevent="terminateInstance(scope.row)"
               size="mini">

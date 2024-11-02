@@ -1,6 +1,5 @@
 package com.visualization.model.api;
 
-import com.visualization.constant.AuthConstant;
 import com.visualization.utils.Base62Util;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,23 +45,5 @@ public class UserInfo {
                     .value(userId)
                     .build());
         }
-        sortOption();
-    }
-
-    private void sortOption() {
-        tenantOptions.sort((o1, o2) -> {
-            String label = o1.getLabel();
-            if (oa.equals(label) || AuthConstant.PUBLIC.equals(label)) {
-                return -1;
-            }
-            return o1.getValue().compareTo(o2.getValue());
-        });
-        spaceOptions.sort((o1, o2) -> {
-            String label = o1.getLabel();
-            if (oa.equals(label) || AuthConstant.PUBLIC.equals(label)) {
-                return -1;
-            }
-            return o1.getValue().compareTo(o2.getValue());
-        });
     }
 }

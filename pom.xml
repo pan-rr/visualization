@@ -18,7 +18,6 @@
         <module>visual-auth</module>
         <module>visual-auth-api-model</module>
         <module>visual-auth-api-core-reactor</module>
-        <module>visual-auth-api-core</module>
     </modules>
 
     <properties>

@@ -2,6 +2,8 @@ package com.visualization.model.db;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.visualization.constant.AuthConstant;
+import com.visualization.exeception.AuthException;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -35,4 +37,10 @@ public class SystemUser {
     private LocalDateTime createTime;
 
     private LocalDateTime modifyTime;
+
+    public void creatable() {
+        if (oa.contains(AuthConstant.PUBLIC)) {
+            throw new AuthException("该账号已被注册！");
+        }
+    }
 }

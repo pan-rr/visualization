@@ -11,7 +11,7 @@ import java.util.Map;
 @Service
 public class HeaderService {
 
-    @Value("${visual.auth.token.name}")
+    @Value("${visual.auth.token.auth-name}")
     private String tokenName;
 
     public Map<String, List<String>> buildAuthHeader(String authToken) {

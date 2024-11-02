@@ -1,7 +1,7 @@
 package com.visualization.config;
 
 import com.visualization.constant.AuthConstant;
-import com.visualization.constant.TenantConstant;
+import com.visualization.utils.PublicTenantUtil;
 import com.visualization.enums.UserTypeEnum;
 import com.visualization.mapper.UserMapper;
 import com.visualization.model.api.Option;
@@ -37,6 +37,6 @@ public class PublicTenantOptionConfig {
             userService.createUser(systemUser);
         }
         Option option = Option.builder().label(AuthConstant.PUBLIC).value(systemUser.getUserId().toString()).build();
-        TenantConstant.PUBLIC_TENANT_OPTION.set(option);
+        PublicTenantUtil.PUBLIC_TENANT_OPTION.set(option);
     }
 }
