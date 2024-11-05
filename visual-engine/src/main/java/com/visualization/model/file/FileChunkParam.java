@@ -12,13 +12,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -104,8 +104,8 @@ public class FileChunkParam {
                 .build();
     }
 
-    private void changePath(){
-        folder = "filePool/";
+    private void changePath() {
+        folder = "filePool/" + DateFormatUtils.format(new Date(), "yyyyMMdd/HH/");
         fileName = UUID.randomUUID().toString();
     }
 }

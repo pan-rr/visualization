@@ -1,5 +1,4 @@
 import service from "../utils/request";
-import { Message } from 'element-ui'
 
 
 export async function createTemplate(graph) {
@@ -46,8 +45,6 @@ export async function terminateInstance(instanceId) {
     return await service.get('engine/portal/terminateInstance', { params: { instanceId } })
 }
 
-
-
 export async function getDataSourceList(param) {
     return await service.post('engine/portal/getDataSourceList', param)
 }
@@ -62,15 +59,4 @@ export async function deleteDataSource(id) {
 
 export async function getDataSourceOptions(space) {
     return await service.get('engine/portal/getDataSourceOptions', { params: { space } })
-}
-
-function sendSuccessMessage(resp) {
-    if (resp.code === 0) {
-        Message({
-            message: resp.result,
-            type: 'success',
-            duration: 5 * 1000,
-        })
-    }
-
 }

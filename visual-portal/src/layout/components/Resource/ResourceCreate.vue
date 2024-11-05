@@ -2,18 +2,16 @@
   <div>
     <el-form ref="form" :model="form">
       <el-form-item label="资源归属者名称：">
-        <el-input v-model="form.tenantName" readonly></el-input>
+        {{ form.tenantName }}
       </el-form-item>
-      <el-form-item label="资源归属者ID：">
-        <el-input v-model="form.tenantId" readonly></el-input>
+
+      <el-form-item label="待创建资源：">
+        <el-select  v-model="form.resourceNames" filterable multiple remote :remote-method="getResourceOption" :loading="loading" placeholder="资源名称">
+            <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.label">
+            </el-option>
+        </el-select>
       </el-form-item>
-      <!-- <el-form-item label="资源名称：">
-        <el-input v-model="form.resourceName"></el-input>
-      </el-form-item> -->
-      <el-form-item label="资源名称：">
-        <el-autocomplete class="inline-input" v-model="form.resourceName"
-          :fetch-suggestions="queryResource"></el-autocomplete>
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button type="primary" @click="finish">取消</el-button>
@@ -26,21 +24,24 @@
 import { createResource } from '../../../api/resource';
 import { Message } from 'element-ui';
 import { getCurrentTenant } from '../../../utils/tenantUtil';
-import { searchResource } from '../../../config/authConfig';
+import { getResourceOptions } from '../../../config/authConfig';
 
 export default {
   name: "ResourceCreate",
   data() {
     return {
+      options:[],
+      loading : false,
       form: {
         tenantId: '',
         tenantName: '',
-        resourceName: '',
+        resourceNames:[],
       }
     }
   },
   methods: {
     onSubmit() {
+      console.log(this.form);
       createResource(this.form).then(res => {
         this.initForm()
         Message({
@@ -60,12 +61,21 @@ export default {
       this.form.tenantId = tenantRes['id'];
       this.form.tenantName = tenantRes['name'];
     },
-    queryResource(query, cb) {
-      cb(searchResource(query))
+    getResourceOption(query){
+        if(query !== ''){
+          this.loading = true;
+          setTimeout(()=>{
+              this.options = getResourceOptions(query);
+              this.loading = false;
+          })
+        }else{
+          this.options = getResourceOptions();
+        }
     },
   },
   mounted() {
     this.initForm()
+    this.options = getResourceOptions();
   }
 };
 </script>

@@ -2,6 +2,7 @@ package com.visualization.controller;
 
 import com.visualization.model.Response;
 import com.visualization.model.api.PortalResource;
+import com.visualization.model.api.PortalResources;
 import com.visualization.service.ResourceService;
 import com.visualization.utils.BindingResultUtil;
 import org.springframework.validation.BindingResult;
@@ -18,10 +19,10 @@ public class ResourceController {
     private ResourceService resourceService;
 
     @PostMapping("/createResource")
-    public Response createResource(@Valid @RequestBody PortalResource portalResource, BindingResult bindingResult) {
+    public Response createResource(@Valid @RequestBody PortalResources portalResources, BindingResult bindingResult) {
         Response error = BindingResultUtil.checkError(bindingResult);
         if (error != null) return error;
-        resourceService.createResource(portalResource);
+        resourceService.createResources(portalResources);
         return Response.success("创建成功！");
     }
 

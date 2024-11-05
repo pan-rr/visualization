@@ -9,7 +9,7 @@
     <!-- 画布 -->
     <div id="LF-view" ref="container"></div>
     <!-- 属性面板 -->
-    <el-drawer title="设置节点属性" :visible.sync="dialogVisible" direction="rtl" size="60%" :before-close="closeDialog">
+    <el-drawer title="节点任务配置页" :visible.sync="dialogVisible" direction="rtl" size="60%" :before-close="closeDialog">
       <PropertyDialog :submitable="submitable" v-if="dialogVisible" :nodeData="clickNode" :lf="lf" @setPropertiesFinish="closeDialog">
       </PropertyDialog>
     </el-drawer>
@@ -39,8 +39,10 @@ import {
   registerDownload,
   registerTask,
   registerConnect,
+  registerVisual,
 } from './registerNode'
 import { getTemplateJSON } from '../../../api/dag'
+import registerSQL from './registerNode/registerSQL'
 
 let canvasData = {};
 
@@ -119,6 +121,8 @@ export default {
       registerDownload(this.lf)
       registerTask(this.lf)
       registerConnect(this.lf)
+      registerVisual(this.lf)
+      registerSQL(this.lf)
       this.$_render()
     },
     $_render() {

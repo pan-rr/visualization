@@ -64,14 +64,14 @@ const getResourceCodeByPattern = (url) => {
 }
 
 
-const searchResource = (str) => {
-    if (!str) return [];
+const getResourceOptions = (str) => {
     if (resourceName.size === 0) loadResource();
-    let res = [];
+    let options = [];
     resourceName.forEach(i => {
-        if (i.indexOf(str) >= 0) res.push({ value: i });
+        if (!str || i.indexOf(str) >= 0) options.push({ value: i ,label:i});
     })
-    return res;
+    options.push({value: '游客' ,label:'游客'})
+    return options;
 }
 
-export { getResourceCode, searchResource }
+export { getResourceCode, getResourceOptions }

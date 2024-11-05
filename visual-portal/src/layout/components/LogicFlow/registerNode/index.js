@@ -10,4 +10,6 @@ import registerDownload from './registerDownload'
 import registerPolyline from './registerPolyline'
 import registerTask from './registerTask'
 import registerConnect from './registerConnect'
-export { registerStart, registerUser, registerEnd, registerPush, registerDownload, registerPolyline, registerTask, registerConnect }
+import registerVisual from './registerVisual'
+import registerSQL from './registerSQL'
+export { registerStart, registerUser, registerEnd, registerPush, registerDownload, registerPolyline, registerTask, registerConnect, registerVisual, registerSQL }

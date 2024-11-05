@@ -16,9 +16,8 @@ public interface ResourceMapper extends BaseMapper<SystemResource> {
     @Select(value = "select * from t_system_resource where tenant_id in (select b.tenant_id from t_system_user_permission a inner join t_system_permission b on (a.user_id = #{userId} and a.permission_id = b.permission_id))")
     List<SystemResource> selectTenantResourceByUserId(@Param("userId") Long userId);
 
-    @Select(value = "SELECT count(1) FROM t_system_resource WHERE tenant_id = #{tenantId} AND resource_name = #{resourceName}")
-    int checkResourceName(@Param("tenantId") String tenantId, @Param("resourceName") String resourceName);
-
     @Select(value = "select resource_id value , resource_name label from t_system_resource where tenant_id = #{tenantId}")
     List<Option> getResourceOptions(@Param("tenantId") Long tenantId);
+
+    int saveResources(@Param("list") List<SystemResource> resources , @Param("tenantId") String tenantId);
 }

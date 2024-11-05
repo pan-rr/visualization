@@ -1,21 +1,28 @@
 export const nodeList = [
-  // {
-  //   text: '任务节点',
-  //   type: 'rect',
-  //   class: 'node-rect'
-  // },
   {
     text: 'Visual任务节点',
-    type: 'rect',
+    type: 'visual',
     class: 'node-v',
     taskType: 'VISUAL'
   },
   {
     text: 'SQL任务节点',
-    type: 'rect',
+    type: 'sql',
     class: 'node-SQL',
     taskType: 'SQL'
   },
+  // {
+  //   text: 'Visual任务节点',
+  //   type: 'rect',
+  //   class: 'node-v',
+  //   taskType: 'VISUAL'
+  // },
+  // {
+  //   text: 'SQL任务节点',
+  //   type: 'rect',
+  //   class: 'node-SQL',
+  //   taskType: 'SQL'
+  // },
 ];
 
 export const BpmnNode = [

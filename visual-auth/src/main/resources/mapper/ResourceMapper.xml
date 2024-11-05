@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.visualization.mapper.ResourceMapper">
+
+    <insert id="saveResources">
+        insert into t_system_resource (resource_id,resource_name,tenant_id)
+        select * from (
+        <foreach collection="list" item="o" separator=" union all ">
+            select #{o.resourceId} resource_id , #{o.resourceName} resource_name , #{o.tenantId} tenant_id from dual
+        </foreach>
+        ) a
+        where not exists (select resource_name from t_system_resource b where b.tenant_id = #{tenantId} and
+        a.resource_name = b.resource_name)
+    </insert>
+
+</mapper>
