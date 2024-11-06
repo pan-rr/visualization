@@ -29,98 +29,98 @@
   </div>
 </template>
 <script>
-import { createTemplate } from '../../../api/dag';
-import { Message } from 'element-ui'
-import SpaceSelector from '../Visual/SpaceSelector.vue';
+  import { createTemplate } from '../../../api/dag';
+  import { Message } from 'element-ui'
+  import SpaceSelector from '../Visual/SpaceSelector.vue';
 
 
 
-export default {
-  name: 'Control',
-  components: { SpaceSelector },
-  props: {
-    lf: Object || String,
-    catTurboData: Boolean,
-    submitable: Boolean,
-  },
-  data() {
-    return {
-      undoDisable: true,
-      redoDisable: true,
-      graphData: null,
-      dataVisible: false,
-      templateName: '',
-      spaceRef: {
-        data: ''
-      }
-    }
-  },
-  mounted() {
-    this.$props.lf.on('history:change', ({ data: { undoAble, redoAble } }) => {
-      this.$data.undoDisable = !undoAble
-      this.$data.redoDisable = !redoAble
-    });
-  },
-  methods: {
-    $_zoomIn() {
-      this.$props.lf.zoom(true);
+  export default {
+    name: 'Control',
+    components: { SpaceSelector },
+    props: {
+      lf: Object || String,
+      catTurboData: Boolean,
+      submitable: Boolean,
     },
-    $_zoomOut() {
-      this.$props.lf.zoom(false);
-    },
-    $_zoomReset() {
-      this.$props.lf.resetZoom();
-    },
-    $_translateRest() {
-      this.$props.lf.resetTranslate();
-    },
-    $_reset() {
-      this.$props.lf.resetZoom();
-      this.$props.lf.resetTranslate();
-    },
-    $_undo() {
-      this.$props.lf.undo();
-    },
-    $_redo() {
-      this.$props.lf.redo();
-    },
-    $_download() {
-      this.$props.lf.getSnapshot();
-    },
-    $_catData() {
-      this.$emit('catData');
-    },
-    $_catTurboData() {
-      this.$emit('catTurboData');
-    },
-    $_showMiniMap() {
-      const { lf } = this.$props;
-      lf.extension.miniMap.show(lf.graphModel.width - 150, 40)
-    },
-    $_createProcess() {
-      // this.$emit('createProcess');
-      const { lf } = this.$props;
-      const data = lf.getGraphData()
-      createTemplate({
-        name: this.$data.templateName,
-        logicFlow: data,
-        space: this.spaceRef.data
-      }).then(response => {
-        if (response?.data?.code === 0) {
-          this.$emit('refreash')
-          this.templateName = ''
-          Message({
-            message: response?.data?.result,
-            type: 'success',
-            duration: 5 * 1000,
-          })
+    data() {
+      return {
+        undoDisable: true,
+        redoDisable: true,
+        graphData: null,
+        dataVisible: false,
+        templateName: '',
+        spaceRef: {
+          data: ''
         }
+      }
+    },
+    mounted() {
+      this.$props.lf.on('history:change', ({ data: { undoAble, redoAble } }) => {
+        this.$data.undoDisable = !undoAble
+        this.$data.redoDisable = !redoAble
       });
     },
-  },
-  computed: {
+    methods: {
+      $_zoomIn() {
+        this.$props.lf.zoom(true);
+      },
+      $_zoomOut() {
+        this.$props.lf.zoom(false);
+      },
+      $_zoomReset() {
+        this.$props.lf.resetZoom();
+      },
+      $_translateRest() {
+        this.$props.lf.resetTranslate();
+      },
+      $_reset() {
+        this.$props.lf.resetZoom();
+        this.$props.lf.resetTranslate();
+      },
+      $_undo() {
+        this.$props.lf.undo();
+      },
+      $_redo() {
+        this.$props.lf.redo();
+      },
+      $_download() {
+        this.$props.lf.getSnapshot();
+      },
+      $_catData() {
+        this.$emit('catData');
+      },
+      $_catTurboData() {
+        this.$emit('catTurboData');
+      },
+      $_showMiniMap() {
+        const { lf } = this.$props;
+        lf.extension.miniMap.show(lf.graphModel.width - 150, 40)
+      },
+      $_createProcess() {
+        // this.$emit('createProcess');
+        const { lf } = this.$props;
+        const data = lf.getGraphData()
+        createTemplate({
+          name: this.$data.templateName,
+          logicFlow: data,
+          space: this.spaceRef.data
+        }).then(response => {
+          if (response?.data?.code === 0) {
+            this.$emit('refreash')
+            this.templateName = ''
+            Message({
+              message: response?.data?.result,
+              type: 'success',
+              duration: 5 * 1000,
+            })
+          }
+        });
+      },
+    },
+    computed: {
 
+    }
   }
-}
 </script>
 <style scoped></style>

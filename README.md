@@ -26,6 +26,8 @@ Visualization使用低代码方式编排DAG任务，集群自动执行相应的�
 
 ![表单配置1](https://gitee.com/pan-rr/visualization/raw/master/pic/任务节点表单配置.png)
 
+![流程配置](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
+
 ![流程模版查看](https://gitee.com/pan-rr/visualization/raw/master/pic/流程模版查看.png)
 
 ![表单配置2](https://gitee.com/pan-rr/visualization/raw/master/pic/表单配置.png)
@@ -42,7 +44,6 @@ Visualization使用低代码方式编排DAG任务，集群自动执行相应的�
 
 ![流程列表](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
 
-![流程配置](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
 
 #### 使用场景
 

@@ -156,7 +156,6 @@ export default {
       let template = TaskBuilder(this.taskType)
       Object.assign(template, this.$data.visualTask, properties)
       this.visualTask = template
-      this.visualTask.output
       this.changeOutput()
       if (properties.output) {
         Object.assign(this.visualTask.output, properties.output)
