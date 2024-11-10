@@ -18,32 +18,54 @@ Visualization使用低代码方式编排DAG任务，集群自动执行相应的�
 + 文件分片上传下、下载；
 + 支持流程实例任务执行情况查询，以任务时间线形式展示；
 + 支持多租户权限管理，允许父子租户
-+ 支持前端页面路由按权限动态生成；
++ 支持前端页面路由按权限动态生成，后端按资源鉴权；
 
 #### 部分截图
 
-![画布](https://gitee.com/pan-rr/visualization/raw/master/pic/画布.png)
+- 非开源版
 
-![表单配置1](https://gitee.com/pan-rr/visualization/raw/master/pic/任务节点表单配置.png)
+![展示s](https://gitee.com/pan-rr/visualization/raw/master/pic/gif/pro.gif)
 
-![流程配置](https://gitee.com/pan-rr/visualization/raw/master/pic/流程配置.png)
+![画布s](https://gitee.com/pan-rr/visualization/raw/master/pic/s/画布.png)
 
-![流程模版查看](https://gitee.com/pan-rr/visualization/raw/master/pic/流程模版查看.png)
+![上下文配置s](https://gitee.com/pan-rr/visualization/raw/master/pic/s/上下文配置.png)
 
-![表单配置2](https://gitee.com/pan-rr/visualization/raw/master/pic/表单配置.png)
+![上下文查看s](https://gitee.com/pan-rr/visualization/raw/master/pic/s/上下文查看.png)
 
-![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
++ 开源版
 
-![赋权管理](https://gitee.com/pan-rr/visualization/raw/master/pic/赋权管理.png)
+![展示ce](https://gitee.com/pan-rr/visualization/raw/master/pic/gif/ce.gif)
 
-![赋权人员管理](https://gitee.com/pan-rr/visualization/raw/master/pic/赋权人员管理.png)
+![画布](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/画布.png)
 
-![执行日志](https://gitee.com/pan-rr/visualization/raw/master/pic/执行日志.png)
+![表单配置1](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/任务节点表单配置.png)
 
-![数据源配置](https://gitee.com/pan-rr/visualization/raw/master/pic/数据源配置.png)
+![流程配置](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/流程配置.png)
 
-![流程列表](https://gitee.com/pan-rr/visualization/raw/master/pic/流程列表.png)
+![流程模版查看](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/流程模版查看.png)
 
+![表单配置2](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/表单配置.png)
+
+![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/文件管理.png)
+
+![赋权管理](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/赋权管理.png)
+
+![赋权人员管理](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/赋权人员管理.png)
+
+![执行日志](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/执行日志.png)
+
+![数据源配置](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/数据源配置.png)
+
+![流程列表](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/流程列表.png)
+
+#### 主要功能点说明
+
++ 流程模版配置、优先级、失败重试配置，开源版支持Visual、SQL任务；
++ 流程实例查看、终止、执行日志；
++ 文件上传下载；
++ 权限资源配置、权限分配、赋权、前后端鉴权、前端路由渲染；
+
+`非开源版增加了上下文任务，任务可以获取上下文的变量，以及修改了部分样式`
 
 #### 使用场景
 
@@ -55,7 +77,7 @@ Visualization使用低代码方式编排DAG任务，集群自动执行相应的�
 + 有数据分析需求，但不想搭建大数据那套集群，可使用本工具；
 + 有配置需求的场景，例如定时生成分析报表的需求。
   - 这个目前需外部定时任务组件新建流程实例，目前市面上已经有很多定时任务组件可以搭配使用（后续考虑增加定时组件）；
-+ 跨数据源连接操作，例如某张表在PolarDB、CSV，另一张表在MySQL的连接操作；
++ 异构数据源连接操作，例如某张表在PolarDB、CSV，另一张表在MySQL的连接操作；
 + 取数逻辑频繁修改，例如某个指标的获取方式。本工具只需修改配置即可实现修改逻辑； 
 + 数据大屏的后端，类似于datav、mapv的画布工具，使用该工具可以快速构建大屏后端；
 
@@ -82,6 +104,20 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 4. 启动visual-auth (SpringBoot的启动方式)
 5. 启动visual-engine (SpringBoot的启动方式)
 6. 启动visual-portal (yarn test，其他环境指令目前就不配置了)
+
+#### 任务类型说明
+
++ Visual
+
+  多输入和一个输出，输入项定义数据获取信息，输出项定义数据连接和输出信息；
+
++ SQL
+  
+  用于执行建表、删除表等操作；
+
++ Context
+  
+  用于上下文变量注入或覆盖；
 
 #### 任务流程
 
@@ -110,7 +146,7 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 流程模版文件上传下载
 
-![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/文件管理.png)
+![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/文件管理.png)
 
 + 在文件管理页找到对应路径上传下载。
 

@@ -58,10 +58,11 @@ public class PermissionHandler {
                 break;
             }
         }
+        resource = AuthResource.replaceUnknownResource(resource);
         HttpHeaders headers = request.getHeaders();
         String authHeader = HeaderUtil.getOneHeader(headers, authName);
         String resourceHeader = HeaderUtil.getOneHeader(headers, resourceName);
-        if (Objects.isNull(resourceHeader) || Objects.isNull(resource)) {
+        if (Objects.isNull(resourceHeader)) {
             return ResponseUtil.writeResponse(exchange, Response.error(ResponseEnum.ACCESS_DENY));
         }
         Boolean ifPresent = permissionCache.getIfPresent(resourceHeader);

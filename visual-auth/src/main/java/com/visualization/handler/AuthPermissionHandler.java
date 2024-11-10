@@ -85,7 +85,7 @@ public class AuthPermissionHandler {
         Long userId = NumberUtils.createLong(id.toString());
         String key = permissionKey(userId);
         Long size = redisTemplate.opsForSet().size(key);
-        if (Objects.isNull(size)) {
+        if (Objects.isNull(size) || size == 0) {
             loadPermission(userId);
         }
         String owner = OwnerUtil.getOwnerRoleByPermission(permission);
