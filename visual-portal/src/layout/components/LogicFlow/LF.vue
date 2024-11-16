@@ -154,16 +154,16 @@ export default {
     },
     $_getData() {
       const data = this.lf.getGraphData()
-      // console.log(JSON.stringify(data))
+     
     },
     $_LfEvent() {
       this.lf.on('node:click', ({ data }) => {
-        // console.log('node:click', data)
+    
         this.$data.clickNode = data
         this.$data.dialogVisible = true
       })
       this.lf.on('edge:click', ({ data }) => {
-        console.log('edge:click', data)
+        
         this.$data.clickNode = data
         this.$data.dialogVisible = true
       })
@@ -171,10 +171,10 @@ export default {
         this.hideAddPanel()
       })
       this.lf.on('edge:add', ({ data }) => {
-        console.log('edge:add', data)
+    
       })
       this.lf.on('node:mousemove', ({ data }) => {
-        // console.log('node:mousemove')
+     
         this.moveData = data
       })
       this.lf.on('blank:click', () => {
@@ -187,14 +187,14 @@ export default {
         })
       })
       this.lf.on('node:mousemove', () => {
-        // console.log('on mousemove')
+       
       })
     },
     clickPlus(e, attributes) {
       e.stopPropagation()
-      // console.log('clickPlus', e, attributes)
+      
       const { clientX, clientY } = e
-      // console.log(clientX, clientY)
+
       this.$data.addPanelStyle.top = (clientY - 40) + 'px'
       this.$data.addPanelStyle.left = clientX + 'px'
       this.$data.showAddPanel = true
@@ -202,7 +202,7 @@ export default {
     },
     mouseDownPlus(e, attributes) {
       e.stopPropagation()
-      console.log('mouseDownPlus', e, attributes)
+   
     },
     hideAddPanel() {
       this.$data.showAddPanel = false

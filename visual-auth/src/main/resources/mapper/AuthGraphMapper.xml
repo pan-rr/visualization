@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.visualization.mapper.AuthGraphMapper">
+
+    <select id="getNodes">
+        <choose>
+            <when test="level == 1">
+                select permission_id id , permission_name name , 2 level from t_system_permission where tenant_id = #{pre}
+            </when>
+            <when test="level == 2">
+                select oa id , username name , 3 level from t_system_user
+                where user_id in (select user_id from t_system_user_permission where permission_id = #{pre})
+            </when>
+            <otherwise>select 1 id , 1 name WHERE FALSE</otherwise>
+        </choose>
+    </select>
+</mapper>

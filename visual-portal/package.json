@@ -16,6 +16,7 @@
     "pre-commit": "vue-cli-service lint --fix"
   },
   "dependencies": {
+    "@antv/g6": "^3.2.0",
     "@logicflow/core": "1.1.29",
     "@logicflow/extension": "1.1.29",
     "axios": "^0.21.4",
@@ -30,6 +31,7 @@
     "promise-queue-plus": "^1.2.2",
     "spark-md5": "^3.0.2",
     "vue": "^2.6.11",
+    "vue-codemirror": "4.0.6",
     "vue-json-editor": "^1.4.3",
     "vue-json-viewer": "^2.2.22",
     "vue-router": "^3.2.0",

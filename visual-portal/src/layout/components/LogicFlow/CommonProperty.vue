@@ -2,13 +2,14 @@
   <div>
     <el-form :model="visualTask" style="margin: auto;">
       <el-card shadow="never">
-        <el-form-item label="节点名称">
+        <el-form-item><div style="color: #72767b;">{{ taskType }}节点任务名称</div>
           <el-input v-model="visualTask.text"></el-input>
         </el-form-item>
       </el-card>
-      <div v-if="taskType === 'SQL'">
+      <div v-if="taskType === 'SQL' || taskType === 'CONTEXT_INJECT' || taskType === 'HTTP'">
         <el-card shadow="never">
-          <SQLForm :fatherRef="visualTask"></SQLForm>
+          <SQLForm v-if="taskType === 'SQL'" :fatherRef="visualTask"></SQLForm>
+          <HttpForm v-if="taskType === 'HTTP'" :fatherRef="visualTask"></HttpForm>
           <el-form-item v-if="submitable">
             <el-button plain type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
@@ -68,7 +69,9 @@
                   <Tips message="文件在存储空间的相对路径，若果是模版共享的，请放在spaceShare文件夹下"></Tips>
                   <el-input v-model="visualTask.input[index].filePath"></el-input>
                 </el-form-item>
-                <KVTable :view="visualTask.input[index]"></KVTable>
+                <KVTable :targetWrapper="visualTask.input[index]" target="param" title="csv可选参数"
+                  tips="
+            样例，括号包裹键值对。（headers:no|name|sex）   （fieldSeparator:|）  （caseSensitiveColumnNames:true） （charset:utf-8） （writeColumnHeader: false）"></KVTable>
               </div>
               <div v-else-if="visualTask.input[index].viewType === 'jdbc'">
                 <JDBCForm :fatherRef="visualTask.input[index]" :view-type="'in'"></JDBCForm>
@@ -91,16 +94,19 @@
             </div>
           </el-card>
           <el-card shadow="never">
-            <el-form-item label="查询SQL">
+            <!-- <el-form-item label="查询SQL">
               <el-input v-model="visualTask.output.script"></el-input>
-            </el-form-item>
-
+            </el-form-item> -->
+            <Editor title="查询SQL" :editor-options="{ mode: 'sql' }" target="script" :target-ref="visualTask.output">
+            </Editor>
             <div v-if="visualTask.output.viewType === 'csv'">
               <el-form-item label="csv存放路径">
                 <Tips message="文件在存储空间的相对路径，若果是模版共享的，请放在spaceShare文件夹下"></Tips>
                 <el-input v-model="visualTask.output.filePath"></el-input>
               </el-form-item>
-              <KVTable :view="visualTask.output"></KVTable>
+              <KVTable :targetWrapper="visualTask.output" target="param" title="csv可选参数"
+                tips="
+            样例，括号包裹键值对。（headers:no|name|sex）   （fieldSeparator:|）  （caseSensitiveColumnNames:true） （charset:utf-8） （writeColumnHeader: false）"></KVTable>
             </div>
             <div v-if="visualTask.output.viewType === 'excel'">
               <el-form-item label="excel存放路径">
@@ -133,70 +139,72 @@
 </template>
 <script>
 
-import vueJsonEditor from 'vue-json-editor'
-import TaskBuilder from '../../../model/TaskBuilder.js';
-import TabTable from '../Visual/TabTable.vue';
-import KVTable from '../Visual/KVTable.vue';
-import Tips from '../Visual/Tips.vue';
-import SQLForm from '../Visual/form/SQLForm.vue';
-import JDBCForm from '../Visual/form/JDBCForm.vue';
+  import vueJsonEditor from 'vue-json-editor'
+  import TaskBuilder from '../../../model/TaskBuilder.js';
+  import TabTable from '../Visual/TabTable.vue';
+  import KVTable from '../Visual/KVTable.vue';
+  import Tips from '../Visual/Tips.vue';
+  import SQLForm from '../Visual/form/SQLForm.vue';
+  import JDBCForm from '../Visual/form/JDBCForm.vue';
+  import Editor from '../Visual/Editor.vue';
+  import HttpForm from '../Visual/form/HttpForm.vue';
 
 
-export default {
-  components: { vueJsonEditor, TabTable, KVTable, Tips, SQLForm, JDBCForm },
-  props: {
-    nodeData: Object,
-    lf: Object || String,
-    submitable: Boolean,
-  },
-  mounted() {
-    const { properties, text } = this.$props.nodeData
-    if (properties) {
-      this.taskType = properties.taskType
-      let template = TaskBuilder(this.taskType)
-      Object.assign(template, this.$data.visualTask, properties)
-      this.visualTask = template
-      this.changeOutput()
-      if (properties.output) {
-        Object.assign(this.visualTask.output, properties.output)
-      }
-    }
-    if (text && text.value) {
-      this.$data.text = text.value
-    }
-  },
-  data() {
-    return {
-      text: '',
-      taskType: '',
-      paramKey: '',
-      paramVal: '',
-      visualTask: {},
-      inputView: 'csv',
-      outputView: 'csv',
-    }
-  },
-  methods: {
-    onSubmit() {
-      const { id } = this.$props.nodeData
-      let submitData;
-      submitData = { ...this.visualTask, taskType: this.taskType };
-      this.$props.lf.setProperties(id, submitData);
-      this.$props.lf.updateText(id, submitData.text);
-      this.$emit('onClose')
+  export default {
+    components: { vueJsonEditor, TabTable, KVTable, Editor, Tips, SQLForm, JDBCForm, HttpForm },
+    props: {
+      nodeData: Object,
+      lf: Object || String,
+      submitable: Boolean,
     },
-    changeOutput() {
-      if (this.visualTask.switchOutputView) {
-        this.visualTask.switchOutputView(this.outputView);
+    mounted() {
+      const { properties, text } = this.$props.nodeData
+      if (properties) {
+        this.taskType = properties.taskType
+        let template = TaskBuilder(this.taskType)
+        Object.assign(template, this.$data.visualTask, properties)
+        this.visualTask = template
+        this.changeOutput()
+        if (properties.output) {
+          Object.assign(this.visualTask.output, properties.output)
+        }
+      }
+      if (text && text.value) {
+        this.$data.text = text.value
       }
     },
-    addIntputView() {
-      this.visualTask.addInputView(this.inputView)
+    data() {
+      return {
+        text: '',
+        taskType: '',
+        paramKey: '',
+        paramVal: '',
+        visualTask: {},
+        inputView: 'csv',
+        outputView: 'csv',
+      }
     },
-    deleteInputView(index) {
-      this.visualTask.deleteInputView(index);
+    methods: {
+      onSubmit() {
+        const { id } = this.$props.nodeData
+        let submitData;
+        submitData = { ...this.visualTask, taskType: this.taskType };
+        this.$props.lf.setProperties(id, submitData);
+        this.$props.lf.updateText(id, submitData.text);
+        this.$emit('onClose')
+      },
+      changeOutput() {
+        if (this.visualTask.switchOutputView) {
+          this.visualTask.switchOutputView(this.outputView);
+        }
+      },
+      addIntputView() {
+        this.visualTask.addInputView(this.inputView)
+      },
+      deleteInputView(index) {
+        this.visualTask.deleteInputView(index);
+      },
     },
-  },
-}
+  }
 </script>
 <style scoped></style>

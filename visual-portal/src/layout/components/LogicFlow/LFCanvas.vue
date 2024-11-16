@@ -150,7 +150,7 @@ export default {
         this.hideAddPanel()
       })
       this.lf.on('edge:add', ({ data }) => {
-        console.log('edge:add', data)
+       
       })
       this.lf.on('node:mousemove', ({ data }) => {
         this.moveData = data
@@ -179,7 +179,6 @@ export default {
     },
     mouseDownPlus(e, attributes) {
       e.stopPropagation()
-      console.log('mouseDownPlus', e, attributes)
     },
     hideAddPanel() {
       this.$data.showAddPanel = false

@@ -1,14 +1,12 @@
 package com.visualization.view.base;
 
 import com.visualization.constant.TaskTypeConstant;
-import com.visualization.handler.SpringContextHandler;
 import com.visualization.handler.rewrite.ViewRewriteHandler;
 import com.visualization.manager.ViewManager;
+import com.visualization.manager.orphan.HttpManager;
 import com.visualization.manager.orphan.SQLManager;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
 
-import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,9 @@ public class VisualStage {
     private List<Map<String, Object>> input;
     private Map<String, Object> output;
     private Map<String, String> sql;
+    private Map<String, Object> contextInject;
+    private Map<String, Object> visualContext;
+    private Map<String, Object> http;
     private String taskType;
 
 
@@ -48,6 +49,30 @@ public class VisualStage {
 
     public void setTaskType(String taskType) {
         this.taskType = taskType;
+    }
+
+    public Map<String, Object> getVisualContext() {
+        return visualContext;
+    }
+
+    public void setVisualContext(Map<String, Object> visualContext) {
+        this.visualContext = visualContext;
+    }
+
+    public Map<String, Object> getContextInject() {
+        return contextInject;
+    }
+
+    public void setContextInject(Map<String, Object> contextInject) {
+        this.contextInject = contextInject;
+    }
+
+    public Map<String, Object> getHttp() {
+        return http;
+    }
+
+    public void setHttp(Map<String, Object> http) {
+        this.http = http;
     }
 
     public VisualStage() {
@@ -81,7 +106,10 @@ public class VisualStage {
                 executeNormal();
                 break;
             case TaskTypeConstant.SQL:
-                executeSQL();
+                SQLManager.execute(this);
+                break;
+            case TaskTypeConstant.HTTP:
+                HttpManager.execute(this);
                 break;
             default:
                 throw new RuntimeException("无法执行非法的配置！");
@@ -89,15 +117,8 @@ public class VisualStage {
     }
 
     private void executeNormal() {
-        ApplicationContext ctx = SpringContextHandler.getCtx();
-        DataSource db = ctx.getBean("db", DataSource.class);
-        Collection<ViewRewriteHandler> viewRewriteHandlers = ctx.getBeansOfType(ViewRewriteHandler.class).values();
-        this.filter(viewRewriteHandlers);
-        ViewManager viewManager = new ViewManager(this.getInputView(), this.getOutputView(), db);
+        ViewManager viewManager = new ViewManager(this);
         viewManager.execute();
     }
 
-    private void executeSQL() {
-        SQLManager.execute(sql);
-    }
 }

@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +30,8 @@ public class LogicGraph {
     private Integer retryCount;
 
     private Double priority;
+
+    private String context;
 
     public LogicFlowPack getPack() {
         this.validateDAG();
@@ -57,6 +58,7 @@ public class LogicGraph {
                 .space(space)
                 .retryCount(this.retryCount)
                 .priority(this.priority)
+                .context(StringUtils.isNotBlank(context) ? context : "{}")
                 .totalTaskCount(logicFlow.getNodes().size())
                 .status(Status.NORMAL.getStatus())
                 .build();
@@ -66,13 +68,13 @@ public class LogicGraph {
         return logicFlow.getTasks();
     }
 
-    public void handleRetryCount(Integer defaultCount){
+    public void handleRetryCount(Integer defaultCount) {
         if (Objects.isNull(this.retryCount)) {
             this.retryCount = defaultCount;
         }
     }
 
-    public void handlePriority(Double defaultPriority){
+    public void handlePriority(Double defaultPriority) {
         if (Objects.isNull(this.priority)) {
             this.priority = defaultPriority;
         }

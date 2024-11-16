@@ -6,7 +6,7 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
-        <el-table-column  type="expand">
+        <el-table-column type="expand">
           <template #default="props">
             <div>
               <CanvasReadonly :templateId="props.row.templateId"></CanvasReadonly>
@@ -39,9 +39,10 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column align="center" fixed="right" label="操作">
+        <el-table-column align="center" fixed="right" label="操作" :render-header="header">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
+            <el-button :disabled="scope.row.status === '-3'"
+              @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
               运行实例
             </el-button>
           </template>
@@ -60,130 +61,140 @@
 <script>
 
 
-import { createInstanceById, getTemplateList, getStatusOptions, changeTemplatePriority, changeTemplateStatus, changeTemplateRetryCount } from '../../api/dag';
-import { Message } from 'element-ui'
-import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
-import CanvasReadonly from './CanvasReadonly.vue';
+  import { createInstanceById, getTemplateList, getStatusOptions, changeTemplatePriority, changeTemplateStatus, changeTemplateRetryCount } from '../../api/dag';
+  import { Message } from 'element-ui'
+  import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
+  import CanvasReadonly from './CanvasReadonly.vue';
 
 
-export default {
-  name: 'VisualTemplateList',
-  components: {
-    SpaceSelector, CanvasReadonly
-  },
-  data() {
-    return {
-      spaceRef: {
-        data: ''
-      },
-      tableData: [],
-      total: 10,
-      pageSize: 10,
-      currentPage: 1,
-      choosenStatus: [],
-      statusOptions: [],
-      lastParam:'',
-    }
-  },
-  computed: {
-    space() {
-      return this.spaceRef.data;
-    }
-  },
-  methods: {
-    changeStatus(scope) {
-      changeTemplateStatus(scope.row.templateId, scope.row.status)
+  export default {
+    name: 'VisualTemplateList',
+    components: {
+      SpaceSelector, CanvasReadonly
     },
-    changePriority(templateId, priority) {
-      changeTemplatePriority(templateId, priority);
-    },
-    changeRetryCount(templateId, retryCount) {
-      changeTemplateRetryCount(templateId, retryCount);
-    },
-    filterChange(filter) {
-      if (filter['status']) {
-        this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
+    data() {
+      return {
+        spaceRef: {
+          data: ''
+        },
+        tableData: [],
+        total: 10,
+        pageSize: 10,
+        currentPage: 1,
+        choosenStatus: [],
+        statusOptions: [],
+        lastParam: '',
       }
     },
-    changePage(val) {
-      this.currentPage = val
+    computed: {
+      space() {
+        return this.spaceRef.data;
+      }
     },
-    changeSize(val) {
-      this.pageSize = val
-    },
-    createInstance(templateId) {
-      createInstanceById(templateId).then(res => {
-        let data = res.data
-        let msg = `创建实例成功，实例id：${data.result}`
-        Message({
-          message: msg,
-          type: data.message,
-          duration: 5 * 1000,
+    methods: {
+      changeStatus(scope) {
+        changeTemplateStatus(scope.row.templateId, scope.row.status).then(() => {
+          this.$set(this.tableData[scope.$index], 'status', scope.row.status);
         })
-      })
-    },
-    getList() {
-      let pageable = {
-        page: this.currentPage,
-        size: this.pageSize,
-        conditions: {
-          space: this.space,
-          status: this.choosenStatus
+      },
+      changePriority(templateId, priority) {
+        changeTemplatePriority(templateId, priority);
+      },
+      changeRetryCount(templateId, retryCount) {
+        changeTemplateRetryCount(templateId, retryCount);
+      },
+      filterChange(filter) {
+        if (filter['status']) {
+          this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
         }
-      }
-      let str = JSON.stringify(pageable);
-      if(this.lastParam === str){
-        return;
-      }else{
-        this.lastParam = str;
-      }
-      getTemplateList(pageable).then(res => {
-        let _this = this
-        _this.tableData = res.data.result
-        _this.total = res.data.total
-      })
+      },
+      changePage(val) {
+        this.currentPage = val
+      },
+      changeSize(val) {
+        this.pageSize = val
+      },
+      createInstance(templateId) {
+        createInstanceById(templateId).then(res => {
+          let data = res.data
+          let msg = `创建实例成功，实例id：${data.result}`
+          Message({
+            message: msg,
+            type: data.message,
+            duration: 5 * 1000,
+          })
+        })
+      },
+      getList() {
+        console.log(8)
+        let pageable = {
+          page: this.currentPage,
+          size: this.pageSize,
+          conditions: {
+            space: this.space,
+            status: this.choosenStatus
+          }
+        }
+        let str = JSON.stringify(pageable);
+        if (this.lastParam === str) {
+          return;
+        } else {
+          this.lastParam = str;
+        }
+        getTemplateList(pageable).then(res => {
+          let _this = this
+          _this.tableData = res.data.result
+          _this.total = res.data.total
+        })
 
-    },
-    getStatusOptions() {
-      getStatusOptions(1).then(res => {
-        this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
-      })
-    },
-  },
-  mounted() {
-    this.getStatusOptions();
-    this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
-    this.getList();
-  },
-  watch: {
-    currentPage: {
-      immediate: false,
-      deep: true,
-      handler(newVal, oldVal) {
-        this.getList()
+      },
+      getStatusOptions() {
+        getStatusOptions(1).then(res => {
+          this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
+        })
+      },
+      header() {
+        return (
+          <div>操作
+            <el-button style='margin-left:10px;' plain type='info' icon='el-icon-refresh' on-click={() => { this.getList(); }} circle size='mini'></el-button>
+          </div>
+        )
       }
     },
-    pageSize: {
-      immediate: false,
-      deep: true,
-      handler(newVal, oldVal) {
-        this.getList()
-      }
+    mounted() {
+      this.getStatusOptions();
+      this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
+      this.getList();
     },
-    choosenStatus: {
-      immediate: false,
-      deep: true,
-      handler(newVal, oldVal) {
+    watch: {
+      currentPage: {
+        immediate: false,
+        deep: true,
+        handler(newVal, oldVal) {
           this.getList()
-      }
-    },
-    space: {
-      immediate: false,
-      deep: true,
-      handler(newVal, oldVal) {
-        this.getList()
+        }
+      },
+      pageSize: {
+        immediate: false,
+        deep: true,
+        handler(newVal, oldVal) {
+          this.getList()
+        }
+      },
+      choosenStatus: {
+        immediate: false,
+        deep: true,
+        handler(newVal, oldVal) {
+          this.getList()
+        }
+      },
+      space: {
+        immediate: false,
+        deep: true,
+        handler(newVal, oldVal) {
+          this.getList()
+        }
       }
     }
   }
-}
 </script>

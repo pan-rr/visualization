@@ -37,6 +37,10 @@ export async function getLogTimeLine(instanceId) {
     return await service.get('engine/portal/getLogTimeLine', { params: { instanceId } })
 }
 
+export async function getContext(instanceId) {
+    return await service.get('engine/portal/getContext', { params: { instanceId } })
+}
+
 export async function createInstanceById(templateId) {
     return await service.get('engine/portal/createInstance', { params: { templateId } })
 }

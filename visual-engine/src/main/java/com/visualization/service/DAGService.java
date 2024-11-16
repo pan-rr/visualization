@@ -60,4 +60,7 @@ public interface DAGService {
     DAGTemplate getExecutableTemplate(Long templateId);
 
     String getTemplateStr(Long templateId);
+
+    String getContext(Long instanceId);
+
 }

@@ -22,6 +22,7 @@ public class PortalDAGTemplate implements Serializable {
     private String space;
     private Integer retryCount;
     private Double priority;
+    private String context;
 
     @LastModifiedDate
     @JsonFormat(pattern = "yyyy-MM-dd")

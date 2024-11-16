@@ -45,6 +45,9 @@ public class DAGTemplate implements Serializable {
 
     private Integer totalTaskCount;
 
+    @Column(columnDefinition = "text")
+    private String context;
+
 
     public Tuple3<List<Edge>, List<DAGPointer>, Long> translateLogicFlowDAG() {
         Gson gson = new Gson();
@@ -61,6 +64,7 @@ public class DAGTemplate implements Serializable {
                 .version(version)
                 .priority(priority)
                 .retryCount(retryCount)
+                .context(context)
                 .build();
     }
 }

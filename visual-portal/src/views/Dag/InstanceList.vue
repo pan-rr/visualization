@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column align="center" prop="finishTime" label="完成时间">
         </el-table-column>
-        <el-table-column align="center" fixed="right" label="操作">
+        <el-table-column align="center" fixed="right" label="操作" :render-header="header">
           <template slot-scope="scope">
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
               查看实例执行日志
@@ -67,125 +67,139 @@
 
 <script>
 
-import { getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
-import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
+  import { getContext, getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
+  import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 
-export default {
-  name: 'VisualInstanceList',
-  components: {
-    SpaceSelector
-  },
-  data() {
-    return {
-      spaceRef: {
-        data: ''
+  export default {
+    name: 'VisualInstanceList',
+    components: {
+      SpaceSelector
+    },
+    data() {
+      return {
+        spaceRef: {
+          data: ''
+        },
+        tableData: [],
+        total: 10,
+        pageSize: 10,
+        currentPage: 1,
+        timeLine: [],
+        openTimeLine: false,
+        choosenStatus: [],
+        statusOptions: [],
+        lastParam: '',
+      }
+    },
+    methods: {
+      header() {
+        return (
+          <div>操作
+            <el-button style='margin-left:10px;' plain type='info' icon='el-icon-refresh' on-click={() => { this.getList(); }} circle size='mini'></el-button>
+          </div>
+        )
       },
-      tableData: [],
-      total: 10,
-      pageSize: 10,
-      currentPage: 1,
-      timeLine: [],
-      openTimeLine: false,
-      choosenStatus: [],
-      statusOptions: [],
-      lastParam:'',
-    }
-  },
-  methods: {
-    getStatusOptions() {
-      getStatusOptions(2).then(res => {
-        this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
-      })
-    },
-    filterChange(filter) {
-      if (filter['status']) {
-        this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
+      getStatusOptions() {
+        getStatusOptions(2).then(res => {
+          this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
+        })
+      },
+      filterChange(filter) {
+        if (filter['status']) {
+          this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
 
-      }
-    },
-    changePage(val) {
-      this.currentPage = val
-    },
-    changeSize(val) {
-      this.pageSize = val
-    },
-    getList() {
-      let pageable = {
-        page: this.currentPage,
-        size: this.pageSize,
-        conditions: {
-          space: this.space,
-          status: this.choosenStatus
         }
-      }
-      let str = JSON.stringify(pageable);
-      if(this.lastParam === str){
-        return;
-      }else{
-        this.lastParam = str;
-      }
-      getInstanceList(pageable).then(res => {
-        let _this = this
-        _this.tableData = res.data.result
-        _this.total = res.data.total
-      })
-    },
-    terminateInstance(row) {
-      terminateInstance(row.instanceId).then(() => {
-        this.getList();
-      });
-    },
-    resetTimeLine() {
-      this.openTimeLine = false;
-      this.timeLine = [];
-    },
-    loadTimeLine(instanceId) {
-      this.openTimeLine = true;
-      getLogTimeLine(instanceId).then(res => {
-        this.timeLine = res.data.result
-      })
-    }
-  },
-  mounted() {
-    this.getStatusOptions();
-    this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
-    this.getList();
-  },
-  computed: {
-    space() {
-      return this.spaceRef.data;
-    }
-  },
-  watch: {
-    currentPage: {
-      immediate: true,
-      deep: true,
-      handler(newVal, oldVal) {
-        this.getList()
-      }
-    },
-    pageSize: {
-      immediate: true,
-      deep: true,
-      handler(newVal, oldVal) {
-        this.getList()
+      },
+      changePage(val) {
+        this.currentPage = val
+      },
+      changeSize(val) {
+        this.pageSize = val
+      },
+      getList() {
+        let pageable = {
+          page: this.currentPage,
+          size: this.pageSize,
+          conditions: {
+            space: this.space,
+            status: this.choosenStatus
+          }
+        }
+        let str = JSON.stringify(pageable);
+        if (this.lastParam === str) {
+          return;
+        } else {
+          this.lastParam = str;
+        }
+        getInstanceList(pageable).then(res => {
+          let _this = this
+          _this.tableData = res.data.result
+          _this.total = res.data.total
+        })
+      },
+      terminateInstance(row) {
+        terminateInstance(row.instanceId).then(() => {
+          this.getList();
+        });
+      },
+      resetTimeLine() {
+        this.openTimeLine = false;
+        this.timeLine = [];
+      },
+      loadTimeLine(instanceId) {
+        this.openTimeLine = true;
+        getLogTimeLine(instanceId).then(res => {
+          this.timeLine = res.data.result
+        })
+      },
+      handleContext(scope) {
+        let row = scope.row;
+        let index = scope.$index;
+        getContext(row.instanceId).then(res => {
+          this.$set(this.tableData[index], 'context', res.data.result);
+        })
       }
     },
-    choosenStatus: {
-      immediate: false,
-      deep: true,
-      handler(newVal, oldVal) {
+    mounted() {
+      this.getStatusOptions();
+      this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
+      this.getList();
+    },
+    computed: {
+      space() {
+        return this.spaceRef.data;
+      }
+    },
+    watch: {
+      currentPage: {
+        immediate: true,
+        deep: true,
+        handler(newVal, oldVal) {
           this.getList()
-      }
-    },
-    space: {
-      immediate: false,
-      deep: true,
-      handler(newVal, oldVal) {
-        this.getList()
+        }
+      },
+      pageSize: {
+        immediate: true,
+        deep: true,
+        handler(newVal, oldVal) {
+          this.getList()
+        }
+      },
+      choosenStatus: {
+        immediate: false,
+        deep: true,
+        handler(newVal, oldVal) {
+          this.getList()
+        }
+      },
+      space: {
+        immediate: false,
+        deep: true,
+        handler(newVal, oldVal) {
+          this.getList()
+        }
       }
     }
   }
-}
 </script>

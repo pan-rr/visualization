@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" @command="handleClick">
     <span class="el-dropdown-link">
-      <el-avatar shape="square"  :src="avatar"></el-avatar>
+      <el-avatar shape="square"  :src="avatar" style="background-color: #e4e4e4;"></el-avatar>
     </span>
     <el-dropdown-menu>
       <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>

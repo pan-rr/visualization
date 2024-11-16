@@ -16,12 +16,8 @@
             </el-button-group>
         </el-form>
         <el-table :data="permissionList" border stripe>
-            <!-- <el-table-column align="center" prop="tenantId" label="权限归属者ID">
-            </el-table-column> -->
             <el-table-column align="center" prop="tenantName" label="权限归属者名称">
             </el-table-column>
-            <!-- <el-table-column align="center" prop="permissionId" label="权限ID">
-            </el-table-column> -->
             <el-table-column align="center" prop="permissionName" label="权限名称">
             </el-table-column>
             <el-table-column align="center" prop="resourceList" label="权限资源">
@@ -40,14 +36,9 @@
             <div>
                 <el-form ref="createForm" :model="createForm">
                     <el-form-item label="权限归属者名称：">
-                        <!-- <el-input v-model="createForm.tenantName" readonly></el-input> -->
                         {{ createForm.tenantName }}
                     </el-form-item>
 
-                    <el-form-item label="权限归属者ID：">
-                        {{ createForm.tenantId }}
-                        <!-- <el-input v-model="createForm.tenantId" readonly></el-input> -->
-                    </el-form-item>
 
                     <el-form-item label="权限名称：">
                         <el-input v-model="createForm.permissionName"></el-input>

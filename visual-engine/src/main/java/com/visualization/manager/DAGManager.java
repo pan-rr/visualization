@@ -1,6 +1,5 @@
 package com.visualization.manager;
 
-import com.visualization.stage.VisualStageBuilder;
 import com.visualization.enums.Status;
 import com.visualization.model.dag.db.*;
 import com.visualization.model.dag.logicflow.LogicFlowPack;
@@ -8,7 +7,10 @@ import com.visualization.repository.file.FilePathMappingRepository;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import com.visualization.service.TaskService;
+import com.visualization.stage.VisualStageBuilder;
+import com.visualization.stage.VisualStageContextService;
 import com.visualization.view.base.VisualStage;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,9 @@ public class DAGManager {
     @Resource
     private DAGDataSourceManager dagDataSourceManager;
 
+    @Resource
+    private VisualStageContextService visualStageContextService;
+
     private List<DAGPointer> computeNextPointers(DAGPointer pointer) {
         List<Edge> edges = dagService.findNextEdges(pointer);
         if (!CollectionUtils.isEmpty(edges)) {
@@ -65,6 +70,7 @@ public class DAGManager {
 
     public void executeStage(DAGPointer pointer) {
 
+        InstanceContext context = visualStageContextService.getById(pointer.getInstanceId());
         List<DAGPointer> nextPointers = computeNextPointers(pointer);
 
         VisualStage visualStage = VisualStageBuilder.builder()
@@ -72,6 +78,7 @@ public class DAGManager {
                 .taskService(taskService)
                 .dagDataSourceManager(dagDataSourceManager)
                 .filePathMappingRepository(filePathMappingRepository)
+                .context(context.getCtx())
                 .build().buildStage();
         visualStage.execute();
 
@@ -83,7 +90,8 @@ public class DAGManager {
         }
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
+            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
+                visualStageContextService.updateContext(context);
                 dagService.deletePointer(pointer);
                 dagService.tryFinishInstance(instanceId);
                 if (!CollectionUtils.isEmpty(nextPointers)) {

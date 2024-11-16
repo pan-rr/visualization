@@ -27,6 +27,8 @@ public abstract class BaseView implements View {
 
     protected JdbcTemplate jdbcTemplate;
 
+    protected ViewContext context;
+
     protected int getId() {
         return id;
     }
@@ -69,4 +71,7 @@ public abstract class BaseView implements View {
         jdbcTemplate.execute(sql);
     }
 
+    public void setContext(ViewContext context) {
+        this.context = context;
+    }
 }

@@ -8,6 +8,7 @@ import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.model.dag.db.DAGTemplate;
 import com.visualization.service.DAGService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,10 @@ public class VisualStageFailHandler {
     private VisualEngineService visualEngineService;
 
 
+    @Value("${visual.error.printStackTrace:false}")
+    private Boolean printStackTrace;
+
+
     private final LinkedBlockingQueue<VisualStageContext> failQ = new LinkedBlockingQueue<>();
 
 
@@ -45,6 +50,7 @@ public class VisualStageFailHandler {
             for (; ; ) {
                 try {
                     VisualStageContext context = failQ.take();
+                    printStackTrace(context.getThrowable());
                     DAGPointer pointer = context.getPointer();
                     visualLogService.accept(VisualStageWrapper.fail(pointer, context.getThrowable()));
                     DAGTemplate template = dagService.getTemplateByPointer(pointer);
@@ -57,6 +63,12 @@ public class VisualStageFailHandler {
                 }
             }
         }, WorkerGroup.DAG_FAIL_HANDLER);
+    }
+
+    private void printStackTrace(Throwable e) {
+        if (Boolean.TRUE.equals(printStackTrace)) {
+            log.error("visual stage error {}", Arrays.toString(e.getStackTrace()));
+        }
     }
 
     public void offerFail(VisualStageContext context) {

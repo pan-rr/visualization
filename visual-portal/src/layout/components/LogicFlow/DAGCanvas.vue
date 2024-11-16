@@ -1,23 +1,19 @@
 <template>
-  <div>
-    <h2 style="display: flex; align-items: center; justify-content: center;"> Visualization流程绘制</h2>
-    <el-row>
-      <!-- 辅助工具栏 -->
-      <Control :submitable="submitable" v-if="lf" :lf="lf" @catData="$_catData" @refreash="$_refreash"></Control>
-    </el-row>
-    <el-row>
-      <el-container>
-        <el-aside width="8%">
-          <!-- 节点面板 -->
-          <NodePanel v-if="submitable" :lf="lf" :nodeList="nodeList"></NodePanel>
-        </el-aside>
-        <el-main>
-          <!-- 画布 -->
-          <div id="LF-view" style="height: 100vh; width: 100%; margin: 0%; border: 1%;border-style:dashed;"
-            ref="container"></div>
-        </el-main>
-      </el-container>
-    </el-row>
+  <div class="templateContainer">
+    <h2 class="templateTitle" :submitable="submitable"> Visualization流程绘制</h2>
+    <!-- 辅助工具栏 -->
+    <Control :submitable="submitable" v-if="lf" :lf="lf" @catData="$_catData" @refreash="$_refreash"></Control>
+    <el-container style="height: 90vh;">
+      <el-aside width="8%" v-if="submitable">
+        <!-- 节点面板 -->
+        <NodePanel :lf="lf" :nodeList="nodeList"></NodePanel>
+      </el-aside>
+      <el-main style="padding: 0%;">
+        <!-- 画布 -->
+        <div id="LF-view" style="height: 100%; width: 100%; margin: 0%; border: 1px solid #DCDFE6;" ref="container">
+        </div>
+      </el-main>
+    </el-container>
 
 
 
@@ -48,9 +44,12 @@
   import {
     registerVisual,
     registerSQL,
+    registerHttp,
   } from './registerNode'
   import { getTemplateJSON } from '../../../api/dag'
   import SpaceSelector from '../Visual/SpaceSelector.vue'
+  import Editor from '../Visual/Editor.vue'
+  import '@/assets/css/visual/canvas.scss';
 
   let canvasData = {};
 
@@ -61,7 +60,7 @@
       templateId: String,
       submitable: Boolean,
     },
-    components: { NodePanel, AddPanel, Control, PropertyDialog, DataDialog, SpaceSelector },
+    components: { NodePanel, AddPanel, Control, PropertyDialog, DataDialog, SpaceSelector, Editor },
     data() {
       return {
         lf: null,
@@ -123,6 +122,7 @@
       $_registerNode() {
         registerVisual(this.lf)
         registerSQL(this.lf)
+        registerHttp(this.lf)
         this.$_render()
       },
       $_render() {
@@ -135,7 +135,7 @@
       },
       $_getData() {
         const data = this.lf.getGraphData()
-        // console.log(JSON.stringify(data))
+        
       },
       $_LfEvent() {
         this.lf.on('node:click', ({ data }) => {
@@ -150,7 +150,7 @@
           this.hideAddPanel()
         })
         this.lf.on('edge:add', ({ data }) => {
-          console.log('edge:add', data)
+          
         })
         this.lf.on('node:mousemove', ({ data }) => {
           this.moveData = data
@@ -165,7 +165,7 @@
           })
         })
         this.lf.on('node:mousemove', () => {
-          // console.log('on mousemove')
+          
         })
       },
       clickPlus(e, attributes) {
@@ -179,7 +179,7 @@
       },
       mouseDownPlus(e, attributes) {
         e.stopPropagation()
-        console.log('mouseDownPlus', e, attributes)
+        
       },
       hideAddPanel() {
         this.$data.showAddPanel = false
@@ -198,7 +198,7 @@
         getTemplateJSON(this.templateId).then(res => {
           canvasData = JSON.parse(res.data.result);
           this.$_render();
-        }).catch(()=>{
+        }).catch(() => {
           canvasData = {};
           this.$_render();
         })

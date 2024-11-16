@@ -82,6 +82,12 @@ public class PortalController {
         return Response.success("中止实例成功！");
     }
 
+    @GetMapping("/getContext")
+    public Response<Object> getContext(@RequestParam("instanceId") String instanceId) {
+        Long id = Long.valueOf(instanceId);
+        return Response.success(dagService.getContext(id));
+    }
+
     @GetMapping("/disableTemplateById")
     public Response<Object> disableTemplateById(@RequestParam("templateId") String templateId) {
         Long id = Long.valueOf(templateId);

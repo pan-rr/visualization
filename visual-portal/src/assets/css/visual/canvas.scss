@@ -1,0 +1,51 @@
+.templateContainer {
+    width: 100%;
+    border: 1px solid #DCDFE6;
+    background-color: #f5f7fa;
+}
+
+.templateTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #606266;
+}
+
+.templatePage {
+    display: flex;
+    width: auto;
+    justify-content: space-between;
+}
+
+.templateContext {
+    width: 75%;
+}
+
+.templateConfig {
+    width: 25%;
+    justify-content: space-between;
+    margin: 0%;
+    align-self: self-end;
+}
+
+.templateConfig>.configRow:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+
+.configRow {
+    display: flex;
+    width: 100%;
+    align-self:flex-end;
+    justify-content: space-between;
+    margin-bottom: 0%;
+    padding: 0%;
+}
+
+.configKey {
+    align-self: center;
+    text-align: center;
+    width: 40%;
+    color: #606266;
+    overflow: visible;
+}

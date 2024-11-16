@@ -2,7 +2,8 @@
     <div>
         <el-form-item label="需执行的SQL">
             <Tips message="查询语句"></Tips>
-            <el-input v-model="fatherRef.sql.script"></el-input>
+            <!-- <el-input v-model="fatherRef.sql.script"></el-input> -->
+            <Editor title="SQL" :editor-options="{ mode: 'sql' }" target="script" :target-ref="fatherRef.sql"></Editor>
         </el-form-item>
         <div style="line-height: 150%">
             <el-switch v-model="useDataSourceConfig" active-text="使用配置数据源" inactive-text="使用临时数据源"
@@ -34,6 +35,7 @@
 <script>
 
 import { getDataSourceOptions } from '../../../../api/dag';
+import Editor from '../Editor.vue';
 import Tips from '../Tips.vue';
 
 
@@ -41,7 +43,7 @@ import Tips from '../Tips.vue';
 
 export default {
     components: {
-        Tips
+        Tips,Editor
     },
     props: {
         fatherRef: {

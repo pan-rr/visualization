@@ -29,5 +29,11 @@ export default {
       meta: { title: '子租户创建', needCache: false, needAuthFilter: true },
       component: () => import('@/views/Auth/SubTenantRegister.vue')
     },
+    {
+      path: 'authTree',
+      name: 'authTree',
+      meta: { title: '权限树查看' },
+      component: () => import('@/views/Auth/Relation.vue')
+    },
   ]
 }

@@ -12,6 +12,7 @@ import com.visualization.repository.dag.*;
 import com.visualization.service.DAGService;
 import com.visualization.service.MinIOService;
 import com.visualization.service.RedisService;
+import com.visualization.stage.VisualStageContextService;
 import com.visualization.utils.PageUtil;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -58,6 +59,9 @@ public class DAGServiceImpl implements DAGService {
     @Resource
     private RedisService redisService;
 
+    @Resource
+    private VisualStageContextService visualStageContextService;
+
 
     @Override
     public Page<DAGTemplate> getTemplateList(PageParam parameter) {
@@ -102,6 +106,7 @@ public class DAGServiceImpl implements DAGService {
                 .unfinishedTaskCount(template.getTotalTaskCount())
                 .build();
         dagInstanceRepository.save(instance);
+        visualStageContextService.createContext(InstanceContext.initContext(instance, template));
         return instance;
     }
 
@@ -151,7 +156,7 @@ public class DAGServiceImpl implements DAGService {
     @Override
     public void updateInstanceStatus(Long instanceId, Integer status) {
         Integer affect = dagInstanceRepository.updateInstanceStatus(instanceId, status);
-        if (affect == null || affect == 0)return;
+        if (affect == null || affect == 0) return;
         if (Status.USER_TERMINATE.getStatus().equals(status)) {
             dagPointerRepository.deleteByInstanceId(instanceId);
             edgeRepository.deleteByInstanceId(instanceId);
@@ -253,5 +258,10 @@ public class DAGServiceImpl implements DAGService {
         DAGTemplate template = getExecutableTemplate(templateId);
         minIOService.getTemplateStr(template);
         return template.getJson();
+    }
+
+    @Override
+    public String getContext(Long instanceId) {
+        return visualStageContextService.getById(instanceId).getContext();
     }
 }

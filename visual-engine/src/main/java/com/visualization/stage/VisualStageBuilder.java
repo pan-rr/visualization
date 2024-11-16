@@ -30,6 +30,8 @@ public class VisualStageBuilder {
 
     private VisualStage visualStage;
 
+    private Map<String, Object> context;
+
 
     public VisualStage buildStage() {
         createStage();

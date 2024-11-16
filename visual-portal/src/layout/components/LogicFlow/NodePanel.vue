@@ -1,16 +1,17 @@
 <template>
   <div class="node-panel">
-    <h2 style="margin-bottom: 20%; margin-top: 20%; text-align: center;display: block;">任务节点
-    </h2>
+    <div style=" margin-top: 0%; text-align: center;display: block; background-color: #f5f7fa; font-size: 14px;
+    color: #606266; border: 1px solid #DCDFE6; padding: 5%;">任务节点拖拽区
+    </div>
     <div class="node-item" v-for="item in nodeList" :key="item.text" @mousedown="$_dragNode(item)">
       <el-button plain size="mini">
         <div style="display: flex; align-items: center; justify-content: center;">
           <svg style="display: block; width: 50%;height: 50%;" viewBox="0 0 1024 1024" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
-            <path :d="item.svg"></path>
+            <path :d="path" v-for="path in item.paths"></path>
           </svg>
         </div>
-        <span  style="text-align: center;display: block;">{{ item.text }}</span>
+        <span style="text-align: center;display: block;">{{ item.text }}</span>
       </el-button>
     </div>
   </div>
