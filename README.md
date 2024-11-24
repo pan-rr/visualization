@@ -1,8 +1,10 @@
 ### Visualization分布式数据分析平台
 
 一个类似Kettle的数据分析平台，目标是数据分析，可承担一点ETL任务。
-Visualization使用低代码方式编排DAG任务，集群自动执行相应的任务。
+Visualization使用低代码(类工作流)方式编排DAG任务，集群自动执行相应的任务。
 如果喜欢或者对您有帮助，请点个star吧！：）
+
+[点击到达GitHub](https://github.com/pan-rr/visualization) | [点击到达码云](https://gitee.com/pan-rr/visualization)
 
 #### 架构图
 
@@ -12,13 +14,14 @@ Visualization使用低代码方式编排DAG任务，集群自动执行相应的�
 
 + 流程配置化。提供前端拖拉拽形式配置流程，数据操作使用表单配置，少量代码即可完成相应的配置；
 + 基于Spring Cloud的分布式集群计算，外部组件依赖较少，容器集群部署相对方便；
++ 基于`SQL-SELECT`方式提取数据，上手成本相对低；
 + DAG任务按优先级调度，节点任务由集群自动执行；
 + 支持多数据源，目前支持CSV、JDBC(MySQL驱动、PostgreSQL)，后续会增加其他类型的数据源；
 + 文件分片上传下、下载；
 + 支持流程实例任务执行情况查询，以任务时间线形式展示；
 + 支持多租户权限管理，允许父子租户
 + 支持前端页面路由按权限动态生成，后端按资源鉴权；
-+ 权限树查看
++ 权限树使用G6绘制
 + 部分组件支持语法提示和高亮
 + 支持Visual、SQL、HTTP任务
 
@@ -117,7 +120,7 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 + Visual
 
-  多输入项和一个输出项，输入项定义数据获取信息，输出项定义数据连接和输出信息；
+  多输入项和一个输出项，输入项定义数据获取信息，输出项定义数据连接和输出信息；使用`SQL-SELECT`方式提取、转换数据，上手成本相对低；
 
 + SQL
   
@@ -126,6 +129,11 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 + Context(非开源版)
   
   用于上下文变量注入或覆盖，其他 任务可以使用表达式获取上下文变量；
+
++ HTTP
+  
+  主要用于外部接口调用。通知外部系统、获取token等用途；
+
 
 #### 任务流程配置步骤说明
 
@@ -154,8 +162,6 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 流程模版文件上传下载
 
-![文件管理](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/文件管理.png)
-
 + 在文件管理页找到对应路径上传下载。
 
 + 支持分片上传、秒传、下载
@@ -168,6 +174,8 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 尊重劳动成果，未经允许禁止商业闭源修改使用。
 
-二次开发必须注明出处`https://gitee.com/pan-rr/visualization` ，禁止抹掉原作者信息。
+二次开发必须注明出处`https://github.com/pan-rr/visualization` 或者 `https://gitee.com/pan-rr/visualization`
 
-有什么问题可提issue或者邮件vision_netmail@163.com联系
+禁止抹掉原作者信息
+
+有什么问题或建议可提issue或者邮件vision_netmail@163.com联系

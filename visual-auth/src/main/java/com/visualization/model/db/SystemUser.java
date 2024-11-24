@@ -38,9 +38,4 @@ public class SystemUser {
 
     private LocalDateTime modifyTime;
 
-    public void creatable() {
-//        if (oa.contains(AuthConstant.PUBLIC)) {
-//            throw new AuthException("该账号已被注册！");
-//        }
-    }
 }

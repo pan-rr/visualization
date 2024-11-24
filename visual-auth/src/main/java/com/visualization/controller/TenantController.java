@@ -25,8 +25,8 @@ public class TenantController {
     public Response registerSubTenant(@Valid @RequestBody PortalTenantUser portalTenantUser, BindingResult bindingResult) {
         Response error = BindingResultUtil.checkError(bindingResult);
         if (error != null) return error;
-        userService.createSubTenant(portalTenantUser);
-        return Response.success("注册成功！");
+        boolean flag = userService.createSubTenant(portalTenantUser);
+        return Response.success(flag ? "注册成功！" : "该账号已被注册或不存在对应父账号，请检查！");
     }
 
 }

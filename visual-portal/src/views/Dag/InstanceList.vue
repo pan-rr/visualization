@@ -67,139 +67,149 @@
 
 <script>
 
-  import { getContext, getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
-  import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
+import { getContext, getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
+import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 
 
-  export default {
-    name: 'VisualInstanceList',
-    components: {
-      SpaceSelector
+export default {
+  name: 'VisualInstanceList',
+  components: {
+    SpaceSelector
+  },
+  data() {
+    return {
+      spaceRef: {
+        data: ''
+      },
+      tableData: [],
+      total: 10,
+      pageSize: 10,
+      currentPage: 1,
+      timeLine: [],
+      openTimeLine: false,
+      choosenStatus: [],
+      statusOptions: [],
+      lastParam: '',
+    }
+  },
+  methods: {
+    header() {
+      return (
+        <div>操作
+          <el-button style='margin-left:10px;' plain type='info' icon='el-icon-refresh' on-click={() => { this.getList(); }} circle size='mini'></el-button>
+        </div>
+      )
     },
-    data() {
-      return {
-        spaceRef: {
-          data: ''
-        },
-        tableData: [],
-        total: 10,
-        pageSize: 10,
-        currentPage: 1,
-        timeLine: [],
-        openTimeLine: false,
-        choosenStatus: [],
-        statusOptions: [],
-        lastParam: '',
+    getStatusOptions() {
+      getStatusOptions(2).then(res => {
+        this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
+      })
+    },
+    filterChange(filter) {
+      if (filter['status']) {
+        this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
+        this.getList();
       }
     },
-    methods: {
-      header() {
-        return (
-          <div>操作
-            <el-button style='margin-left:10px;' plain type='info' icon='el-icon-refresh' on-click={() => { this.getList(); }} circle size='mini'></el-button>
-          </div>
-        )
-      },
-      getStatusOptions() {
-        getStatusOptions(2).then(res => {
-          this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
-        })
-      },
-      filterChange(filter) {
-        if (filter['status']) {
-          this.choosenStatus = Object.values(filter['status']).map(i => parseInt(i))
-
-        }
-      },
-      changePage(val) {
-        this.currentPage = val
-      },
-      changeSize(val) {
-        this.pageSize = val
-      },
-      getList() {
-        let pageable = {
-          page: this.currentPage,
-          size: this.pageSize,
-          conditions: {
-            space: this.space,
-            status: this.choosenStatus
+    changePage(val) {
+      this.currentPage = val
+    },
+    changeSize(val) {
+      this.pageSize = val
+    },
+    getList() {
+      let pageable = {
+        page: this.currentPage,
+        size: this.pageSize,
+        conditions: {
+          space: {
+            conditionType: 'eq',
+            param: [this.space]
+          },
+          status: {
+            conditionType: 'in',
+            param: this.choosenStatus.length > 0 ? this.choosenStatus : [-4, 0, 1]
           }
-        }
-        let str = JSON.stringify(pageable);
-        if (this.lastParam === str) {
-          return;
-        } else {
-          this.lastParam = str;
-        }
-        getInstanceList(pageable).then(res => {
-          let _this = this
-          _this.tableData = res.data.result
-          _this.total = res.data.total
-        })
-      },
-      terminateInstance(row) {
-        terminateInstance(row.instanceId).then(() => {
-          this.getList();
-        });
-      },
-      resetTimeLine() {
-        this.openTimeLine = false;
-        this.timeLine = [];
-      },
-      loadTimeLine(instanceId) {
-        this.openTimeLine = true;
-        getLogTimeLine(instanceId).then(res => {
-          this.timeLine = res.data.result
-        })
-      },
-      handleContext(scope) {
-        let row = scope.row;
-        let index = scope.$index;
-        getContext(row.instanceId).then(res => {
-          this.$set(this.tableData[index], 'context', res.data.result);
-        })
+        },
+        sort: [{
+          field: 'instanceId',
+          direction: -1
+        }]
+      };
+      let str = JSON.stringify(pageable);
+      if (this.lastParam === str) {
+        return;
+      } else {
+        this.lastParam = str;
+      }
+      getInstanceList(pageable).then(res => {
+        let _this = this
+        _this.tableData = res.data.result
+        _this.total = res.data.total
+      })
+    },
+    terminateInstance(row) {
+      terminateInstance(row.instanceId).then(() => {
+        this.getList();
+      });
+    },
+    resetTimeLine() {
+      this.openTimeLine = false;
+      this.timeLine = [];
+    },
+    loadTimeLine(instanceId) {
+      this.openTimeLine = true;
+      getLogTimeLine(instanceId).then(res => {
+        this.timeLine = res.data.result
+      })
+    },
+    handleContext(scope) {
+      let row = scope.row;
+      let index = scope.$index;
+      getContext(row.instanceId).then(res => {
+        this.$set(this.tableData[index], 'context', res.data.result);
+      })
+    }
+  },
+  mounted() {
+    this.getStatusOptions();
+    this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
+    this.getList();
+  },
+  computed: {
+    space() {
+      return this.spaceRef.data;
+    }
+  },
+  watch: {
+    currentPage: {
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
       }
     },
-    mounted() {
-      this.getStatusOptions();
-      this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
-      this.getList();
-    },
-    computed: {
-      space() {
-        return this.spaceRef.data;
+    pageSize: {
+      immediate: true,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
       }
     },
-    watch: {
-      currentPage: {
-        immediate: true,
-        deep: true,
-        handler(newVal, oldVal) {
-          this.getList()
-        }
-      },
-      pageSize: {
-        immediate: true,
-        deep: true,
-        handler(newVal, oldVal) {
-          this.getList()
-        }
-      },
-      choosenStatus: {
-        immediate: false,
-        deep: true,
-        handler(newVal, oldVal) {
-          this.getList()
-        }
-      },
-      space: {
-        immediate: false,
-        deep: true,
-        handler(newVal, oldVal) {
-          this.getList()
-        }
+    choosenStatus: {
+      immediate: false,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
+      }
+    },
+    space: {
+      immediate: false,
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getList()
       }
     }
   }
+}
 </script>

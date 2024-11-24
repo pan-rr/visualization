@@ -43,7 +43,6 @@ public class PortalTenantUser {
                 .username(username).status(UserStatusEnum.NORMAL.getCode())
                 .password(MD5Utils.encode(password)).modifyTime(now)
                 .createTime(now).build();
-        user.creatable();
         SystemTenant tenant = SystemTenant.builder()
                 .tenantId(id)
                 .fatherId(Long.valueOf(fatherId))

@@ -1,5 +1,6 @@
 package com.visualization.controller;
 
+import com.visualization.handler.AuthPermissionHandler;
 import com.visualization.model.Response;
 import com.visualization.model.api.GrantView;
 import com.visualization.model.api.PortalPermission;
@@ -23,6 +24,9 @@ public class PermissionController {
     @Resource
     private PermissionService permissionService;
 
+    @Resource
+    private AuthPermissionHandler authPermissionHandler;
+
     @PostMapping("/createPermission")
     public Response createPermission(@Valid @RequestBody SystemPermission systemPermission, BindingResult bindingResult) {
         Response error = BindingResultUtil.checkError(bindingResult);
@@ -36,6 +40,7 @@ public class PermissionController {
         Response error = BindingResultUtil.checkError(bindingResult);
         if (error != null) return error;
         permissionService.grantPermissionToUser(portalUserPermission);
+        authPermissionHandler.flushPermission(portalUserPermission.getOa());
         return Response.success("赋权成功！");
     }
 
@@ -52,6 +57,7 @@ public class PermissionController {
     @PostMapping("/retractPermission")
     public Response retractPermission(@RequestBody GrantView grantView) {
         permissionService.retractPermission(grantView);
+        authPermissionHandler.flushPermission(grantView.getOa());
         return Response.success("撤销权限成功！");
     }
 }

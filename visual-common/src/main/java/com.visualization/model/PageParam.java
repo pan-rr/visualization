@@ -15,6 +15,6 @@ import java.util.Map;
 public class PageParam {
     private Integer page = 0;
     private Integer size = 10;
-    private Map<String, Object> conditions;
+    private Map<String, Condition> conditions;
     private List<SortParam> sort;
 }

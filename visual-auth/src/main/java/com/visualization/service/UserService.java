@@ -12,7 +12,7 @@ public interface UserService  {
 
     void changePassword(ChangePassword request);
 
-    void createSubTenant(PortalTenantUser tenantUser);
+    boolean createSubTenant(PortalTenantUser tenantUser);
 
     SystemUser getNonNullUser(String oa);
 

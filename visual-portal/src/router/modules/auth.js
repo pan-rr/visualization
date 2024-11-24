@@ -32,8 +32,8 @@ export default {
     {
       path: 'authTree',
       name: 'authTree',
-      meta: { title: '权限树查看' },
-      component: () => import('@/views/Auth/Relation.vue')
+      meta: { title: '权限树' },
+      component: () => import('@/views/Auth/AuthTree.vue')
     },
   ]
 }

@@ -27,6 +27,10 @@ public class InstanceContext {
     @Transient
     private Map<String, Object> ctx;
 
+    public String getKey() {
+        return "visual:context:" + instanceId.toString();
+    }
+
     public void toMap() {
         Gson gson = new Gson();
         this.ctx = gson.fromJson(context, Map.class);

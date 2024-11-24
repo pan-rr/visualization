@@ -1,0 +1,6 @@
+<svg class="icon"
+  style="width: 1em;height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;"
+  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6842">
+    <path d= "M960 0H64a64 64 0 0 0-64 64v896a64 64 0 0 0 64 64h896a64 64 0 0 0 64-64V64a64 64 0 0 0-64-64z m0 960H64V64h896z"  fill="#061161" p-id="6843"></path>
+    <path d=  "M128 176A48 48 0 0 1 176 128h288a48 48 0 0 1 48 48v96a48 48 0 0 1-48 48h-192v167.68H320v-23.68a48 48 0 0 1 48-48h288a48 48 0 0 1 48 48v96a48 48 0 0 1-48 48h-192v168.32H512v-24.32a48 48 0 0 1 48-48h288a48 48 0 0 1 48 48v96a48 48 0 0 1-48 48h-288a48 48 0 0 1-48-48v-23.68H416V608h-48A48 48 0 0 1 320 560v-24.32H224V320h-48A48 48 0 0 1 128 272z" fill="#061161" p-id="6843"></path>
+</svg>

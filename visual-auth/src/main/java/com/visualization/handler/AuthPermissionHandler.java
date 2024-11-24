@@ -4,7 +4,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.visualization.exeception.AuthException;
 import com.visualization.mapper.ResourceMapper;
 import com.visualization.mapper.TenantMapper;
+import com.visualization.mapper.UserMapper;
 import com.visualization.model.db.SystemResource;
+import com.visualization.model.db.SystemUser;
 import com.visualization.utils.OwnerUtil;
 import com.visualization.utils.PublicTenantUtil;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -30,6 +32,9 @@ public class AuthPermissionHandler {
     @Resource
     private ResourceMapper resourceMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
     private static final String prefix = "visual:permission:";
 
     private String permissionKey(Long userId) {
@@ -46,7 +51,17 @@ public class AuthPermissionHandler {
     }
 
     public void cleanPermission() {
-        redisTemplate.delete(permissionKey(StpUtil.getLoginIdAsLong()));
+        doFlush(permissionKey(StpUtil.getLoginIdAsLong()));
+    }
+
+    private void doFlush(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public void flushPermission(String oa) {
+        SystemUser systemUser = userMapper.selectOneByOA(oa);
+        if (Objects.isNull(systemUser)) return;
+        doFlush(permissionKey(systemUser.getUserId()));
     }
 
     public List<String> getRole(Long userId) {

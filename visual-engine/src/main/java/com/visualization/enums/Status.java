@@ -34,7 +34,7 @@ public enum Status {
 
     private static final int[] EXECUTABLE_STATUS = new int[]{NORMAL.status};
 
-    private static final Status[] INSTANCE_STATUS_LIST = new Status[]{NORMAL,FINISHED,USER_TERMINATE,BLOCK_FAIL_REACH_THRESHOLD};
+    private static final Status[] INSTANCE_STATUS_LIST = new Status[]{NEW, NORMAL, FINISHED, USER_TERMINATE, BLOCK_FAIL_REACH_THRESHOLD};
 
     Status(Integer status, String statusName) {
         this.status = status;
@@ -73,7 +73,7 @@ public enum Status {
         return res;
     }
 
-    public static int[] getExecutablePointerStatus(){
+    public static int[] getExecutablePointerStatus() {
         return EXECUTABLE_STATUS;
     }
 }

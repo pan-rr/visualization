@@ -65,15 +65,13 @@ public class DAGServiceImpl implements DAGService {
 
     @Override
     public Page<DAGTemplate> getTemplateList(PageParam parameter) {
-        Sort defaultSort = Sort.by(Sort.Order.desc("templateId"));
-        Pair<Specification<DAGTemplate>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGTemplate.class, defaultSort);
+        Pair<Specification<DAGTemplate>, PageRequest> pair = PageUtil.buidlRequestPair(parameter, DAGTemplate.class);
         return dagTemplateRepository.findAll(pair.getFirst(), pair.getSecond());
     }
 
     @Override
     public Page<DAGInstance> getInstanceList(PageParam parameter) {
-        Sort defaultSort = Sort.by(Sort.Order.desc("instanceId"));
-        Pair<Specification<DAGInstance>, PageRequest> pair = PageUtil.convertNormalRequest(parameter, DAGInstance.class, defaultSort);
+        Pair<Specification<DAGInstance>, PageRequest> pair = PageUtil.buidlRequestPair(parameter, DAGInstance.class);
         return dagInstanceRepository.findAll(pair.getFirst(), pair.getSecond());
     }
 
