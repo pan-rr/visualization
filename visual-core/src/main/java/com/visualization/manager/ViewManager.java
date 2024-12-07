@@ -4,7 +4,10 @@ import com.visualization.factory.InputFactory;
 import com.visualization.factory.OutputFactory;
 import com.visualization.handler.SpringContextHandler;
 import com.visualization.handler.rewrite.ViewRewriteHandler;
-import com.visualization.view.base.*;
+import com.visualization.runtime.*;
+import com.visualization.view.base.BaseView;
+import com.visualization.view.base.View;
+import com.visualization.view.base.ViewConf;
 import com.visualization.view.in.InputView;
 import com.visualization.view.out.OutputView;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +34,7 @@ public class ViewManager {
 
     private final int id;
 
-    private ViewContext context;
+    private VContext context;
 
     public ViewManager(VisualStage stage) {
         List<ViewConf> inView = stage.getInputView();
@@ -42,7 +45,7 @@ public class ViewManager {
         stage.filter(viewRewriteHandlers);
         id = SessionManager.getId();
         this.federationDataSource = db;
-        this.context = new ViewContext(stage.getVisualContext());
+        this.context = stage.getRuntimeContext();
         this.inList = inView.stream().map((viewConf -> InputFactory.produce(viewConf, this))).collect(Collectors.toList());
         out = OutputFactory.produce(stage.getOutputView(), this);
         prepareTableName();
@@ -74,7 +77,9 @@ public class ViewManager {
         try {
             CompletableFuture.allOf(inList.stream().map((in) -> CompletableFuture.runAsync(in::generate)).toArray(CompletableFuture[]::new)).join();
             out.generate();
+            this.context.setStatus(VStageStatus.FINISHED);
         } catch (Throwable e) {
+            this.context.setStatus(VStageStatus.FOUND_EXCEPTION);
             throw new RuntimeException(e);
         } finally {
             release(() -> inList.forEach(View::destroy));

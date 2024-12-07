@@ -1,15 +1,18 @@
-package com.visualization.view.base;
+package com.visualization.runtime;
 
 import com.visualization.constant.TaskTypeConstant;
 import com.visualization.handler.rewrite.ViewRewriteHandler;
 import com.visualization.manager.ViewManager;
+import com.visualization.manager.orphan.FlinkManager;
 import com.visualization.manager.orphan.HttpManager;
 import com.visualization.manager.orphan.SQLManager;
+import com.visualization.view.base.ViewConf;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class VisualStage {
@@ -20,7 +23,10 @@ public class VisualStage {
     private Map<String, Object> contextInject;
     private Map<String, Object> visualContext;
     private Map<String, Object> http;
+    private Map<String, Object> flink;
     private String taskType;
+
+    private VContext runtimeContext;
 
 
     public List<Map<String, Object>> getInput() {
@@ -97,13 +103,36 @@ public class VisualStage {
         this.sql = sql;
     }
 
-    public void execute() {
+    public Map<String, Object> getFlink() {
+        return flink;
+    }
+
+    public void setFlink(Map<String, Object> flink) {
+        this.flink = flink;
+    }
+
+    private void initRuntimeContext() {
+        if (Objects.nonNull(this.runtimeContext)) return;
+        this.runtimeContext = new VStageContext(visualContext);
+    }
+
+    public void setRuntimeContext(VContext runtimeContext) {
+        this.runtimeContext = runtimeContext;
+    }
+
+    public VContext getRuntimeContext() {
+        return runtimeContext;
+    }
+
+    public VContext execute() {
         if (StringUtils.isBlank(taskType)) {
             throw new RuntimeException("任务类型为空！");
         }
+        this.initRuntimeContext();
         switch (taskType) {
             case TaskTypeConstant.VISUAL:
-                executeNormal();
+                ViewManager viewManager = new ViewManager(this);
+                viewManager.execute();
                 break;
             case TaskTypeConstant.SQL:
                 SQLManager.execute(this);
@@ -111,14 +140,13 @@ public class VisualStage {
             case TaskTypeConstant.HTTP:
                 HttpManager.execute(this);
                 break;
+            case TaskTypeConstant.FLINK:
+                FlinkManager.execute(this);
+                break;
             default:
                 throw new RuntimeException("无法执行非法的配置！");
         }
-    }
-
-    private void executeNormal() {
-        ViewManager viewManager = new ViewManager(this);
-        viewManager.execute();
+        return this.runtimeContext;
     }
 
 }

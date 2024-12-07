@@ -10,7 +10,7 @@ export default {
       avatar: '',
       spaceOptions: [],
       tenantOptions: [],
-      choosenTenant: ''
+      chosenTenant: ''
     },
   },
   mutations: {
@@ -20,11 +20,11 @@ export default {
       state.userInfo.avatar = ''
       state.userInfo.spaceOptions = data.spaceOptions
       state.userInfo.tenantOptions = data.tenantOptions
-      state.userInfo.choosenTenant = data.tenantOptions ? data.tenantOptions[0].value : ''
+      state.userInfo.chosenTenant = data.tenantOptions ? data.tenantOptions[0].value : ''
       localStorage.setItem('visual', data.token)
     },
     SET_TENANT(state, data) {
-      state.userInfo.choosenTenant = data
+      state.userInfo.chosenTenant = data
     },
   },
   actions: {
@@ -33,7 +33,7 @@ export default {
         userLogin(data).then(async (res) => {
           commit('SET_USER_INFO', res.data.result)
           await dispatch('space/initHolder', res.data.result.spaceOptions,{root:true})
-          await dispatch('permission/userPermissionResource', state.userInfo.choosenTenant,{root:true})
+          await dispatch('permission/userPermissionResource', state.userInfo.chosenTenant,{root:true})
           // await dispatch('permission/handleRoutes', null, { root: true })
           resolve('success')
         })

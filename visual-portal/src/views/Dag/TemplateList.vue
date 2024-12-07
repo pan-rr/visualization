@@ -1,11 +1,14 @@
 <template>
   <div>
-
-    <div>
-      <space-selector :space-ref="spaceRef"></space-selector>
+    <div style="display: flex; justify-items:flex-start;">
+      <el-button plain type='info' icon='el-icon-refresh' @click="getList">刷新</el-button>
+      <div style="width: 100%">
+        <space-selector :space-ref="spaceRef"></space-selector>
+      </div>
     </div>
     <div>
-      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
+      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange"
+        :default-sort="{ prop: 'templateId', order: 'descending' }" @sort-change="changeSort">
         <el-table-column type="expand">
           <template #default="props">
             <div>
@@ -13,13 +16,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="templateId" label="流程模版ID">
+        <el-table-column align="center" prop="templateId" label="流程模版ID" sortable>
         </el-table-column>
         <el-table-column align="center" prop="name" label="流程模版名称">
         </el-table-column>
-        <el-table-column align="center" prop="version" label="发布时间">
+        <el-table-column align="center" prop="version" label="发布时间" sortable>
         </el-table-column>
-        <el-table-column align="center" label="执行优先级">
+        <el-table-column align="center" label="执行优先级" prop="priority" sortable>
           <template slot-scope="scope">
             <el-input-number @change="changePriority(scope.row.templateId, scope.row.priority)"
               v-model="scope.row.priority" controls-position="right" size="mini" :min="1" :max="10"></el-input-number>
@@ -44,7 +47,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column align="center" fixed="right" label="操作" :render-header="header">
+        <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button :disabled="scope.row.status === '-3'"
               @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
@@ -88,7 +91,10 @@ export default {
       currentPage: 1,
       opchoosenStatus: [],
       statusOptions: [],
-      lastParam: '',
+      sort: [{
+        field: 'templateId',
+        direction: -1
+      }],
     }
   },
   computed: {
@@ -97,6 +103,16 @@ export default {
     }
   },
   methods: {
+    changeSort(rule) {
+      let arr = this.sort.filter(i => i.field !== rule.prop);
+      if (rule.order === 'descending') {
+        arr.push({ field: rule.prop, direction: -1 })
+      } else if (rule.order === 'ascending') {
+        arr.push({ field: rule.prop, direction: 1 })
+      }
+      this.sort = arr;
+      this.getList();
+    },
     changeStatus(scope) {
       changeTemplateStatus(scope.row.templateId, scope.row.status).then(() => {
         this.$set(this.tableData[scope.$index], 'status', scope.row.status);
@@ -145,17 +161,8 @@ export default {
             param: this.choosenStatus.length > 0 ? this.choosenStatus : [0]
           }
         },
-        sort: [{
-          field: 'templateId',
-          direction: -1
-        }]
+        sort: this.sort
       };
-      let str = JSON.stringify(pageable);
-      if (this.lastParam === str) {
-        return;
-      } else {
-        this.lastParam = str;
-      }
       getTemplateList(pageable).then(res => {
         let _this = this
         _this.tableData = res.data.result
@@ -168,13 +175,6 @@ export default {
         this.statusOptions = res.data.result.map(i => { return { "text": i.label, "value": i.value } });
       })
     },
-    header() {
-      return (
-        <div>操作
-          <el-button style='margin-left:10px;' plain type='info' icon='el-icon-refresh' on-click={() => { this.getList(); }} circle size='mini'></el-button>
-        </div>
-      )
-    }
   },
   mounted() {
     this.getStatusOptions();

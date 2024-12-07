@@ -35,7 +35,8 @@
     "vue-json-editor": "^1.4.3",
     "vue-json-viewer": "^2.2.22",
     "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "watermark-dom": "^2.3.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.0",

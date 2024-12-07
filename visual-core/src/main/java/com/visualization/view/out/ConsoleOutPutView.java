@@ -2,6 +2,9 @@ package com.visualization.view.out;
 
 import com.visualization.handler.SQLHandler;
 import com.visualization.manager.ViewManager;
+import com.visualization.runtime.VFunctions;
+import com.visualization.runtime.VLog;
+import com.visualization.runtime.VLogTheme;
 import com.visualization.view.base.BaseView;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.ParseException;

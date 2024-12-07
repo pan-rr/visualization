@@ -1,11 +1,10 @@
 package com.visualization.stage;
 
 import com.visualization.enums.WorkerGroup;
-import com.visualization.log.logger.VisualLogService;
-import com.visualization.log.model.VisualStageWrapper;
 import com.visualization.manager.DAGManager;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.model.dag.db.DAGTemplate;
+import com.visualization.runtime.VLogTheme;
 import com.visualization.service.DAGService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,18 +31,29 @@ public class VisualStageFailHandler {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
-    private VisualLogService visualLogService;
-
-    @Resource
     private VisualEngineService visualEngineService;
 
 
     @Value("${visual.error.printStackTrace:false}")
     private Boolean printStackTrace;
 
+    @Resource
+    private VLogger vLogger;
+
 
     private final LinkedBlockingQueue<VisualStageContext> failQ = new LinkedBlockingQueue<>();
 
+
+    private void log(DAGPointer pointer, Throwable e) {
+        vLogger.accept(VLogPoint.builder()
+                .templateId(pointer.getTemplateId().toString())
+                .instanceId(pointer.getInstanceId().toString())
+                .taskId(pointer.getTaskId().toString())
+                .message(Arrays.toString(e.getStackTrace()))
+                .theme(VLogTheme.FAIL.getCode())
+                .time(Instant.now())
+                .build());
+    }
 
     @PostConstruct
     public void init() {
@@ -52,7 +63,7 @@ public class VisualStageFailHandler {
                     VisualStageContext context = failQ.take();
                     printStackTrace(context.getThrowable());
                     DAGPointer pointer = context.getPointer();
-                    visualLogService.accept(VisualStageWrapper.fail(pointer, context.getThrowable()));
+                    log(pointer, context.getThrowable());
                     DAGTemplate template = dagService.getTemplateByPointer(pointer);
                     dagService.makeSurePointerConfigMatchTemplate(pointer, template);
                     pointer.fail();

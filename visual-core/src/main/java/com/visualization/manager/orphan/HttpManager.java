@@ -1,7 +1,7 @@
 package com.visualization.manager.orphan;
 
 import com.google.gson.Gson;
-import com.visualization.view.base.VisualStage;
+import com.visualization.runtime.VisualStage;
 import okhttp3.*;
 import org.springframework.util.CollectionUtils;
 

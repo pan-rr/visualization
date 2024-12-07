@@ -2,14 +2,16 @@
   <div>
     <el-form :model="visualTask" style="margin: auto;">
       <el-card shadow="never">
-        <el-form-item><div style="color: #72767b;">{{ taskType }}节点任务名称</div>
+        <el-form-item>
+          <div style="color: #72767b;">{{ taskType }}节点任务名称</div>
           <el-input v-model="visualTask.text"></el-input>
         </el-form-item>
       </el-card>
-      <div v-if="taskType === 'SQL' || taskType === 'CONTEXT_INJECT' || taskType === 'HTTP'">
+      <div v-if="taskType === 'SQL' || taskType === 'CONTEXT_INJECT' || taskType === 'HTTP' || taskType === 'FLINK'">
         <el-card shadow="never">
           <SQLForm v-if="taskType === 'SQL'" :fatherRef="visualTask"></SQLForm>
           <HttpForm v-if="taskType === 'HTTP'" :fatherRef="visualTask"></HttpForm>
+          <FlinkForm v-if="taskType === 'FLINK'" :fatherRef="visualTask"></FlinkForm>
           <el-form-item v-if="submitable">
             <el-button plain type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
@@ -139,72 +141,74 @@
 </template>
 <script>
 
-  import vueJsonEditor from 'vue-json-editor'
-  import TaskBuilder from '../../../model/TaskBuilder.js';
-  import TabTable from '../Visual/TabTable.vue';
-  import KVTable from '../Visual/KVTable.vue';
-  import Tips from '../Visual/Tips.vue';
-  import SQLForm from '../Visual/form/SQLForm.vue';
-  import JDBCForm from '../Visual/form/JDBCForm.vue';
-  import Editor from '../Visual/Editor.vue';
-  import HttpForm from '../Visual/form/HttpForm.vue';
+import vueJsonEditor from 'vue-json-editor'
+import TaskBuilder from '../../../model/TaskBuilder.js';
+import TabTable from '../Visual/TabTable.vue';
+import KVTable from '../Visual/KVTable.vue';
+import Tips from '../Visual/Tips.vue';
+import SQLForm from '../Visual/form/SQLForm.vue';
+import JDBCForm from '../Visual/form/JDBCForm.vue';
+import Editor from '../Visual/Editor.vue';
+import HttpForm from '../Visual/form/HttpForm.vue';
+import FlinkForm from '../Visual/form/FlinkForm.vue';
 
 
-  export default {
-    components: { vueJsonEditor, TabTable, KVTable, Editor, Tips, SQLForm, JDBCForm, HttpForm },
-    props: {
-      nodeData: Object,
-      lf: Object || String,
-      submitable: Boolean,
-    },
-    mounted() {
-      const { properties, text } = this.$props.nodeData
-      if (properties) {
-        this.taskType = properties.taskType
-        let template = TaskBuilder(this.taskType)
-        Object.assign(template, this.$data.visualTask, properties)
-        this.visualTask = template
-        this.changeOutput()
-        if (properties.output) {
-          Object.assign(this.visualTask.output, properties.output)
-        }
+
+export default {
+  components: { vueJsonEditor, TabTable, KVTable, Editor, Tips, SQLForm, JDBCForm, HttpForm,FlinkForm },
+  props: {
+    nodeData: Object,
+    lf: Object || String,
+    submitable: Boolean,
+  },
+  mounted() {
+    const { properties, text } = this.$props.nodeData
+    if (properties) {
+      this.taskType = properties.taskType
+      let template = TaskBuilder(this.taskType)
+      Object.assign(template, this.$data.visualTask, properties)
+      this.visualTask = template
+      this.changeOutput()
+      if (properties.output) {
+        Object.assign(this.visualTask.output, properties.output)
       }
-      if (text && text.value) {
-        this.$data.text = text.value
+    }
+    if (text && text.value) {
+      this.$data.text = text.value
+    }
+  },
+  data() {
+    return {
+      text: '',
+      taskType: '',
+      paramKey: '',
+      paramVal: '',
+      visualTask: {},
+      inputView: 'csv',
+      outputView: 'csv',
+    }
+  },
+  methods: {
+    onSubmit() {
+      const { id } = this.$props.nodeData
+      let submitData;
+      submitData = { ...this.visualTask, taskType: this.taskType };
+      this.$props.lf.setProperties(id, submitData);
+      this.$props.lf.updateText(id, submitData.text);
+      this.$emit('onClose')
+    },
+    changeOutput() {
+      if (this.visualTask.switchOutputView) {
+        this.visualTask.switchOutputView(this.outputView);
       }
     },
-    data() {
-      return {
-        text: '',
-        taskType: '',
-        paramKey: '',
-        paramVal: '',
-        visualTask: {},
-        inputView: 'csv',
-        outputView: 'csv',
-      }
+    addIntputView() {
+      this.visualTask.addInputView(this.inputView)
     },
-    methods: {
-      onSubmit() {
-        const { id } = this.$props.nodeData
-        let submitData;
-        submitData = { ...this.visualTask, taskType: this.taskType };
-        this.$props.lf.setProperties(id, submitData);
-        this.$props.lf.updateText(id, submitData.text);
-        this.$emit('onClose')
-      },
-      changeOutput() {
-        if (this.visualTask.switchOutputView) {
-          this.visualTask.switchOutputView(this.outputView);
-        }
-      },
-      addIntputView() {
-        this.visualTask.addInputView(this.inputView)
-      },
-      deleteInputView(index) {
-        this.visualTask.deleteInputView(index);
-      },
+    deleteInputView(index) {
+      this.visualTask.deleteInputView(index);
     },
-  }
+  },
+}
 </script>
 <style scoped></style>

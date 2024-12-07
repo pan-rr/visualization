@@ -8,7 +8,7 @@
         <div style="display: flex; align-items: center; justify-content: center;">
           <svg style="display: block; width: 50%;height: 50%;" viewBox="0 0 1024 1024" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
-            <path :d="path" v-for="path in item.paths"></path>
+            <path :d="path.d" :fill="path.fill" v-for="path in item.paths"></path>
           </svg>
         </div>
         <span style="text-align: center;display: block;">{{ item.text }}</span>

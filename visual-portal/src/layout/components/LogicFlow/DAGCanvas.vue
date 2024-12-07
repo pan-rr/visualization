@@ -45,6 +45,7 @@
     registerVisual,
     registerSQL,
     registerHttp,
+    registerFlink
   } from './registerNode'
   import { getTemplateJSON } from '../../../api/dag'
   import SpaceSelector from '../Visual/SpaceSelector.vue'
@@ -123,6 +124,7 @@
         registerVisual(this.lf)
         registerSQL(this.lf)
         registerHttp(this.lf)
+        registerFlink(this.lf)
         this.$_render()
       },
       $_render() {

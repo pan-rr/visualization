@@ -118,7 +118,7 @@ public class PortalController {
 
     @GetMapping("/getLogTimeLine")
     public Response<Object> getLogTimeLineByInstanceId(@RequestParam("instanceId") String instanceId) {
-        return Response.success(timeLineManager.getTimeLineByInstanceId(instanceId));
+        return Response.success(timeLineManager.getTimeLine(instanceId));
     }
 
     @PostMapping("/saveDataSource")

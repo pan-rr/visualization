@@ -15,7 +15,7 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     let token = localStorage.getItem('visual');
-    let tenantId = store.getters.userInfo.choosenTenant;
+    let tenantId = store.getters.userInfo.chosenTenant;
     config.headers['visual_tenant'] = tenantId;
     if (token != 'undefined') {
       config.headers['visual'] = token

@@ -1,19 +1,18 @@
 package com.visualization.config;
 
 import com.visualization.enums.Status;
-import com.visualization.log.logger.VisualLogService;
-import com.visualization.log.model.VisualStageWrapper;
 import com.visualization.manager.DAGManager;
-import com.visualization.stage.VisualJobHandler;
-import com.visualization.stage.VisualEngineService;
-import com.visualization.stage.VisualStageDispatchHandler;
-import com.visualization.stage.VisualStageContext;
+import com.visualization.model.dag.db.DAGPointer;
+import com.visualization.runtime.VLogTheme;
+import com.visualization.runtime.VLogTheme;
+import com.visualization.stage.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -33,10 +32,10 @@ public class StageConfig {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
-    private VisualLogService visualLogService;
+    private VisualEngineService visualEngineService;
 
     @Resource
-    private VisualEngineService visualEngineService;
+    private VLogger vLogger;
 
 
     @Order(-9999999)
@@ -76,7 +75,15 @@ public class StageConfig {
     @Bean
     public Function<VisualStageContext, Boolean> startLog() {
         return ctx -> {
-            visualLogService.accept(VisualStageWrapper.start(ctx.getPointer()));
+            DAGPointer pointer = ctx.getPointer();
+            vLogger.accept(VLogPoint.builder()
+                    .templateId(pointer.getTemplateId().toString())
+                    .instanceId(pointer.getInstanceId().toString())
+                    .taskId(pointer.getTaskId().toString())
+                    .message(VLogTheme.START.getMessage())
+                    .theme(VLogTheme.START.getCode())
+                    .time(Instant.now())
+                    .build());
             return true;
         };
     }
@@ -95,7 +102,15 @@ public class StageConfig {
     @Bean
     public Function<VisualStageContext, Boolean> successLog() {
         return ctx -> {
-            visualLogService.accept(VisualStageWrapper.success(ctx.getPointer()));
+            DAGPointer pointer = ctx.getPointer();
+            vLogger.accept(VLogPoint.builder()
+                    .templateId(pointer.getTemplateId().toString())
+                    .instanceId(pointer.getInstanceId().toString())
+                    .taskId(pointer.getTaskId().toString())
+                    .message(VLogTheme.FINISH.getMessage())
+                    .theme(VLogTheme.FINISH.getCode())
+                    .time(Instant.now())
+                    .build());
             return true;
         };
     }

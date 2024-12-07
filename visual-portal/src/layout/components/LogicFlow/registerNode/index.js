@@ -6,5 +6,6 @@
 import registerVisual from './registerVisual'
 import registerSQL from './registerSQL'
 import registerHttp from './registerHttp'
+import registerFlink from './registerFlink'
 
-export { registerVisual, registerSQL, registerHttp }
+export { registerVisual, registerSQL,  registerHttp ,registerFlink}

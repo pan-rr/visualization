@@ -1,6 +1,7 @@
 package com.visualization.view.base;
 
 import com.visualization.constant.ViewConstant;
+import com.visualization.runtime.VContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -27,7 +28,7 @@ public abstract class BaseView implements View {
 
     protected JdbcTemplate jdbcTemplate;
 
-    protected ViewContext context;
+    protected VContext context;
 
     protected int getId() {
         return id;
@@ -71,7 +72,7 @@ public abstract class BaseView implements View {
         jdbcTemplate.execute(sql);
     }
 
-    public void setContext(ViewContext context) {
+    public void setContext(VContext context) {
         this.context = context;
     }
 }

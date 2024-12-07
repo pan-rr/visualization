@@ -4,9 +4,9 @@ import store from '@/store'
 const getCurrentTenant = () => {
   let tenant = {}
   let tenantOptions = store.getters.userInfo.tenantOptions;
-  let choosenTenant = store.getters.userInfo.choosenTenant
+  let chosenTenant = store.getters.userInfo.chosenTenant
   for (let item of tenantOptions) {
-    if (item.value === choosenTenant) {
+    if (item.value === chosenTenant) {
       tenant['id'] = item.value;
       tenant['name'] = item.label
       break;
@@ -21,7 +21,7 @@ const getCurrentTenantName = () => {
 }
 
 const getCurrentTenantId = () => {
-  return store.getters.userInfo.choosenTenant;
+  return store.getters.userInfo.chosenTenant;
 }
 
 export { getCurrentTenant, getCurrentTenantName, getCurrentTenantId }

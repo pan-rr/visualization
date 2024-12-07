@@ -9,7 +9,7 @@ import com.visualization.service.MinIOService;
 import com.visualization.service.TaskService;
 import com.visualization.stage.VisualStageBuilder;
 import com.visualization.stage.VisualStageContextService;
-import com.visualization.view.base.VisualStage;
+import com.visualization.runtime.VisualStage;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;

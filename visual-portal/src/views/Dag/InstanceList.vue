@@ -1,15 +1,19 @@
 <template>
   <div>
-    <div>
-      <space-selector :space-ref="spaceRef"></space-selector>
+    <div style="display: flex; justify-items:flex-start;">
+      <el-button plain type='info' icon='el-icon-refresh' @click="getList">刷新</el-button>
+      <div style="width: 100%">
+        <space-selector :space-ref="spaceRef"></space-selector>
+      </div>
     </div>
     <div>
-      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange">
-        <el-table-column align="center" prop="templateId" label="流程模版ID">
+      <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange"
+        :default-sort="{ prop: 'instanceId', order: 'descending' }" @sort-change="changeSort">
+        <el-table-column align="center" prop="templateId" label="流程模版ID" sortable>
         </el-table-column>
         <el-table-column align="center" prop="templateName" label="流程模版名称">
         </el-table-column>
-        <el-table-column align="center" prop="instanceId" label="实例ID">
+        <el-table-column align="center" prop="instanceId" label="实例ID" sortable>
         </el-table-column>
         <el-table-column align="center" label="实例状态" :filters="statusOptions" column-key="status">
           <template slot-scope="scope">
@@ -18,11 +22,11 @@
         </el-table-column>
         <el-table-column align="center" prop="unfinishedTaskCount" label="待完成任务数">
         </el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间">
+        <el-table-column align="center" prop="createTime" label="创建时间" sortable>
         </el-table-column>
-        <el-table-column align="center" prop="finishTime" label="完成时间">
+        <el-table-column align="center" prop="finishTime" label="完成时间" sortable>
         </el-table-column>
-        <el-table-column align="center" fixed="right" label="操作" :render-header="header">
+        <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
               查看实例执行日志
@@ -42,7 +46,7 @@
       </el-pagination>
 
 
-      <el-dialog title="实例执行日志时间线" :visible.sync="openTimeLine" center>
+      <el-dialog title="实例执行日志" :visible.sync="openTimeLine" center>
         <div style="margin: 2%;">
           <span v-if="timeLine.length < 1">暂无时间日志或日志已过期</span>
           <el-timeline :reverse="true" v-else>
@@ -89,16 +93,22 @@ export default {
       openTimeLine: false,
       choosenStatus: [],
       statusOptions: [],
-      lastParam: '',
+      sort: [{
+        field: 'instanceId',
+        direction: -1
+      }],
     }
   },
   methods: {
-    header() {
-      return (
-        <div>操作
-          <el-button style='margin-left:10px;' plain type='info' icon='el-icon-refresh' on-click={() => { this.getList(); }} circle size='mini'></el-button>
-        </div>
-      )
+    changeSort(rule) {
+      let arr = this.sort.filter(i => i.field !== rule.prop);
+      if (rule.order === 'descending') {
+        arr.push({ field: rule.prop, direction: -1 })
+      } else if (rule.order === 'ascending') {
+        arr.push({ field: rule.prop, direction: 1 })
+      }
+      this.sort = arr;
+      this.getList();
     },
     getStatusOptions() {
       getStatusOptions(2).then(res => {
@@ -131,17 +141,8 @@ export default {
             param: this.choosenStatus.length > 0 ? this.choosenStatus : [-4, 0, 1]
           }
         },
-        sort: [{
-          field: 'instanceId',
-          direction: -1
-        }]
+        sort: this.sort
       };
-      let str = JSON.stringify(pageable);
-      if (this.lastParam === str) {
-        return;
-      } else {
-        this.lastParam = str;
-      }
       getInstanceList(pageable).then(res => {
         let _this = this
         _this.tableData = res.data.result

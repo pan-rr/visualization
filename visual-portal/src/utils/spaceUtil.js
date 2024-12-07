@@ -2,7 +2,7 @@ import store from '@/store'
 
 const resetSpaceOption = () => {
     
-    let currentTenant = store.getters.userInfo.choosenTenant;
+    let currentTenant = store.getters.userInfo.chosenTenant;
     let userId = store.getters.userInfo.userId;
     let spaceHolder = store.getters.spaceHolder;
     let primitiveOptions = spaceHolder.primitiveOptions;

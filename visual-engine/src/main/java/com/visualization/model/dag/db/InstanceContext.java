@@ -54,6 +54,8 @@ public class InstanceContext {
         init.ctx = StringUtils.isNotBlank(templateContext) ? gson.fromJson(templateContext, Map.class) : new HashMap<>();
         init.ctx.put("space", instance.getSpace());
         init.ctx.put("templateId", instance.getTemplateId().toString());
+        init.ctx.put("instanceId",instance.getInstanceId().toString());
+        init.ctx.put("launchTime",System.currentTimeMillis());
         init.context = new Gson().toJson(init.ctx);
         return init;
     }

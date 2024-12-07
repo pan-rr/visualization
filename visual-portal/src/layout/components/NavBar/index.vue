@@ -5,18 +5,14 @@
         <Collapse />
         <Breadcrumb />
       </div>
-      <div style="margin-left: auto;">
-
-
-        <el-input v-model="currentTenant" class="select" :readonly="true" placeholder="请选择租户">
-          <template slot="prepend"><el-icon class="el-icon-office-building"></el-icon><span>企业/组织/团队</span></template>
-          <el-select v-model="choosenTenant" slot="append" placeholder="请选择租户" @change="changeTenant">
-            <el-option v-for="item in tenantOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-input>
-
-
+      <div
+        style="margin-left: auto;color: #909399;border: 1px solid #DCDFE6;background-color: #F5F7FA;display: table-cell;vertical-align: middle;white-space: nowrap;">
+        <span style="margin-left:20px;margin-right:20px;"><el-icon
+            class="el-icon-office-building"></el-icon>企业/组织/团队</span>
+        <el-select v-model="chosenTenant" slot="append" placeholder="请选择租户" @change="changeTenant">
+          <el-option v-for="item in tenantOptions" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
       </div>
       <AvatarDropDown />
     </div>
@@ -38,12 +34,12 @@ export default {
     return {
       currentTenant: getCurrentTenantName(),
       tenantOptions: this.$store.getters.userInfo.tenantOptions,
-      choosenTenant: this.$store.getters.userInfo.choosenTenant,
+      chosenTenant: this.$store.getters.userInfo.chosenTenant,
     };
   },
   methods: {
     changeTenant(value) {
-      this.$store.getters.userInfo.choosenTenant = value;
+      this.$store.getters.userInfo.chosenTenant = value;
       this.currentTenant = getCurrentTenantName();
       this.$store.dispatch("permission/userPermissionResource", value).then(() => {
         this.$store.commit("user/SET_TENANT", value)

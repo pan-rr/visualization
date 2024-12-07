@@ -9,10 +9,11 @@ import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.model.dag.db.Task;
 import com.visualization.model.file.FilePathMapping;
 import com.visualization.repository.file.FilePathMappingRepository;
+import com.visualization.runtime.VStageContext;
 import com.visualization.service.TaskService;
 import com.visualization.utils.FilePathUtil;
 import com.visualization.utils.ShortLinkUtil;
-import com.visualization.view.base.VisualStage;
+import com.visualization.runtime.VisualStage;
 import lombok.Builder;
 
 import java.util.*;
@@ -48,6 +49,7 @@ public class VisualStageBuilder {
         }
         Gson gson = new Gson();
         this.visualStage = gson.fromJson(task.getJson(), VisualStage.class);
+        this.visualStage.setRuntimeContext(VETContext.builder().stageContext(new VStageContext(this.context)).templateId(dagPointer.getTemplateId()).instanceId(dagPointer.getInstanceId()).taskId(dagPointer.getTaskId()).build());
     }
 
     private void rewriteDatasource() {

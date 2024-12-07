@@ -2,7 +2,7 @@ package com.visualization.manager.orphan;
 
 import com.visualization.constant.ViewConstant;
 import com.visualization.handler.JDBCHandler;
-import com.visualization.view.base.VisualStage;
+import com.visualization.runtime.VisualStage;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.Map;
