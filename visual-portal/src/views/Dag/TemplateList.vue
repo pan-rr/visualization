@@ -6,17 +6,25 @@
         <space-selector :space-ref="spaceRef"></space-selector>
       </div>
     </div>
-    <div>
+    <div style="max-height: fit-content;">
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange"
         :default-sort="{ prop: 'templateId', order: 'descending' }" @sort-change="changeSort">
         <el-table-column type="expand">
           <template #default="props">
             <div>
-              <CanvasReadonly :templateId="props.row.templateId"></CanvasReadonly>
+              <el-select v-model="meunOption">
+                <el-option key="templateConfig" value="templateGraph" label="查看模版"></el-option>
+                <el-option key="metric" value="metric" label="执行监控"></el-option>
+              </el-select>
+            </div>
+            <div>
+              <CanvasReadonly v-if="meunOption === 'templateGraph'" :templateId="props.row.templateId">
+              </CanvasReadonly>
+              <Metric v-else-if="meunOption === 'metric'"
+                :options="{ id: props.row.templateId, mode: 'templateId', groupName: props.row.name }">
+              </Metric>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column align="center" prop="templateId" label="流程模版ID" sortable>
         </el-table-column>
         <el-table-column align="center" prop="name" label="流程模版名称">
         </el-table-column>
@@ -49,10 +57,12 @@
         </el-table-column>
         <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button :disabled="scope.row.status === '-3'"
-              @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
-              运行实例
-            </el-button>
+            <div>
+              <el-button :disabled="scope.row.status === '-3'"
+                @click.native.prevent="createInstance(scope.row.templateId)" type="text" size="mini">
+                运行实例
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -62,7 +72,6 @@
         layout="total, sizes, prev, pager, next, jumper" :total=total>
       </el-pagination>
     </div>
-
   </div>
 </template>
 
@@ -73,12 +82,14 @@ import { createInstanceById, getTemplateList, getStatusOptions, changeTemplatePr
 import { Message } from 'element-ui'
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
 import CanvasReadonly from './CanvasReadonly.vue';
+import Metric from '../Metric/metric.vue';
+
 
 
 export default {
   name: 'VisualTemplateList',
   components: {
-    SpaceSelector, CanvasReadonly
+    SpaceSelector, CanvasReadonly, Metric
   },
   data() {
     return {
@@ -95,6 +106,7 @@ export default {
         field: 'templateId',
         direction: -1
       }],
+      meunOption: 'templateGraph'
     }
   },
   computed: {
@@ -179,7 +191,7 @@ export default {
   mounted() {
     this.getStatusOptions();
     this.choosenStatus = this.statusOptions.map(o => parseInt(o.value))
-    this.getList();
+    this.getList(); console.log(this.context)
   },
   watch: {
     currentPage: {

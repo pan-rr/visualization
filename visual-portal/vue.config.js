@@ -1,6 +1,55 @@
 'use strict'
 const path = require('path')
 
+
+const getProxyConfig = () => {
+  switch (process.env.ENV) {
+    case 'development': return { // 配置跨域
+      [process.env.VUE_APP_BASE_API + '/engine']: {
+        target: "http://localhost:8374/", //请求后台接口
+        changeOrigin: true, // 允许跨域
+        secure: false,
+        ws: true,
+        // logLevel: 'debug',
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''  // 重写请求
+        },
+        onProxyReq: function (proxyReq, req, res) {
+          // console.log(req.originalUrl + "-->" + req.path )
+        },
+      },
+      [process.env.VUE_APP_BASE_API]: {
+        target: process.env.VUE_APP_BASE_URL, //请求后台接口
+        changeOrigin: true, // 允许跨域
+        secure: false,
+        ws: true,
+        // logLevel: 'debug',
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''  // 重写请求
+        },
+        onProxyReq: function (proxyReq, req, res) {
+          // console.log(req.originalUrl + "-->" + req.path )
+        },
+      }
+    }
+    default: return { // 配置跨域
+      [process.env.VUE_APP_BASE_API]: {
+        target: process.env.VUE_APP_BASE_URL, //请求后台接口
+        changeOrigin: true, // 允许跨域
+        secure: false,
+        ws: true,
+        // logLevel: 'debug',
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''  // 重写请求
+        },
+        onProxyReq: function (proxyReq, req, res) {
+          // console.log(req.originalUrl + "-->" + req.path )
+        },
+      }
+    }
+  };
+};
+
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -36,22 +85,7 @@ module.exports = {
     //     }
     //   }
     // }
-    proxy: { // 配置跨域
-      [process.env.VUE_APP_BASE_API]: {
-        target: process.env.VUE_APP_BASE_URL, //请求后台接口
-        changeOrigin: true, // 允许跨域
-        secure: false,
-        ws: true,
-        // logLevel: 'debug',
-        pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''  // 重写请求
-        },
-        onProxyReq: function (proxyReq, req, res) {
-          // console.log(req.originalUrl + "-->" + req.path )
-        },
-
-      }
-    }
+    proxy: getProxyConfig()
   },
   configureWebpack: {
     resolve: {

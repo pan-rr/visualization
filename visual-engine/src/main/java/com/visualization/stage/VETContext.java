@@ -16,11 +16,8 @@ public class VETContext implements VContext {
 
     private VStageContext stageContext;
 
-    private Long templateId;
-
-    private Long instanceId;
-
     private Long taskId;
+
 
     @Override
     public <T> T get(String key, Class<T> clazz) {
@@ -40,5 +37,9 @@ public class VETContext implements VContext {
     @Override
     public void setStatus(VStageStatus status) {
         stageContext.setStatus(status);
+    }
+
+    public <T> T getValue(String key , Class<T> clazz){
+        return stageContext.get(key,clazz);
     }
 }

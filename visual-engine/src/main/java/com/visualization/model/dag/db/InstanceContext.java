@@ -1,6 +1,7 @@
 package com.visualization.model.dag.db;
 
 import com.google.gson.Gson;
+import com.visualization.enums.VisualContextKey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,9 +38,9 @@ public class InstanceContext {
     }
 
 
-    public static InstanceContext inject(InstanceContext db , InstanceContext current){
+    public static InstanceContext inject(InstanceContext db, InstanceContext current) {
         Gson gson = new Gson();
-        Map<String,Object> old = gson.fromJson(db.getContext(), Map.class);
+        Map<String, Object> old = gson.fromJson(db.getContext(), Map.class);
         old.putAll(current.getCtx());
         return InstanceContext.builder().instanceId(db.getInstanceId()).context(gson.toJson(old)).version(System.currentTimeMillis()).build();
     }
@@ -52,10 +53,9 @@ public class InstanceContext {
         Gson gson = new Gson();
         String templateContext = template.getContext();
         init.ctx = StringUtils.isNotBlank(templateContext) ? gson.fromJson(templateContext, Map.class) : new HashMap<>();
-        init.ctx.put("space", instance.getSpace());
-        init.ctx.put("templateId", instance.getTemplateId().toString());
-        init.ctx.put("instanceId",instance.getInstanceId().toString());
-        init.ctx.put("launchTime",System.currentTimeMillis());
+        init.ctx.put(VisualContextKey.space.name(), instance.getSpace());
+        init.ctx.put(VisualContextKey.templateId.name(), instance.getTemplateId());
+        init.ctx.put(VisualContextKey.instanceId.name() ,instance.getInstanceId());
         init.context = new Gson().toJson(init.ctx);
         return init;
     }

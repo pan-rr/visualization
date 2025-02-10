@@ -51,6 +51,7 @@ public class VisualStageFailHandler {
                 .taskId(pointer.getTaskId().toString())
                 .message(Arrays.toString(e.getStackTrace()))
                 .theme(VLogTheme.FAIL.getCode())
+                .space(pointer.getSpace())
                 .time(Instant.now())
                 .build());
     }
@@ -78,7 +79,7 @@ public class VisualStageFailHandler {
 
     private void printStackTrace(Throwable e) {
         if (Boolean.TRUE.equals(printStackTrace)) {
-            log.error("visual stage error {}", Arrays.toString(e.getStackTrace()));
+            log.error("visual stage error {}", e.getStackTrace());
         }
     }
 

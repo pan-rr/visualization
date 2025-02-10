@@ -17,7 +17,6 @@ import com.visualization.utils.PageUtil;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -234,12 +233,14 @@ public class DAGServiceImpl implements DAGService {
     public void changeTemplatePriority(Long templateId, Double priority) {
         DAGPriority.validatePriority(priority);
         dagTemplateRepository.changeTemplatePriority(templateId, priority);
+        dagPointerRepository.changePriority(templateId, priority);
     }
 
     @Transactional(transactionManager = "transactionManagerDAG", rollbackFor = Throwable.class)
     @Override
     public void changeTemplateRetryCount(Long templateId, Integer retryCount) {
         dagTemplateRepository.changeTemplateRetryCount(templateId, retryCount);
+        dagPointerRepository.changeRetryCount(templateId, retryCount);
     }
 
     @Override

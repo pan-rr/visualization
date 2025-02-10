@@ -38,8 +38,6 @@
                     <el-form-item label="权限归属者名称：">
                         {{ createForm.tenantName }}
                     </el-form-item>
-
-
                     <el-form-item label="权限名称：">
                         <el-input v-model="createForm.permissionName"></el-input>
                     </el-form-item>
@@ -75,7 +73,6 @@
                 <el-button slot="append" icon="el-icon-close" @click="drawerVisible = false">取消</el-button>
                 <el-button slot="append" icon="el-icon-user" @click="grant">确认赋权</el-button>
             </el-input>
-
         </el-dialog>
 
     </div>

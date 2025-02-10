@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +16,9 @@ import java.util.Objects;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "t_dag_pointer")
+@Table(name = "t_dag_pointer", indexes = {
+        @Index(name = "idx_template", columnList = "templateId")
+})
 @IdClass(value = PointerId.class)
 public class DAGPointer implements Serializable, Comparable<DAGPointer> {
     @Id

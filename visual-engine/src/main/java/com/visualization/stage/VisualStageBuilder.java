@@ -3,12 +3,14 @@ package com.visualization.stage;
 import com.google.gson.Gson;
 import com.visualization.constant.TaskTypeConstant;
 import com.visualization.constant.ViewConstant;
+import com.visualization.enums.VisualContextKey;
 import com.visualization.exception.DAGException;
 import com.visualization.manager.DAGDataSourceManager;
 import com.visualization.model.dag.db.DAGPointer;
 import com.visualization.model.dag.db.Task;
 import com.visualization.model.file.FilePathMapping;
 import com.visualization.repository.file.FilePathMappingRepository;
+import com.visualization.runtime.VContextManager;
 import com.visualization.runtime.VStageContext;
 import com.visualization.service.TaskService;
 import com.visualization.utils.FilePathUtil;
@@ -48,8 +50,15 @@ public class VisualStageBuilder {
             throw new DAGException("任务为空，id:" + taskId);
         }
         Gson gson = new Gson();
-        this.visualStage = gson.fromJson(task.getJson(), VisualStage.class);
-        this.visualStage.setRuntimeContext(VETContext.builder().stageContext(new VStageContext(this.context)).templateId(dagPointer.getTemplateId()).instanceId(dagPointer.getInstanceId()).taskId(dagPointer.getTaskId()).build());
+        String json = task.getJson();
+        String taskJson = VisualStageExpressionRewriter.rewriteExpression(json, this.context);
+        this.visualStage = gson.fromJson(taskJson, VisualStage.class);
+        this.visualStage.setVisualContext(this.context);
+        VETContext vetContext = VETContext.builder()
+                .stageContext(new VStageContext(this.context))
+                .taskId(dagPointer.getTaskId()).build();
+        VContextManager.register(vetContext);
+        this.visualStage.setRuntimeContext(vetContext);
     }
 
     private void rewriteDatasource() {
@@ -70,7 +79,7 @@ public class VisualStageBuilder {
 
 
     private void rewriteFilePath() {
-        if (TaskTypeConstant.VISUAL.equals(visualStage.getTaskType())){
+        if (TaskTypeConstant.VISUAL.equals(visualStage.getTaskType())) {
             List<Map<String, Object>> input = visualStage.getInput();
             for (Map<String, Object> conf : input) {
                 conf.compute(ViewConstant.FILE_PATH, (k, v) -> getRealPath(v));
@@ -98,9 +107,9 @@ public class VisualStageBuilder {
         if (s.startsWith(FilePathUtil.SPACE_SHARE)) {
             params.put(FilePathUtil.SPACE_SHARE, true);
         }
-        params.put("space", space);
-        params.put("instanceId", dagPointer.getInstanceId());
-        params.put("templateId", dagPointer.getTemplateId());
+        params.put(VisualContextKey.space.name(), space);
+        params.put(VisualContextKey.instanceId.name(), dagPointer.getInstanceId());
+        params.put(VisualContextKey.templateId.name(), dagPointer.getTemplateId());
         params.put("filePath", s);
         return FilePathUtil.getStoragePath(params);
     }

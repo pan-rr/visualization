@@ -5,6 +5,7 @@
         <Collapse />
         <Breadcrumb />
       </div>
+
       <div
         style="margin-left: auto;color: #909399;border: 1px solid #DCDFE6;background-color: #F5F7FA;display: table-cell;vertical-align: middle;white-space: nowrap;">
         <span style="margin-left:20px;margin-right:20px;"><el-icon
@@ -36,6 +37,9 @@ export default {
       tenantOptions: this.$store.getters.userInfo.tenantOptions,
       chosenTenant: this.$store.getters.userInfo.chosenTenant,
     };
+  },
+  mounted() {
+    this.currentTenant = getCurrentTenantName();
   },
   methods: {
     changeTenant(value) {

@@ -1,5 +1,6 @@
 package com.visualization.stage;
 
+import com.visualization.runtime.VContextManager;
 import lombok.Data;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class VisualStageProcessor {
             context.setThrowable(e);
             errorHandler.accept(context);
         } finally {
+            VContextManager.release();
             finalHandler.accept(context);
         }
     }

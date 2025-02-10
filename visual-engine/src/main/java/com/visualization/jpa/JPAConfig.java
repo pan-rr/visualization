@@ -1,6 +1,5 @@
 package com.visualization.jpa;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
@@ -32,7 +31,7 @@ public class JPAConfig {
     @Resource(name = "dag")
     private DataSource DAGDataSource;
 
-    @Autowired
+    @Resource
     private JpaProperties jpaProperties;
 
     @Resource

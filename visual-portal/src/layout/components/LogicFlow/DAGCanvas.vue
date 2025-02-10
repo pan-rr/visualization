@@ -15,8 +15,6 @@
       </el-main>
     </el-container>
 
-
-
     <!-- 属性面板 -->
     <el-drawer title="节点任务配置页" :visible.sync="dialogVisible" direction="rtl" size="60%" :before-close="closeDialog">
       <PropertyDialog :submitable="submitable" v-if="dialogVisible" :nodeData="clickNode" :lf="lf"
@@ -44,8 +42,10 @@
   import {
     registerVisual,
     registerSQL,
+    registerContext,
     registerHttp,
-    registerFlink
+    registerFlink,
+    registerVisualTable
   } from './registerNode'
   import { getTemplateJSON } from '../../../api/dag'
   import SpaceSelector from '../Visual/SpaceSelector.vue'
@@ -123,8 +123,10 @@
       $_registerNode() {
         registerVisual(this.lf)
         registerSQL(this.lf)
+        registerContext(this.lf)
         registerHttp(this.lf)
         registerFlink(this.lf)
+        registerVisualTable(this.lf)
         this.$_render()
       },
       $_render() {

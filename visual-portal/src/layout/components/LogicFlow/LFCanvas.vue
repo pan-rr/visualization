@@ -40,6 +40,7 @@ import {
   registerTask,
   registerConnect,
   registerVisual,
+  registerFlink
 } from './registerNode'
 import { getTemplateJSON } from '../../../api/dag'
 import registerSQL from './registerNode/registerSQL'

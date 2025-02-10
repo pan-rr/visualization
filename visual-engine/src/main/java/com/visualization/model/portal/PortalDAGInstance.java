@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Builder
 public class PortalDAGInstance implements Serializable {
     private String instanceId;
+    private String instanceName;
     private String templateId;
     private String templateName;
     private String space;

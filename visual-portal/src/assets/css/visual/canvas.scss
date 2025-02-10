@@ -24,7 +24,8 @@
 .templateConfig {
     width: 25%;
     justify-content: space-between;
-    margin: 0%;
+    width: 100%;
+    margin: 0% auto;
     align-self: self-end;
 }
 
@@ -36,8 +37,7 @@
 .configRow {
     display: flex;
     width: 100%;
-    align-self:flex-end;
-    justify-content: space-between;
+    justify-content: space-around;
     margin-bottom: 0%;
     padding: 0%;
 }
@@ -46,6 +46,7 @@
     align-self: center;
     text-align: center;
     width: 40%;
-    color: #606266;
+    color: #303133;
+    font-size: 14px;
     overflow: visible;
 }

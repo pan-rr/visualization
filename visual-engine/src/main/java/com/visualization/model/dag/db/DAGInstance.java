@@ -2,6 +2,7 @@ package com.visualization.model.dag.db;
 
 import com.visualization.enums.Status;
 import com.visualization.model.portal.PortalDAGInstance;
+import com.visualization.utils.Base62Util;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,6 +40,7 @@ public class DAGInstance implements Serializable {
                 .templateId(String.valueOf(templateId))
                 .templateName(templateName)
                 .instanceId(String.valueOf(instanceId))
+                .instanceName(Base62Util.zip(instanceId))
                 .space(space)
                 .status(Status.getStatusNameByStatus(status))
                 .createTime(Objects.nonNull(createTime) ? formatter.format(createTime) : null)

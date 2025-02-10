@@ -13,6 +13,7 @@ Visualization使用低代码(类工作流)方式编排DAG任务，集群自动�
 #### 特性
 
 + 流程配置化。提供前端拖拉拽形式配置流程，数据操作使用表单配置，少量代码即可完成相应的配置；
++ 流程执行监控统计。统计任务执行情况；
 + 基于Spring Cloud的分布式集群计算，外部组件依赖较少，容器集群部署相对方便；
 + 基于`SQL-SELECT`方式提取数据，上手成本相对低；
 + DAG任务按优先级调度，节点任务由集群自动执行；
@@ -41,21 +42,15 @@ Visualization使用低代码(类工作流)方式编排DAG任务，集群自动�
 
 #### 部分截图
 
-- 非开源版
+![s](https://gitee.com/pan-rr/visualization/raw/master/pic/gif/s.gif)
 
 ![展示s](https://gitee.com/pan-rr/visualization/raw/master/pic/gif/pro.gif)
 
 ![画布s](https://gitee.com/pan-rr/visualization/raw/master/pic/s/画布.png)
 
+![执行监控](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/metric.png)
+
 ![上下文配置s](https://gitee.com/pan-rr/visualization/raw/master/pic/s/上下文配置.png)
-
-![上下文查看s](https://gitee.com/pan-rr/visualization/raw/master/pic/s/上下文查看.png)
-
-+ 开源版
-
-![展示ce](https://gitee.com/pan-rr/visualization/raw/master/pic/gif/ce.gif)
-
-![画布](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/画布.png)
 
 ![权限树](https://gitee.com/pan-rr/visualization/raw/master/pic/ce/权限树.png)
 
@@ -106,11 +101,13 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 4. 启动visual-auth (SpringBoot的启动方式)
 5. 启动visual-engine (SpringBoot的启动方式)
 6. 启动visual-portal (yarn test，其他环境指令目前就不配置了)
+7. 浏览器进入`http://localhost:8080/`
 
 #### 主要功能点说明
 
 + 流程模版配置、优先级(失败重试)配置;
 + 流程实例执行、查看、终止、日志；
++ 流程执行情况监控；
 + 文件上传下载；
 + 权限资源配置、权限分配、赋权、网关鉴权、前端路由渲染、权限树；
 
@@ -118,17 +115,27 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
 #### 任务类型说明
 
-+ Visual
++ Visual Table
 
-  多输入项和一个输出项，输入项定义数据获取信息，输出项定义数据连接和输出信息；使用`SQL-SELECT`方式提取、转换数据，上手成本相对低；
+  `Visual Table，下文称VT`
+
+  VT类似Flink SQL，使用SQL定义ETL任务；
+
+  VT提供基础的SQL语法提示和语法校验，目前不支持`UDF`；
+
+  VT基于内存计算，使用create table 和 insert 语句定义ETL；
+
+  VT会尝试执行脚本中的DDL；
+  
+  详情点击 [Visual Table说明](https://gitee.com/pan-rr/visualization/table.md)
 
 + SQL
   
   用于执行建表、删除表等操作；
 
-+ Context(非开源版)
++ Context
   
-  用于上下文变量注入或覆盖，其他 任务可以使用表达式获取上下文变量；
+  用于上下文变量注入或覆盖，其他任务可以使用表达式获取上下文变量；
 
 + HTTP
   
@@ -137,6 +144,11 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 + Flink
 
   使用Jar Id提交Flink Job给Flink集群；
+
++ Visual(将废弃)
+
+  多输入项和一个输出项，输入项定义数据获取信息，输出项定义数据连接和输出信息；使用`SQL-SELECT`方式提取、转换数据，上手成本相对低；
+  `未来会将这部分代码移除！请收悉！`
 
 
 #### 任务流程配置步骤说明
@@ -171,6 +183,18 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 + 支持分片上传、秒传、下载
 
 + `注意:`流程模版共享的文件需在spaceShare文件夹下，否则无法识别。例如存储空间为public时，对应空间路径是"/public/spaceShare"
+
+#### 功能变更
+
+> 功能下架
+
+感谢支持及使用`Visualization`！
+流程类型中的Visual任务后续会做下架处理，相关代码会移除，请重新定义流程，避免报错！
+
+> 功能新增
+
++ 新增Visual Table，后续Visual Table将代替Visual任务
++ 新增执行监控面板(Beta)，方便查看执行情况
 
 #### 后记
 

@@ -50,6 +50,10 @@
                 show: true,
             }
         },
+        mounted(){
+            let str = this.targetRef[this.target];
+            this.$refs?.cm?.handerCodeChange(str);
+        },
         computed: {
             options() {
                 let propsOptions = this.editorOptions ? this.editorOptions : {};
@@ -63,7 +67,7 @@
                     matchBrackets: true,
                     theme: 'idea',
                     mode: 'sql',
-                    collaspsable: true,
+                    collaspsable : true,
                     hintOptions: {
                         hint: this.handleShowHint,
                         completeSingle: false,
@@ -79,7 +83,6 @@
         methods: {
             collaspse() {
                 this.show = !this.show;
-
             },
             inputChange(content) {
                 this.$nextTick(() => {

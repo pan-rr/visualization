@@ -3,9 +3,11 @@
 // [阿里字体库](https://www.iconfont.cn/collections/index?spm=a313x.7781069.1998910419.4)
 // svg图标建议使用自己创建的
 
-import registerVisual from './registerVisual'
-import registerSQL from './registerSQL'
-import registerHttp from './registerHttp'
-import registerFlink from './registerFlink'
+import registerVisual from './registerVisual';
+import registerSQL from './registerSQL';
+import registerContext from './registerContext';
+import registerHttp from './registerHttp';
+import registerFlink from './registerFlink';
+import registerVisualTable from './registerVisualTable';
 
-export { registerVisual, registerSQL,  registerHttp ,registerFlink}
+export { registerVisual, registerSQL, registerContext, registerHttp, registerFlink, registerVisualTable }

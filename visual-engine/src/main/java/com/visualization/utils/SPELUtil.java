@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SPELUtil {
 
-    public static String parseExpression(String expression , Map<String,Object> params){
+    public static String parseExpression(String expression, Map<String, Object> params) {
         ExpressionParser parser = new SpelExpressionParser();
         TemplateParserContext parserContext = new TemplateParserContext();
         return parser.parseExpression(expression, parserContext).getValue(params, String.class);

@@ -2,7 +2,6 @@
     <div>
         <el-form-item label="需执行的SQL">
             <Tips message="查询语句"></Tips>
-            <!-- <el-input v-model="fatherRef.sql.script"></el-input> -->
             <Editor title="SQL" :editor-options="{ mode: 'sql' }" target="script" :target-ref="fatherRef.sql"></Editor>
         </el-form-item>
         <div style="line-height: 150%">

@@ -9,11 +9,23 @@
     <div>
       <el-table :data="tableData" style="width: 100%" max-height="100%" border stripe @filter-change="filterChange"
         :default-sort="{ prop: 'instanceId', order: 'descending' }" @sort-change="changeSort">
-        <el-table-column align="center" prop="templateId" label="流程模版ID" sortable>
+        <el-table-column type="expand">
+          <template #default="props">
+            <div>
+              <el-select v-model="meunOption">
+                <el-option key="metric" value="metric" label="执行监控"></el-option>
+              </el-select>
+            </div>
+            <div>
+              <Metric v-if="meunOption === 'metric'"
+                :options="{ id: props.row.instanceId, mode: 'instanceId', groupName: props.row.instanceId }">
+              </Metric>
+            </div>
+          </template>
         </el-table-column>
         <el-table-column align="center" prop="templateName" label="流程模版名称">
         </el-table-column>
-        <el-table-column align="center" prop="instanceId" label="实例ID" sortable>
+        <el-table-column align="center" prop="instanceName" label="实例名称" sortable>
         </el-table-column>
         <el-table-column align="center" label="实例状态" :filters="statusOptions" column-key="status">
           <template slot-scope="scope">
@@ -26,12 +38,20 @@
         </el-table-column>
         <el-table-column align="center" prop="finishTime" label="完成时间" sortable>
         </el-table-column>
+        <el-table-column align="center" label="实例上下文">
+          <template slot-scope="scope">
+            <el-button type="text" class="el-icon-refresh" @click.native.prevent="handleContext(scope)" size="mini">
+              刷新/获取
+            </el-button>
+            <div> {{ scope.row.context }}</div>
+          </template>
+        </el-table-column>
         <el-table-column align="center" fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click.native.prevent="loadTimeLine(scope.row.instanceId)" size="mini">
               查看实例执行日志
             </el-button>
-            <el-button v-if="scope.row.status == '正常'" type="text" @click.native.prevent="terminateInstance(scope.row)"
+            <el-button v-if="scope.row.status == '正常' || scope.row.status == '待执行'" type="text" @click.native.prevent="terminateInstance(scope.row)"
               size="mini">
               终止实例
             </el-button>
@@ -73,12 +93,13 @@
 
 import { getContext, getInstanceList, getLogTimeLine, getStatusOptions, terminateInstance } from '../../api/dag';
 import SpaceSelector from '../../layout/components/Visual/SpaceSelector.vue';
+import Metric from '../Metric/metric.vue';
 
 
 export default {
   name: 'VisualInstanceList',
   components: {
-    SpaceSelector
+    SpaceSelector,Metric
   },
   data() {
     return {
@@ -97,6 +118,7 @@ export default {
         field: 'instanceId',
         direction: -1
       }],
+      meunOption:'metric'
     }
   },
   methods: {

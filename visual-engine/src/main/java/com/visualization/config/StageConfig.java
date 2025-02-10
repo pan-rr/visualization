@@ -1,9 +1,9 @@
 package com.visualization.config;
 
+import com.visualization.VisualActive;
 import com.visualization.enums.Status;
 import com.visualization.manager.DAGManager;
 import com.visualization.model.dag.db.DAGPointer;
-import com.visualization.runtime.VLogTheme;
 import com.visualization.runtime.VLogTheme;
 import com.visualization.stage.*;
 import org.springframework.context.annotation.Bean;
@@ -81,6 +81,7 @@ public class StageConfig {
                     .instanceId(pointer.getInstanceId().toString())
                     .taskId(pointer.getTaskId().toString())
                     .message(VLogTheme.START.getMessage())
+                    .space(pointer.getSpace())
                     .theme(VLogTheme.START.getCode())
                     .time(Instant.now())
                     .build());
@@ -109,6 +110,7 @@ public class StageConfig {
                     .taskId(pointer.getTaskId().toString())
                     .message(VLogTheme.FINISH.getMessage())
                     .theme(VLogTheme.FINISH.getCode())
+                    .space(pointer.getSpace())
                     .time(Instant.now())
                     .build());
             return true;

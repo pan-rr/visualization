@@ -33,4 +33,13 @@ public interface DAGPointerRepository extends JpaRepository<DAGPointer, PointerI
 
     @Query(value = "select * from t_dag_pointer where status in :statusArr and count < retry_max_count order by priority desc limit :size", nativeQuery = true)
     List<DAGPointer> getExecutablePointers(@Param("size") int limit, @Param("statusArr") int[] arr);
+
+    @Modifying
+    @Query(value = "update t_dag_pointer set retry_max_count = :retryCount where template_id = :templateId", nativeQuery = true)
+    void changeRetryCount(@Param("templateId") Long templateId, @Param("retryCount") Integer retryCount);
+
+    @Modifying
+    @Query(value = "update t_dag_pointer set priority = :priority where template_id = :templateId", nativeQuery = true)
+    void changePriority(@Param("templateId") Long templateId, @Param("priority") Double priority);
+
 }

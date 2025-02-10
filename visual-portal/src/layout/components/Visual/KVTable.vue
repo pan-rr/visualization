@@ -37,73 +37,73 @@
 
 <script>
 
-    import Tips from './Tips.vue';
-    import '@/assets/css/visual/kv-table.scss';
+import Tips from './Tips.vue';
+import '@/assets/css/visual/kv-table.scss';
 
-    export default {
-        components: {
-            Tips
+export default {
+    components: {
+        Tips
+    },
+    props: {
+        targetWrapper: {
+            type: Object
         },
-        props: {
-            targetWrapper: {
-                type: Object
-            },
-            target: {
-                type: String
-            },
-            title: {
-                type: String
-            },
-            tips: {
-                type: String
-            },
-            expand: {
-                type: Boolean,
-                default: true,
-            }
+        target: {
+            type: String
         },
-        data() {
-            return {
-                paramKey: '',
-                paramVal: '',
-                time: Date.now(),
-                show: false
-            }
+        title: {
+            type: String
         },
-        mounted() {
-            this.show = this.expand || this.show;
+        tips: {
+            type: String
         },
-        methods: {
-            delKey(key) {
-                Reflect.deleteProperty(this.targetWrapper[this.target], key);
-                this.time = Date.now();
-            },
-            addParam() {
-                if (this.paramKey === '' && this.paramVal === '') return;
-                this.targetWrapper[this.target][this.paramKey] = this.paramVal
-                this.empty();
-            },
-            empty() {
-                this.paramKey = '';
-                this.paramVal = '';
-            },
-            getList() {
-                this.refresh();
-                return Object.keys(this.targetWrapper[this.target]).map(item => {
-                    return {
-                        key: item,
-                        value: this.targetWrapper[this.target][item]
-                    }
-                });
-            },
-            refresh() {
-                this.$emit('refresh', this.targetWrapper[this.target])
-            }
-        },
-        computed: {
-            iconStyle() {
-                return this.show ? 'el-icon-arrow-down' : 'el-icon-arrow-right'
-            }
+        expand: {
+            type: Boolean,
+            default: true,
         }
-    };
+    },
+    data() {
+        return {
+            paramKey: '',
+            paramVal: '',
+            time: Date.now(),
+            show: false
+        }
+    },
+    mounted() {
+        this.show = this.expand || this.show;
+    },
+    methods: {
+        delKey(key) {
+            Reflect.deleteProperty(this.targetWrapper[this.target], key);
+            this.time = Date.now();
+        },
+        addParam() {
+            if (this.paramKey === '' && this.paramVal === '') return;
+            this.targetWrapper[this.target][this.paramKey] = this.paramVal
+            this.empty();
+        },
+        empty() {
+            this.paramKey = '';
+            this.paramVal = '';
+        },
+        getList() {
+            this.refresh();
+            return Object.keys(this.targetWrapper[this.target]).map(item => {
+                return {
+                    key: item,
+                    value: this.targetWrapper[this.target][item]
+                }
+            });
+        },
+        refresh() {
+            this.$emit('refresh', this.targetWrapper[this.target])
+        }
+    },
+    computed: {
+        iconStyle() {
+            return this.show ? 'el-icon-arrow-down' : 'el-icon-arrow-right'
+        }
+    }
+};
 </script>

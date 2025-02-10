@@ -7,11 +7,14 @@
           <el-input v-model="visualTask.text"></el-input>
         </el-form-item>
       </el-card>
-      <div v-if="taskType === 'SQL' || taskType === 'CONTEXT_INJECT' || taskType === 'HTTP' || taskType === 'FLINK'">
+      <div v-if="taskType === 'SQL' || taskType === 'CONTEXT_INJECT' || taskType === 'HTTP' || taskType === 'FLINK' || taskType === 'TABLE'">
         <el-card shadow="never">
           <SQLForm v-if="taskType === 'SQL'" :fatherRef="visualTask"></SQLForm>
+          <ContextForm :submitable="submitable" v-if="taskType === 'CONTEXT_INJECT'" :fatherRef="visualTask">
+          </ContextForm>
           <HttpForm v-if="taskType === 'HTTP'" :fatherRef="visualTask"></HttpForm>
           <FlinkForm v-if="taskType === 'FLINK'" :fatherRef="visualTask"></FlinkForm>
+          <TableForm v-if="taskType === 'TABLE'" :fatherRef="visualTask" ></TableForm>
           <el-form-item v-if="submitable">
             <el-button plain type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
@@ -149,13 +152,14 @@ import Tips from '../Visual/Tips.vue';
 import SQLForm from '../Visual/form/SQLForm.vue';
 import JDBCForm from '../Visual/form/JDBCForm.vue';
 import Editor from '../Visual/Editor.vue';
+import ContextForm from '../Visual/form/ContextForm.vue';
 import HttpForm from '../Visual/form/HttpForm.vue';
 import FlinkForm from '../Visual/form/FlinkForm.vue';
-
+import TableForm from '../Visual/form/TableForm.vue';
 
 
 export default {
-  components: { vueJsonEditor, TabTable, KVTable, Editor, Tips, SQLForm, JDBCForm, HttpForm,FlinkForm },
+  components: { vueJsonEditor, TabTable, KVTable, Editor, Tips, SQLForm, ContextForm, JDBCForm, HttpForm,FlinkForm ,TableForm},
   props: {
     nodeData: Object,
     lf: Object || String,

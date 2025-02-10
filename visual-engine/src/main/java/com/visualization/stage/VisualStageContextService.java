@@ -18,7 +18,6 @@ public class VisualStageContextService {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
-
     public InstanceContext getById(Long instanceId) {
         InstanceContext context = dagInstanceContextRepository.getById(instanceId);
         context.toMap();
