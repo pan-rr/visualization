@@ -127,7 +127,7 @@ JDK1.8+、MySQL5.7+、Redis6+、NodeJS、MinIO、InfluxDB
 
   VT会尝试执行脚本中的DDL；
   
-  详情点击 [Visual Table说明](https://gitee.com/pan-rr/visualization/raw/master/table.md)
+  详情点击 [Visual Table说明](https://gitee.com/pan-rr/visualization/blob/master/table.md)
 
 + SQL
   
